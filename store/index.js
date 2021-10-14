@@ -1,14 +1,16 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { createStore, applyMiddleware, compose } from "redux";
 import { createWrapper } from "next-redux-wrapper";
-import logger from "redux-logger";
-import reducer from "./modules";
+import { createLogger } from "redux-logger";
+import { composeWithDevTools } from "redux-devtools-extension";
+import rootReducer from "reducer/index";
 
-const makeStore = (context) =>
-  configureStore({
-    reducer,
-    middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(logger),
-    devTools: process.env.NODE_ENV !== "production",
-  });
-export const wrapper = createWrapper(makeStore, {
-  debug: process.env.NODE_ENV !== "production",
-});
+const configureStore = () => {
+  const logger = createLogger();
+  const enhancer = compose(composeWithDevTools(applyMiddleware(logger)));
+  const store = createStore(rootReducer, enhancer);
+  return store;
+};
+
+const wrapper = createWrapper(configureStore, { debug: true });
+
+export default wrapper;
