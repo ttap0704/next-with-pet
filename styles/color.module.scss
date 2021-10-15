@@ -1,0 +1,173 @@
+$colors: (
+  red: #e11124,
+  green: #14e973,
+  orange: #e56717,
+  yellow: #fbbd00,
+  kakao: #ffe100,
+  blue: #2eafce,
+  bluish-green: #2bd1b1,
+  purple: #b85bff,
+  gray-1: #212529,
+  gray-2: #454545,
+  gray-3: #989898,
+  gray-4: #d5d5d5,
+  gray-5: #e9ebec,
+  gray-6: #f9f9f9,
+  success: #14e973,
+  warning: #fbbd00,
+  danger: #e11124,
+);
+
+$sides: (
+  "l": "left",
+  "r": "right",
+  "t": "top",
+  "b": "bottom",
+  "a": "all",
+);
+
+@each $colorKey, $colorValue in $colors {
+  // background 컬러
+  .bg_#{"" + $colorKey} {
+    background-color: $colorValue !important;
+  }
+
+  // text 컬러
+  .text_#{"" + $colorKey} {
+    color: $colorValue !important;
+  }
+
+  // border 컬러
+  @each $sideKey, $sideValue in $sides {
+    @if ($sideKey != "a") {
+      .border_#{$sideKey}_#{"" + $colorKey} {
+        border-#{$sideValue}: 1px solid;
+        border-color: #{$colorValue};
+      }
+    } @else if ($sideKey == "a") {
+      .border_#{"" + $colorKey} {
+        border: 1px solid;
+        border-color: $colorValue;
+      }
+    }
+  }
+
+  // 면 채워진 버튼
+  .btn_#{"" + $colorKey} {
+    background-color: $colorValue;
+    border-color: $colorValue;
+    color: var(--white);
+    &:active,
+    &:active,
+    &.btn-secondary:not(:disabled):not(.disabled):active,
+    .btn-secondary:not(:disabled):not(.disabled).active,
+    .show > .btn-secondary.dropdown-toggle,
+    &.btn-secondary:hover {
+      color: var(--white);
+      background-color: #{$colorValue}99 !important;
+      border-color: #{$colorValue}99 !important;
+      box-shadow: none;
+    }
+
+    &:focus {
+      color: var(--white);
+      background-color: #{$colorValue} !important;
+      border-color: #{$colorValue} !important;
+      box-shadow: none;
+    }
+
+    &.disabled {
+      background-color: #ced4da !important;
+      border-color: #ced4da !important;
+      color: var(--gray-2) !important;
+      &:hover {
+        background-color: #ced4da !important;
+        border-color: #ced4da !important;
+        color: var(--gray-2) !important
+      }
+
+    }
+  }
+
+  // 면 비워진 버튼
+  .border_btn_#{"" + $colorKey} {
+    background-color: var(--white);
+    border-color: $colorValue;
+    color: $colorValue;
+    &:active,
+    &:active,
+    &.btn-secondary:not(:disabled):not(.disabled):active,
+    .btn-secondary:not(:disabled):not(.disabled).active,
+    .show > .btn-secondary.dropdown-toggle,
+    &.btn-secondary:hover {
+      background-color: $colorValue;
+      border-color: $colorValue;
+      color: var(--white);
+      box-shadow: none;
+      svg {
+        color: var(--white);
+      }
+    }
+
+    &:focus {
+      background-color: var(--white);
+      border-color: $colorValue;
+      color:  $colorValue;
+      box-shadow: none;
+      svg {
+        color: var(--white);
+      }
+    }
+
+    &.disabled {
+      background-color: #ced4da !important;
+      border-color: #ced4da !important;
+      color: var(--gray-2) !important;
+      &:hover {
+        background-color: #ced4da !important;
+        border-color: #ced4da !important;
+        color: var(--gray-2) !important
+      }
+
+    }
+  }
+
+  // 텍스트 버튼
+  .text_btn_#{"" + $colorKey} {
+    background-color: var(--white);
+    border: none;
+    color: $colorValue;
+    &:active,
+    &:active,
+    &.btn-secondary:not(:disabled):not(.disabled):active,
+    .btn-secondary:not(:disabled):not(.disabled).active,
+    .show > .btn-secondary.dropdown-toggle,
+    &.btn-secondary:hover {
+      background-color: var(--white);
+      border: none;
+      color: $colorValue;
+      box-shadow: none;
+      svg {
+        color: $colorValue;
+      }
+    }   
+
+    &:focus {
+      background-color: var(--white);
+      border: none;
+      color: $colorValue;
+      box-shadow: none;
+      svg {
+        color: $colorValue;
+      }
+    }
+
+    &.disabled {
+      background-color: var(--white);
+      &:hover {
+        color: var(--gray-2)
+      }
+
+    }
+  }
+}

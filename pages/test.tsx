@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reducers";
 import { actions, RESET_TEXT } from "../reducers/testReducer";
+import c_style from '../styles/color.module.scss';
 
 const Test = () => {
   const { no, text } = useSelector((state: RootState) => state.testReducer);
@@ -22,7 +23,7 @@ const Test = () => {
 
   return (
     <>
-      <p>no: {no}</p>
+      <p className={c_style.text_green}>no: {no}</p>
       <p>text: {text || ""}</p>
       <div>
         <button onClick={addTextHandler}>버튼</button>
