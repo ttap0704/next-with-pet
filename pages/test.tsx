@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../reducers";
 import { actions, RESET_TEXT } from "../reducers/testReducer";
-import c_style from '../styles/color.module.scss';
+import c_style from "../styles/color.module.scss";
 
 const Test = () => {
   const { no, text } = useSelector((state: RootState) => state.testReducer);

@@ -1,5 +1,6 @@
 import nav_items from "../tools/nav";
-import styles from "../../styles/header.module.scss";
+import styles from "../../styles/components/header.module.scss";
+import Link from "next/link";
 // function createTag() {
 //   let ul = document.createElement("ul");
 //   for (let i = 0, leng = nav_items.length; i < leng; i++) {
@@ -16,7 +17,15 @@ const Header = () => {
     <header className={styles.header}>
       <ul>
         {nav_items.map((data) => {
-          return <li>{data.kor_name}</li>;
+          const href = data.path;
+
+          return (
+            <li>
+              <Link href={href}>
+                <a>{data.kor_name}</a>
+              </Link>
+            </li>
+          );
         })}
       </ul>
     </header>

@@ -1,0 +1,26 @@
+@import './colors';
+
+.header {
+  width: 100%;
+  height: 50px;
+  background-color: $orange;
+  ul {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    li {
+      height: 100%;
+      color: #fff;
+      a {
+        width: 100%;
+        height: 100%;
+        display: block;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+      }
+    }
+  }
+}
