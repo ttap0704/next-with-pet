@@ -1,9 +1,9 @@
 // import { useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { RootState } from "../../reducers";
-import c_style from "../styles/color.module.scss";
+// import c_style from "../styles/color.module.scss";
 
-const Community = () => {
+const Restaurant = () => {
   // const { no, text } = useSelector((state: RootState) => state.testReducer);
 
   // const dispatch = useDispatch();
@@ -15,7 +15,7 @@ const Community = () => {
   // }, []);
 
   const addTextHandler = () => {
-    const value = "hi";
+    const value = "레스토랑";
 
     return value;
   };
@@ -29,4 +29,4 @@ const Community = () => {
   );
 };
 
-export default Community;
+export default Restaurant;

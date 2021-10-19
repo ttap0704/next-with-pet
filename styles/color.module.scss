@@ -1,7 +1,7 @@
 $colors: (
   red: #e11124,
   green: #14e973,
-  orange: #e56717,
+  orange: #ffa500,
   yellow: #fbbd00,
   kakao: #ffe100,
   blue: #2eafce,
@@ -40,9 +40,9 @@ $sides: (
   // border 컬러
   @each $sideKey, $sideValue in $sides {
     @if ($sideKey != "a") {
-      .border_#{$sideKey}_#{"" + $colorKey} {
-        border-#{$sideValue}: 1px solid;
-        border-color: #{$colorValue};
+      .border_#{"" + $sideKey}_#{"" + $colorKey} {
+        border-#{"" + $sideValue}: 1px solid;
+        border-color: #{"" + $colorValue};
       }
     } @else if ($sideKey == "a") {
       .border_#{"" + $colorKey} {
@@ -64,15 +64,15 @@ $sides: (
     .show > .btn-secondary.dropdown-toggle,
     &.btn-secondary:hover {
       color: var(--white);
-      background-color: #{$colorValue}99 !important;
-      border-color: #{$colorValue}99 !important;
+      background-color: #{"" + $colorValue}99 !important;
+      border-color: #{"" + $colorValue}99 !important;
       box-shadow: none;
     }
 
     &:focus {
       color: var(--white);
-      background-color: #{$colorValue} !important;
-      border-color: #{$colorValue} !important;
+      background-color: #{"" + $colorValue} !important;
+      border-color: #{"" + $colorValue} !important;
       box-shadow: none;
     }
 
@@ -167,7 +167,6 @@ $sides: (
       &:hover {
         color: var(--gray-2)
       }
-
     }
   }
 }

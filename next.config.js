@@ -5,4 +5,13 @@ module.exports = {
   sassOptions: {
     includePaths: [path.join(__dirname, "styles")],
   },
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/accommodation',
+        permanent: true,
+      },
+    ]
+  },
 };

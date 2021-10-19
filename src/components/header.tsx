@@ -18,14 +18,15 @@ const Header = () => {
       <ul>
         {nav_items.map((data) => {
           const href = data.path;
-
-          return (
-            <li>
-              <Link href={href}>
-                <a>{data.kor_name}</a>
-              </Link>
-            </li>
-          );
+          if (data.display) {
+            return (
+              <li key={data.name}>
+                <Link href={href}>
+                  <a>{data.kor_name}</a>
+                </Link>
+              </li>
+            );
+          }
         })}
       </ul>
     </header>

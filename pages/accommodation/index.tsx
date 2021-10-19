@@ -3,7 +3,7 @@
 // import { RootState } from "../../reducers";
 import c_style from "../styles/color.module.scss";
 
-const Community = () => {
+const Accommodation = () => {
   // const { no, text } = useSelector((state: RootState) => state.testReducer);
 
   // const dispatch = useDispatch();
@@ -15,7 +15,7 @@ const Community = () => {
   // }, []);
 
   const addTextHandler = () => {
-    const value = "hi";
+    const value = "숙박이라니까";
 
     return value;
   };
@@ -29,4 +29,4 @@ const Community = () => {
   );
 };
 
-export default Community;
+export default Accommodation;
