@@ -7,14 +7,18 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   box-sizing: border-box;
+  font-size: 14px;
 }
 
 #__next {
-  width: 750px;
-  max-width: 750px;
   height: 100vh;
   margin: 0 auto;
   border: 1px solid #e3e3e3;
+  #__wrap {
+    width: 60rem;
+    margin: 0 auto;
+    padding-top: 2rem;
+  }
 }
 
 a {
@@ -36,4 +40,8 @@ input,button {
   border-color: #e3e3e3;
   box-shadow: none;
   border-radius: 6px;
+}
+
+h1,h2,h3,h4,h5,h6,p {
+  margin: 0;
 }
