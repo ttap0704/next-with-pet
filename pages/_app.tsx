@@ -14,7 +14,9 @@ const TestApp = ({ Component, pageProps }: AppProps) => {
     <Provider store={store}>
       <Header />
       <div id="__wrap">
-        <Component {...pageProps} />
+        <div id="__container">
+          <Component {...pageProps} />
+        </div>
       </div>
     </Provider>
   );

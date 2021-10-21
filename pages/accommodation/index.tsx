@@ -7,6 +7,25 @@ import styles from "../../styles/pages/accommodation.module.scss";
 const Accommodation = () => {
   const data = [
     {
+      idx: 0,
+      title: "수영장 펜션, 반려동물과 함께 즐가세요.",
+      img_path:
+        "https://uploads-ssl.webflow.com/5e5cad32512f4ebf86ae2fa1/5e942f6e5f867827a4659114_mrp_6140-hdr.jpeg",
+      rating: 3.5,
+      review_cnt: 1,
+      location: "화성시 반월동",
+    },
+    {
+      idx: 1,
+      title: "수영장 펜션, 반려동물과 함께 즐가세요.",
+      img_path:
+        "https://uploads-ssl.webflow.com/5e5cad32512f4ebf86ae2fa1/5e942f6e5f867827a4659114_mrp_6140-hdr.jpeg",
+      rating: 3.5,
+      review_cnt: 1,
+      location: "화성시 반월동",
+    },
+    {
+      idx: 2,
       title: "수영장 펜션, 반려동물과 함께 즐가세요.",
       img_path:
         "https://uploads-ssl.webflow.com/5e5cad32512f4ebf86ae2fa1/5e942f6e5f867827a4659114_mrp_6140-hdr.jpeg",

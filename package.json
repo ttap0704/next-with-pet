@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.6.2",
+    "dotenv": "^10.0.0",
     "immer": "^9.0.6",
     "next": "^11.1.2",
     "next-redux-wrapper": "^7.0.5",

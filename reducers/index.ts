@@ -1,5 +1,11 @@
 import { combineReducers } from "redux";
-import testReducer from "./testReducer";
+
+// models
+import userReducer from "./models/user"
+
+// common
+import testReducer from "./common/testReducer";
+
 
 const rootReducer = combineReducers({
     testReducer

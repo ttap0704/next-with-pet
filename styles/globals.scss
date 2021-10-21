@@ -14,10 +14,16 @@ body {
   height: 100vh;
   margin: 0 auto;
   border: 1px solid #e3e3e3;
+  overflow: auto;
   #__wrap {
-    width: 60rem;
-    margin: 0 auto;
-    padding-top: 2rem;
+    width: 100%;
+    height: calc(100vh - 5rem);
+    overflow-y: auto;
+    #__container {
+      width: 60rem;
+      margin: 0 auto;
+      padding-top: 2rem;
+    }
   }
 }
 

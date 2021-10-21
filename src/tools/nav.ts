@@ -21,7 +21,7 @@ export default [
     name: 'community',
     kor_name: '커뮤니티',
     path: '/community',
-    display: true
+    display: false
   },
   {
     name: 'login',
