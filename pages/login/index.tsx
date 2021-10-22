@@ -1,19 +1,21 @@
-// import { useEffect } from "react";
-import { useState } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { RootState } from "../../reducers";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
+import { useRouter } from "next/router";
+
 import styles from "../../styles/pages/login.module.scss";
+import { actions, RESET_USER } from "../../reducers/models/user";
 
 const Login = () => {
-  // const { no, text } = useSelector((state: RootState) => state.testReducer);
+  const dispatch = useDispatch();
+  const router = useRouter();
 
-  // const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch({
+      type: RESET_USER,
+    });
+  }, []);
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: RESET_TEXT,
-  //   });
-  // }, []);
   let [contentsText, setContentsText] = useState("login");
 
   const contents = (type: string) => {
@@ -99,7 +101,7 @@ const Login = () => {
     } else if (type == "certification") {
       return "사업자 인증";
     } else {
-      return "회원가입"
+      return "회원가입";
     }
   };
 
@@ -111,25 +113,37 @@ const Login = () => {
     }
   };
 
+  const onLogin = (e) => {
+    e.preventDefault();
+    dispatch(
+      actions.addUser({
+        uid: 1,
+        unick: "쪼앙",
+        profile_img_path:
+          "https://fluffyhund.com/wp-content/uploads/Toy-Poodle-thumb-300x300.jpg",
+      })
+    );
+    router.push("/service");
+  };
+
   return (
     <>
       <form className={styles.form_box}>
         {contents(contentsText)}
         <div style={{ textAlign: "right" }}>
-          {contentsText != "certification" ? (
-            <span
-              style={{ padding: "6px 0", display: "block", cursor: "pointer" }}
-              onClick={changeContents}
-            >
-              {contentsText == 'login' ? '사업자 회원가입' : '로그인'}
-            </span>
-          ) : (
+          {contentsText == "certification" ? (
             <span style={{ padding: "6px 0", display: "block" }}>
               * 항목은 필수항목입니다.
             </span>
-          )}
+          ) : null}
+          <span
+            style={{ padding: "6px 0", display: "block", cursor: "pointer" }}
+            onClick={changeContents}
+          >
+            {contentsText == "login" ? "사업자 회원가입" : "로그인"}하기
+          </span>
         </div>
-        <button>{button_txt(contentsText)}</button>
+        <button onClick={onLogin}>{button_txt(contentsText)}</button>
       </form>
     </>
   );

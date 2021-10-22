@@ -47,7 +47,7 @@ const Accommodation = () => {
   const list = () => {
     return data.map((data) => {
       return (
-        <div className={styles.list}>
+        <div className={styles.list} key={data.idx}>
           <div
             className={styles.list_img}
             style={{ backgroundImage: `url(${data.img_path})` }}

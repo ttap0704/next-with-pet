@@ -1,18 +1,17 @@
 import nav_items from "../tools/nav";
 import styles from "../../styles/components/header.module.scss";
 import Link from "next/link";
-// function createTag() {
-//   let ul = document.createElement("ul");
-//   for (let i = 0, leng = nav_items.length; i < leng; i++) {
-//     let li = document.createElement("li");
-//     li.innerText = nav_items[i].kor_name;
-//     ul.append(li);
-//   }
-
-//   return ul;
-// }
+import { RootState } from "../../reducers";
+import { useSelector } from "react-redux";
 
 const Header = () => {
+  const { uid } = useSelector((state: RootState) => state.userReducer);
+
+  if (uid > 0) {
+    nav_items[4].display = false;
+    nav_items[5].display = true;
+  }
+
   return (
     <header className={styles.header}>
       <ul>

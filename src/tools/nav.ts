@@ -28,5 +28,11 @@ export default [
     kor_name: '로그인',
     path: '/login',
     display: true
+  },
+  {
+    name: 'service',
+    kor_name: '내 정보',
+    path: '/service',
+    display: false
   }
 ]

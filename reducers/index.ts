@@ -8,6 +8,10 @@ import testReducer from "./common/testReducer";
 
 
 const rootReducer = combineReducers({
+    // models
+    userReducer,
+
+    // common
     testReducer
 })
 
