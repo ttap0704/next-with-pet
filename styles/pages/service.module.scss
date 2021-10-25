@@ -7,7 +7,7 @@
   border-radius: 6px;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   padding: 3rem;
   .service_profile_img {
@@ -19,7 +19,7 @@
   }
   .service_service {
     width: calc(100% - 16rem);
-    height: 10rem;
+    height: 12rem;
     h2 {
       height: 3rem;
     }

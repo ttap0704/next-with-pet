@@ -1,0 +1,349 @@
+
+// width #####################################################################################################################
+.w-60 {
+  width: 60%;
+}
+.max-w-75px {
+  max-width: 75px;
+}
+.max-w-380px {
+  max-width: 380px;
+}
+.min-w-65px {
+  min-width: 65px;
+}
+.w-5 {
+  width: 5%;
+}
+.w-10 {
+  width: 10%;
+}
+.w-30 {
+  width: 30%;
+}
+.w-40 {
+  width: 40%;
+}
+.w-45 {
+  width: 45%;
+}
+.w-47 {
+  width: 47%;
+}
+.w-48 {
+  width: 48%;
+}
+.w-60 {
+  width: 60%;
+}
+.w-70 {
+  width: 70%;
+}
+.w-85 {
+  width: 85%;
+}
+.w-90 {
+  width: 90%;
+}
+.w-95 {
+  width: 95%;
+}
+
+.max-h-100 {
+  max-height: 100%;
+}
+
+.h-inherit {
+  height: inherit !important;
+}
+
+.h-0 {
+  height: 0;
+}
+.h-5 {
+  height: 5%;
+}
+.h-10 {
+  height: 10%;
+}
+.h-20 {
+  height: 20%;
+}
+.h-30 {
+  height: 30%;
+}
+.h-40 {
+  height: 40%;
+}
+.h-45 {
+  height: 45%;
+}
+.h-50 {
+  height: 50%;
+}
+.h-55 {
+  height: 55%;
+}
+.h-60 {
+  height: 60%;
+}
+.h-70 {
+  height: 70%;
+}
+.h-80 {
+  height: 80%;
+}
+
+// position #####################################################################################################################
+.pos-abs {
+  position: absolute !important;
+}
+.pos-rel {
+  position: relative !important;
+}
+
+.pos-fix {
+  position: fixed !important;
+}
+.pos-stick {
+  position: sticky !important;
+}
+
+.translate-x {
+  left: 50% !important;
+  transform: translate(-50%, 0) !important;
+}
+.translate-y {
+  top: 50% !important;
+  transform: translate(0, -50%) !important;
+}
+.translate-a {
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+}
+
+.top-0 {
+  top: 0;
+}
+.right-0 {
+  right: 0;
+}
+.bottom-0 {
+  bottom: 0;
+}
+.left-0 {
+  left: 0;
+}
+
+// cursor #####################################################################################################################
+.cursor-p {
+  cursor: pointer;
+}
+.cursor-cm {
+  cursor: context-menu !important;
+  a {
+    cursor: context-menu !important;
+  }
+}
+.cursor-i {
+  cursor: inherit;
+}
+
+// text #####################################################################################################################
+.lsm-1 {
+  letter-spacing: -1px;
+}
+.lsm-2 {
+  letter-spacing: -2px;
+}
+
+.fw-100 {
+  font-weight: 100 !important;
+}
+.fw-200 {
+  font-weight: 200 !important;
+}
+.fw-300 {
+  font-weight: 300 !important;
+}
+.fw-400 {
+  font-weight: 400 !important;
+}
+.fw-500 {
+  font-weight: 500 !important;
+}
+.fw-600 {
+  font-weight: 600 !important;
+}
+.fw-700 {
+  font-weight: 700 !important;
+}
+.fw-800 {
+  font-weight: 800 !important;
+}
+
+.text-ellip {
+  text-overflow: ellipsis;
+}
+
+.fs-1r {
+  font-size: 1rem;
+}
+.fs-1d1r {
+  font-size: 1.1rem;
+}
+.fs-1d25r {
+  font-size: 1.25rem;
+}
+.fs-1d5r {
+  font-size: 1.5rem;
+}
+.fs-2r {
+  font-size: 2rem;
+}
+.fs-90p {
+  font-size: 90%;
+}
+.fs-inherit {
+  font-size: inherit;
+}
+.fs-1d25r-i {
+  font-size: 1.25rem !important;
+}
+.fs-1d125r-i {
+  font-size: 1.125rem !important;
+}
+
+// overflow #####################################################################################################################
+.over-h {
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+.over-y-s {
+  overflow-y: scroll;
+}
+.over-y-h {
+  overflow-y: hidden;
+}
+.over-y-a {
+  overflow-y: auto;
+}
+
+.over-x-h {
+  overflow-x: hidden;
+}
+
+// border #####################################################################################################################
+.b-none {
+  border: none;
+}
+.b-r-0 {
+  border-radius: 0;
+}
+.b-r-4px {
+  border-radius: 4px;
+}
+.b-r-025rem {
+  border-radius: 0.25rem;
+}
+.b-r-50 {
+  border-radius: 50%;
+}
+
+.b-l-f5f5f5 {
+  border-left: thin solid #f5f5f5;
+}
+.b-l-d7d7d7 {
+  border-left: thin solid #d7d7d7;
+}
+.b-l-yellow {
+  border-left: 4px solid var(--yellow) !important;
+}
+
+.b-dadada {
+  border: thin solid #dadada;
+}
+
+.b-edeeef {
+  border: thin solid #edeeef !important;
+}
+.b-t-edeeef {
+  border-top: thin solid #edeeef;
+}
+.b-b-edeeef {
+  border-bottom: thin solid #edeeef;
+}
+.b-l-edeeef {
+  border-left: thin solid #edeeef;
+}
+.b-r-edeeef {
+  border-right: thin solid #edeeef;
+}
+
+.b-a-none {
+  border: 0;
+}
+
+.b-b-000 {
+  border-bottom: thin solid #000;
+}
+.b-r-cacaca {
+  border-right: thin solid #cacaca;
+}
+.b-r-ddd {
+  border-right: thin solid #ddd;
+}
+.b-r-ddd-2px {
+  border-right: 2px solid #ddd;
+}
+.b-b-ddd {
+  border-bottom: thin solid #ddd;
+}
+
+.b-w-3px {
+  border-width: 3px;
+}
+
+// display flex ############################################################################################################
+.d-flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.justify-content-flex-end {
+  justify-content: flex-end;
+}
+
+.align-items-flex-end {
+  align-items: flex-end;
+}
+
+.align-items-flex-start {
+  align-items: flex-start;
+}
+
+.align-content-space-between {
+  align-content: space-between;
+}
+
+.justify-content-space-between {
+  justify-content: space-between;
+}
+
+.justify-content-space-around {
+  justify-content: space-around;
+}
+
+.dir-row {
+  flex-direction: row;
+}
+
+.dir-column {
+  flex-direction: column;
+}
+
+// etc #####################################################################################################################
+
+

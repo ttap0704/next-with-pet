@@ -1,7 +1,7 @@
 // import { useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { RootState } from "../../reducers";
-import c_style from "../styles/color.module.scss";
+import color from "../styles/color.module.scss";
 
 const Community = () => {
   // const { no, text } = useSelector((state: RootState) => state.testReducer);

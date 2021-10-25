@@ -1,7 +1,7 @@
 // import { useEffect } from "react";
 // import { useDispatch, useSelector } from "react-redux";
 // import { RootState } from "../../reducers";
-import c_style from "../../styles/color.module.scss";
+import color from "../../styles/color.module.scss";
 import styles from "../../styles/pages/accommodation.module.scss";
 
 const Accommodation = () => {
@@ -56,7 +56,7 @@ const Accommodation = () => {
             <div className={styles.list_text}>
               <h2>{data.title}</h2>
               <span className={styles.list_rating}>
-                <span className={c_style.text_red}>{data.rating}</span>/5 (
+                <span className={color.text_red}>{data.rating}</span>/5 (
                 {data.review_cnt})
               </span>
               <p className={styles.list_location}>{data.location}</p>

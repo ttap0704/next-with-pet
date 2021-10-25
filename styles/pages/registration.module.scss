@@ -1,0 +1,16 @@
+.form_box {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  .custom_input {
+    width: 100% i !important;
+    padding-left: 8px;
+    margin-bottom: 8px;
+  }
+  input {
+    height: 3rem;
+  } 
+  textarea {
+    height: 10rem;
+  }
+}

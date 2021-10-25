@@ -19,15 +19,15 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 12px;
+
   label {
-    width: 20%;
+    width: 15%;
     display: flex;
     align-items: center;
     justify-content: flex-start;
   }
   input {
-    width: 80%;
+    width: 85%;
     padding-left: 8px;
   }
-  
 }
