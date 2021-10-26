@@ -13,9 +13,24 @@ const Service = () => {
   );
 
   const service_cotents = [
-    { label: "회원정보 수정", type: "modify", path: "info" },
-    { label: "숙박업소 등록", type: "accommodation", path: "registration" },
-    { label: "식당 등록", type: "restaurant", path: "registration" },
+    {
+      label: "회원정보 수정",
+      type: "modify",
+      path: "info",
+      icon_path: "들어갈 예정",
+    },
+    {
+      label: "숙박업소 등록",
+      type: "accommodation",
+      path: "registration",
+      icon_path: "들어갈 예정",
+    },
+    {
+      label: "식당 등록",
+      type: "restaurant",
+      path: "registration",
+      icon_path: "들어갈 예정",
+    },
   ];
 
   const movePage = (data: { path: string; type: string }) => {
@@ -53,7 +68,10 @@ const Service = () => {
                 key={data.type}
                 onClick={() => movePage(data)}
               >
-                <a>{data.label}</a>
+                <a>
+                  <span>{data.label}</span>
+                  <p>{data.icon_path}</p>
+                </a>
               </div>
             );
           })}
