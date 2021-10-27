@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@react-icons/all-files": "^4.1.0",
     "@reduxjs/toolkit": "^1.6.2",
     "dotenv": "^10.0.0",
     "immer": "^9.0.6",
