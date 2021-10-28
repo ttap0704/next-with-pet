@@ -3,9 +3,8 @@ import styles from "../../../styles/pages/registration.module.scss";
 import common from "../../../styles/common.module.scss";
 import accom_style from "../../../styles/pages/accommodation.module.scss";
 import { useRouter } from "next/router";
-import { FaFileUpload } from "@react-icons/all-files/fa/FaFileUpload";
-import { FaChevronRight } from "@react-icons/all-files/fa/FaChevronRight";
-import { FaChevronLeft } from "@react-icons/all-files/fa/FaChevronLeft";
+import { FaFileUpload, FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { HiChevronDoubleRight, HiChevronDoubleLeft } from "react-icons/hi";
 
 const Service = () => {
   const router = useRouter();
@@ -15,6 +14,7 @@ const Service = () => {
     file: null,
     imageUrl: "",
   });
+  let [detailFiles, setDetailFiles] = useState([]);
 
   function movePage(type: string) {
     const slider_btn = document.getElementById("slider_btn");
@@ -34,7 +34,7 @@ const Service = () => {
       slider_btn.style.marginLeft = "0";
     }
     const slider = document.getElementById("slider_wrap");
-    const distance = type == "exposure" ? "-60rem" : "0px";
+    const distance = type == "exposure" ? "-61rem" : "0px";
     slider.style.transition = "500ms";
     slider.style.transform = `translate3d(${distance}, 0px, 0px)`;
   }
@@ -134,15 +134,70 @@ const Service = () => {
             </div>
             <div className={styles.page}>
               <h1>상세 페이지</h1>
-              <form className={styles.form_box}>
-                <input
-                  type="text"
-                  placeholder="제목을 입력해주세요."
-                  className={styles.custom_input}
-                  onChange={(e) => inputHandler(e)}
-                ></input>
-                <div>위치 선택 들어갈 자리!!!!!</div>
-              </form>
+              <div>
+                <h2>대표 이미지</h2>
+                <div className={styles.detail_img}></div>
+                <div
+                  style={{
+                    width: "100%",
+                    display: "flex",
+                    alignItems: "flex-end",
+                    flexDirection: "column",
+                    marginBottom: "1rem",
+                  }}
+                >
+                  <label htmlFor="preview_img" className={common.file_input}>
+                    대표이미지 업로드
+                    <FaFileUpload />
+                  </label>
+                  <input
+                    type="file"
+                    onChange={(e) => uploadPreview(e)}
+                    id="preview_img"
+                  ></input>
+                  <span style={{ color: "#666", marginTop: "4px" }}>
+                    * 상세페이지의 대표이미지 설정입니다.
+                  </span>
+                </div>
+              </div>
+              <div>
+                <h2>숙소 소개</h2>
+                <textarea
+                  className={styles.detail_intro}
+                  no-resize
+                  placeholder="숙소에 대해 자유롭게 작성해주시길 바랍니다."
+                />
+              </div>
+              <div>
+                <h2>객실 정보</h2>
+                <div className={styles.detail_room}>
+                  <ul>
+                    <li>
+                      이미지
+                    </li>
+                    <div>
+                      <label
+                        htmlFor="preview_img"
+                        className={common.file_input}
+                      >
+                        객실이미지 업로드
+                        <FaFileUpload />
+                      </label>
+                      <input
+                        type="file"
+                        onChange={(e) => uploadPreview(e)}
+                        id="preview_img"
+                      ></input>
+                    </div>
+                  </ul>
+                  <div className={styles.detail_room_intro}>
+                    <h3>객실명 : </h3>
+                    <h3>인원 : </h3>
+                    <h3>가격 : </h3>
+                  </div>
+                </div>
+                <div className={styles.add_room_btn}>객실 추가</div>
+              </div>
             </div>
           </div>
         </div>
@@ -152,11 +207,14 @@ const Service = () => {
           onClick={() => movePage(curPage)}
           style={{ marginRight: "-10rem", right: 0 }}
         >
-          {curPage == "detail" ? <FaChevronLeft /> : null}
-          <span style={{ margin: "0 12px" }}>
+          {curPage == "detail" ? (
+            <HiChevronDoubleLeft />
+          ) : (
+            <HiChevronDoubleRight />
+          )}
+          <p style={{ margin: "0 12px", display: "block" }}>
             {curPage == "detail" ? "뒤로가기" : "상세페이지 등록"}
-          </span>
-          {curPage == "exposure" ? <FaChevronRight /> : null}
+          </p>
         </div>
       </div>
     </>
