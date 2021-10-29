@@ -14,7 +14,21 @@ const Service = () => {
     file: null,
     imageUrl: "",
   });
-  let [detailFiles, setDetailFiles] = useState([]);
+  let [detailPreview, setDetailPreview] = useState([]);
+  let [roomDetail, setRoomDetail] = useState([
+    {
+      title: "",
+      people: "",
+      max_people: "",
+      price: "",
+      files: [
+        {
+          file: null,
+          imageUrl: "",
+        },
+      ],
+    },
+  ]);
 
   function movePage(type: string) {
     const slider_btn = document.getElementById("slider_btn");
@@ -39,19 +53,65 @@ const Service = () => {
     slider.style.transform = `translate3d(${distance}, 0px, 0px)`;
   }
 
-  function uploadPreview(event: React.ChangeEvent<HTMLInputElement>) {
+  function uploadImage(
+    event: React.ChangeEvent<HTMLInputElement>,
+    type: string,
+    idx?: number
+  ) {
     let reader = new FileReader();
-    let file = event.currentTarget.files[0];
+    let file = event.currentTarget.files;
     if (file) {
-      reader.onloadend = () => {
-        setPreviewFile({ file: file, imageUrl: reader.result.toString() });
-        console.log(reader.result);
+      reader.onload = () => {
+        if (type == "exposure") {
+          setPreviewFile({ file: file[0], imageUrl: reader.result.toString() });
+          setDetailPreview((state) => [
+            ...state,
+            { file: file[0], imageUrl: reader.result.toString() },
+          ]);
+        } else {
+          if (type == "detail") {
+          } else {
+            let items = [...roomDetail];
+            let item = items[idx];
+            for (let i = 0, leng = file.length; i < leng; i++) {
+              item.files.push({
+                file: file[i],
+                imageUrl: reader.result.toString(),
+              });
+            }
+            items[idx] = item;
+            setRoomDetail([...items]);
+          }
+        }
       };
-      reader.readAsDataURL(file);
+      if (type == "exposure") {
+        reader.readAsDataURL(file[0]);
+      } else {
+        // [].forEach.call(file, multiImageupload)
+      }
     } else {
-      setPreviewFile({ file: null, imageUrl: "" });
+      switch (type) {
+        case "exposure":
+          setPreviewFile({ file: null, imageUrl: "" });
+          break;
+      }
     }
   }
+
+  // function multiImageupload(file) {
+  //   // `file.name` 형태의 확장자 규칙에 주의하세요
+  //   let reader = new FileReader();
+
+  //   reader.onload = () => {
+
+  //   }
+  //       preview.appendChild(image);
+  //     },
+  //     false
+  //   );
+
+  //   reader.readAsDataURL(file);
+  // }
 
   function inputHandler(e) {
     setTitle(e.target.value);
@@ -119,7 +179,7 @@ const Service = () => {
                   </label>
                   <input
                     type="file"
-                    onChange={(e) => uploadPreview(e)}
+                    onChange={(e) => uploadImage(e, "exposure")}
                     id="preview_img"
                   ></input>
                 </div>
@@ -143,59 +203,99 @@ const Service = () => {
                     display: "flex",
                     alignItems: "flex-end",
                     flexDirection: "column",
-                    marginBottom: "1rem",
                   }}
                 >
-                  <label htmlFor="preview_img" className={common.file_input}>
+                  <label htmlFor="detail_img" className={common.file_input}>
                     대표이미지 업로드
                     <FaFileUpload />
                   </label>
                   <input
                     type="file"
-                    onChange={(e) => uploadPreview(e)}
-                    id="preview_img"
+                    onChange={(e) => uploadImage(e, "detail")}
+                    id="detail_img"
                   ></input>
                   <span style={{ color: "#666", marginTop: "4px" }}>
                     * 상세페이지의 대표이미지 설정입니다.
                   </span>
                 </div>
               </div>
-              <div>
+              <div style={{ marginBottom: "1rem" }}>
                 <h2>숙소 소개</h2>
                 <textarea
                   className={styles.detail_intro}
-                  no-resize
                   placeholder="숙소에 대해 자유롭게 작성해주시길 바랍니다."
                 />
               </div>
               <div>
                 <h2>객실 정보</h2>
-                <div className={styles.detail_room}>
-                  <ul>
-                    <li>
-                      이미지
-                    </li>
-                    <div>
-                      <label
-                        htmlFor="preview_img"
-                        className={common.file_input}
-                      >
-                        객실이미지 업로드
-                        <FaFileUpload />
-                      </label>
-                      <input
-                        type="file"
-                        onChange={(e) => uploadPreview(e)}
-                        id="preview_img"
-                      ></input>
+                {roomDetail.map((data, index) => {
+                  return (
+                    <div className={styles.detail_room} key={index}>
+                      <div className={styles.detail_room_img}>
+                        <ul>
+                          {data.files.length == 0 ? (
+                            <h3>객실 이미지를 등록해주세요.</h3>
+                          ) : (
+                            data.files.map((file, index) => {
+                              <li key={index}>
+                                <img src={file.imageUrl} alt="detail_image" />
+                              </li>;
+                            })
+                          )}
+                        </ul>
+                        <div>
+                          <label
+                            htmlFor="rooms_img"
+                            className={common.file_input}
+                          >
+                            객실이미지 업로드
+                            <FaFileUpload />
+                          </label>
+                          <input
+                            type="file"
+                            onChange={(e) => uploadImage(e, "room", index)}
+                            id="rooms_img"
+                            multiple
+                          ></input>
+                        </div>
+                      </div>
+                      <div className={styles.detail_room_intro}>
+                        <div className={styles.detailr_room_explain}>
+                          <label>객실명</label>
+                          <input
+                            type="text"
+                            placeholder="객실명을 입력해주세요."
+                            onChange={() => console.log("hi")}
+                          />
+                        </div>
+                        <div className={styles.detailr_room_explain}>
+                          <label>기준 인원</label>
+                          <input
+                            type="text"
+                            placeholder="기준 인원을 입력해주세요."
+                            onChange={() => console.log("hi")}
+                          />
+                        </div>
+                        <div className={styles.detailr_room_explain}>
+                          <label>최대 인원</label>
+                          <input
+                            type="text"
+                            placeholder="최대 인원을 입력해주세요."
+                            onChange={() => console.log("hi")}
+                          />
+                        </div>
+                        <div className={styles.detailr_room_explain}>
+                          <label>가격</label>
+                          <input
+                            type="text"
+                            placeholder="가격을 입력해주세요."
+                            onChange={() => console.log("hi")}
+                          />
+                        </div>
+                      </div>
                     </div>
-                  </ul>
-                  <div className={styles.detail_room_intro}>
-                    <h3>객실명 : </h3>
-                    <h3>인원 : </h3>
-                    <h3>가격 : </h3>
-                  </div>
-                </div>
+                  );
+                })}
                 <div className={styles.add_room_btn}>객실 추가</div>
               </div>
             </div>
