@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useLayoutEffect } from "react";
 import styles from "../../../styles/pages/registration.module.scss";
 import common from "../../../styles/common.module.scss";
 import accom_style from "../../../styles/pages/accommodation.module.scss";
 import { useRouter } from "next/router";
-import { FaFileUpload, FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import { HiChevronDoubleRight, HiChevronDoubleLeft } from "react-icons/hi";
+import { FaFileUpload } from "react-icons/fa";
+import {
+  HiChevronDoubleRight,
+  HiChevronDoubleLeft,
+  HiChevronLeft,
+  HiChevronRight,
+} from "react-icons/hi";
 
 const Service = () => {
   const router = useRouter();
@@ -58,36 +63,40 @@ const Service = () => {
     type: string,
     idx?: number
   ) {
-    let reader = new FileReader();
     let file = event.currentTarget.files;
     if (file) {
-      reader.onload = () => {
-        if (type == "exposure") {
+      if (type == "exposure") {
+        let reader = new FileReader();
+        reader.onload = () => {
           setPreviewFile({ file: file[0], imageUrl: reader.result.toString() });
           setDetailPreview((state) => [
             ...state,
             { file: file[0], imageUrl: reader.result.toString() },
           ]);
-        } else {
-          if (type == "detail") {
-          } else {
-            let items = [...roomDetail];
-            let item = items[idx];
-            for (let i = 0, leng = file.length; i < leng; i++) {
+        };
+        reader.readAsDataURL(file[0]);
+      } else {
+        let files = Array.from(file);
+        let items = [...roomDetail];
+        let item = items[idx];
+        files.forEach((file) => {
+          let reader = new FileReader();
+          reader.onloadend = () => {
+            if (item.files[0].file == null) {
+              item.files[0].file = file;
+              item.files[0].imageUrl = reader.result.toString();
+            } else {
               item.files.push({
-                file: file[i],
+                file: file,
                 imageUrl: reader.result.toString(),
               });
             }
-            items[idx] = item;
-            setRoomDetail([...items]);
-          }
-        }
-      };
-      if (type == "exposure") {
-        reader.readAsDataURL(file[0]);
-      } else {
-        // [].forEach.call(file, multiImageupload)
+          };
+          reader.readAsDataURL(file);
+        });
+        items[idx] = item;
+        setRoomDetail([...items]);
+        console.log(roomDetail);
       }
     } else {
       switch (type) {
@@ -98,23 +107,21 @@ const Service = () => {
     }
   }
 
-  // function multiImageupload(file) {
-  //   // `file.name` 형태의 확장자 규칙에 주의하세요
-  //   let reader = new FileReader();
-
-  //   reader.onload = () => {
-
-  //   }
-  //       preview.appendChild(image);
-  //     },
-  //     false
-  //   );
-
-  //   reader.readAsDataURL(file);
-  // }
-
   function inputHandler(e) {
     setTitle(e.target.value);
+  }
+
+  function toggleImageSlider(idx: number, type: string) {
+    const slider = document.getElementById(
+      `detail_img_slider_${idx}`
+    ).lastElementChild;
+    if (slider.tagName == "DIV") {
+      if (type == "enter") {
+        slider.setAttribute("style", "display: block");
+      } else {
+        slider.setAttribute("style", "display: none");
+      }
+    }
   }
 
   const preview = () => {
@@ -232,16 +239,29 @@ const Service = () => {
                   return (
                     <div className={styles.detail_room} key={index}>
                       <div className={styles.detail_room_img}>
-                        <ul>
-                          {data.files.length == 0 ? (
+                        <ul
+                          id={`detail_img_slider_${index}`}
+                          onMouseEnter={() => toggleImageSlider(index, "enter")}
+                          onMouseLeave={() => toggleImageSlider(index, "leave")}
+                        >
+                          {data.files[0].file == null ? (
                             <h3>객실 이미지를 등록해주세요.</h3>
                           ) : (
-                            data.files.map((file, index) => {
-                              <li key={index}>
-                                <img src={file.imageUrl} alt="detail_image" />
-                              </li>;
+                            data.files.map((file, idx) => {
+                              return (
+                                <li key={idx}>
+                                  <img src={file.imageUrl} alt="detail_image" />
+                                </li>
+                              );
                             })
                           )}
+                          {data.files[index].file != null &&
+                          data.files[index + 1].file != undefined ? (
+                            <div className={styles.detail_room_slider}>
+                              <HiChevronLeft />
+                              <HiChevronRight />
+                            </div>
+                          ) : null}
                         </ul>
                         <div>
                           <label
