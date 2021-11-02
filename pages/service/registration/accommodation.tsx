@@ -26,12 +26,7 @@ const Service = () => {
       people: "",
       max_people: "",
       price: "",
-      files: [
-        {
-          file: null,
-          imageUrl: "",
-        },
-      ],
+      files: [],
     },
   ]);
 
@@ -63,6 +58,12 @@ const Service = () => {
     type: string,
     idx?: number
   ) {
+    const detail_slider = document.getElementById(
+      `detail_img_slider_${idx}`
+    );
+    const detail_slider_wrap = document.getElementById(
+      `detail_slider_wrap_${idx}`
+    );
     let file = event.currentTarget.files;
     if (file) {
       if (type == "exposure") {
@@ -79,21 +80,27 @@ const Service = () => {
         let files = Array.from(file);
         let items = [...roomDetail];
         let item = items[idx];
+        item.files = [];
         files.forEach((file) => {
           let reader = new FileReader();
           reader.onloadend = () => {
-            if (item.files[0].file == null) {
-              item.files[0].file = file;
-              item.files[0].imageUrl = reader.result.toString();
-            } else {
-              item.files.push({
-                file: file,
-                imageUrl: reader.result.toString(),
-              });
-            }
+            item.files.push({
+              file: file,
+              imageUrl: reader.result.toString(),
+            });
+            const li_tag = document.createElement("li");
+            const image = document.createElement("img");
+            image.setAttribute("src", reader.result.toString());
+            li_tag.append(image);
+            detail_slider.append(li_tag);
           };
           reader.readAsDataURL(file);
+          detail_slider_wrap.children[1].setAttribute(
+            "style",
+            "display: none;"
+          );
         });
+        detail_slider.style.width = `${files.length * 17}rem`;
         items[idx] = item;
         setRoomDetail([...items]);
         console.log(roomDetail);
@@ -103,6 +110,18 @@ const Service = () => {
         case "exposure":
           setPreviewFile({ file: null, imageUrl: "" });
           break;
+        case "room":
+          let items = [...roomDetail];
+          let item = items[idx];
+          item.files = [];
+          items[idx] = item;
+          setRoomDetail([...items]);
+          detail_slider.innerHTML = "";
+          detail_slider_wrap.children[1].setAttribute(
+            "style",
+            "display: block;"
+          );
+          detail_slider.style.width = `100%`;
       }
     }
   }
@@ -112,16 +131,27 @@ const Service = () => {
   }
 
   function toggleImageSlider(idx: number, type: string) {
-    const slider = document.getElementById(
-      `detail_img_slider_${idx}`
-    ).lastElementChild;
-    if (slider.tagName == "DIV") {
+    const slider = document.getElementById(`detail_slider_wrap_${idx}`)
+      .children[2];
+    if (slider.tagName == "DIV" && roomDetail[idx].files.length > 0) {
       if (type == "enter") {
         slider.setAttribute("style", "display: block");
       } else {
         slider.setAttribute("style", "display: none");
       }
     }
+  }
+
+  function detailSlider(type: string, idx: number) {
+    const slider = document.getElementById(`detail_img_slider_${idx}`);
+    if (type == 'next') {
+      slider.style.marginLeft = '-17rem';
+      slider.append(slider[0]);
+      slider.removeChild(slider.childNodes[0]);
+    } else if (type == 'prev') {
+      slider.style.marginLeft = '0rem';
+    }
+    console.log(slider);
   }
 
   const preview = () => {
@@ -239,30 +269,23 @@ const Service = () => {
                   return (
                     <div className={styles.detail_room} key={index}>
                       <div className={styles.detail_room_img}>
-                        <ul
-                          id={`detail_img_slider_${index}`}
+                        <div
+                          className={styles.detail_room_slider_wrap}
+                          id={`detail_slider_wrap_${index}`}
                           onMouseEnter={() => toggleImageSlider(index, "enter")}
                           onMouseLeave={() => toggleImageSlider(index, "leave")}
                         >
-                          {data.files[0].file == null ? (
-                            <h3>객실 이미지를 등록해주세요.</h3>
-                          ) : (
-                            data.files.map((file, idx) => {
-                              return (
-                                <li key={idx}>
-                                  <img src={file.imageUrl} alt="detail_image" />
-                                </li>
-                              );
-                            })
-                          )}
-                          {data.files[index].file != null &&
-                          data.files[index + 1].file != undefined ? (
-                            <div className={styles.detail_room_slider}>
-                              <HiChevronLeft />
-                              <HiChevronRight />
-                            </div>
-                          ) : null}
-                        </ul>
+                          <ul id={`detail_img_slider_${index}`}></ul>
+                          <h3>객실 이미지를 등록해주세요.</h3>
+                          <div className={styles.detail_room_slider}>
+                            <HiChevronLeft
+                              onClick={() => detailSlider("prev", index)}
+                            />
+                            <HiChevronRight
+                              onClick={() => detailSlider("next", index)}
+                            />
+                          </div>
+                        </div>
                         <div>
                           <label
                             htmlFor="rooms_img"
