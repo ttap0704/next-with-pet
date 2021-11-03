@@ -79,6 +79,9 @@
   height: 21rem;
   box-shadow: 2px 2px 4px #999;
   margin-bottom: 1rem;
+  position: relative;
+  background-position: center;
+  background-size: cover;
 }
 
 .detail_intro {
@@ -93,7 +96,7 @@
   border-radius: 6px;
   padding: 1rem 3rem;
   display: flex;
-  
+  margin-bottom: 8px;
   .detail_room_img {
     width: 17rem;
     height: 100%;
@@ -109,11 +112,12 @@
         min-width: 100%;
         height: 17rem;
         position: relative;
-        
         li {
           width: 17rem;
           height: 100%;
-          float:left;
+          &:not(:first-of-type) {
+            display: none;
+          }
           img {
             width: 100%;
             height: 100%;
@@ -128,32 +132,7 @@
         text-align: center;
         transform: translateY(-50%);
       }
-      .detail_room_slider {
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        z-index: 1;
-        display: none;
-        svg {
-          width: 2.5rem;
-          height: 2.5rem;
-          position: absolute;
-          top: 50%;
-          transform: translateY(-50%);
-          background-color: #000;
-          border-radius: 6px;
-          color: #fff;
-          opacity: 0.5;
-          &:first-of-type {
-            left: 0;
-          }
-          &:last-of-type {
-            right: 0;
-          }
-        }
-      }
+      
     }
     div {
       width: 100%;
@@ -173,7 +152,7 @@
     justify-content: space-evenly;
     padding: 1.5rem 2rem;
     margin-left: 1rem;
-    .detailr_room_explain {
+    .detail_room_explain {
       width: 100%;
       height: 3rem;
       display: flex;
@@ -203,4 +182,30 @@
   color: #fff;
   float: right;
   margin-top: 1rem;
+}
+
+
+.detail_room_slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1;
+  display: none;
+  svg {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #000;
+    border-radius: 6px;
+    color: #fff;
+    opacity: 0.5;
+    &:first-of-type {
+      left: 0;
+    }
+    &:last-of-type {
+      right: 0;
+    }
+  }
 }

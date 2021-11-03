@@ -1,4 +1,9 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, {
+  useEffect,
+  useState,
+  useLayoutEffect,
+  cloneElement,
+} from "react";
 import styles from "../../../styles/pages/registration.module.scss";
 import common from "../../../styles/common.module.scss";
 import accom_style from "../../../styles/pages/accommodation.module.scss";
@@ -20,13 +25,16 @@ const Service = () => {
     imageUrl: "",
   });
   let [detailPreview, setDetailPreview] = useState([]);
+  let [detailPreviewNum, setDetailPreviewNum] = useState(0);
   let [roomDetail, setRoomDetail] = useState([
     {
+      key: '0',
       title: "",
       people: "",
       max_people: "",
       price: "",
       files: [],
+      cur_num: 0,
     },
   ]);
 
@@ -56,16 +64,15 @@ const Service = () => {
   function uploadImage(
     event: React.ChangeEvent<HTMLInputElement>,
     type: string,
-    idx?: number
+    key?: string,
+    data?: object
   ) {
-    const detail_slider = document.getElementById(
-      `detail_img_slider_${idx}`
-    );
+    const detail_slider = document.getElementById(`detail_img_slider_${key}`);
     const detail_slider_wrap = document.getElementById(
-      `detail_slider_wrap_${idx}`
+      `room_slider_wrap_${key}`
     );
     let file = event.currentTarget.files;
-    if (file) {
+    if (file.length > 0) {
       if (type == "exposure") {
         let reader = new FileReader();
         reader.onload = () => {
@@ -76,10 +83,23 @@ const Service = () => {
           ]);
         };
         reader.readAsDataURL(file[0]);
+      } else if (type == "detail") {
+        let files = Array.from(file);
+        files.forEach((file) => {
+          let reader = new FileReader();
+          reader.onloadend = () => {
+            setDetailPreview((state) => [
+              ...state,
+              { file: file, imageUrl: reader.result.toString() },
+            ]);
+          };
+          reader.readAsDataURL(file);
+        });
       } else {
+        console.log(key, roomDetail, data)
         let files = Array.from(file);
         let items = [...roomDetail];
-        let item = items[idx];
+        let item = items[key];
         item.files = [];
         files.forEach((file) => {
           let reader = new FileReader();
@@ -101,9 +121,8 @@ const Service = () => {
           );
         });
         detail_slider.style.width = `${files.length * 17}rem`;
-        items[idx] = item;
+        items[key] = item;
         setRoomDetail([...items]);
-        console.log(roomDetail);
       }
     } else {
       switch (type) {
@@ -111,10 +130,11 @@ const Service = () => {
           setPreviewFile({ file: null, imageUrl: "" });
           break;
         case "room":
+          console.log("room");
           let items = [...roomDetail];
-          let item = items[idx];
+          let item = items[key];
           item.files = [];
-          items[idx] = item;
+          items[key] = item;
           setRoomDetail([...items]);
           detail_slider.innerHTML = "";
           detail_slider_wrap.children[1].setAttribute(
@@ -130,8 +150,19 @@ const Service = () => {
     setTitle(e.target.value);
   }
 
-  function toggleImageSlider(idx: number, type: string) {
-    const slider = document.getElementById(`detail_slider_wrap_${idx}`)
+  function toggleDetailImageSlider(type: string) {
+    const slider = document.getElementById(`detail_slider_wrap`).children[0];
+    if (detailPreview.length > 0) {
+      if (type == "enter") {
+        slider.setAttribute("style", "display: block");
+      } else {
+        slider.setAttribute("style", "display: none");
+      }
+    }
+  }
+
+  function toggleRoomImageSlider(idx: string, type: string) {
+    const slider = document.getElementById(`room_slider_wrap_${idx}`)
       .children[2];
     if (slider.tagName == "DIV" && roomDetail[idx].files.length > 0) {
       if (type == "enter") {
@@ -142,16 +173,71 @@ const Service = () => {
     }
   }
 
-  function detailSlider(type: string, idx: number) {
-    const slider = document.getElementById(`detail_img_slider_${idx}`);
-    if (type == 'next') {
-      slider.style.marginLeft = '-17rem';
-      slider.append(slider[0]);
-      slider.removeChild(slider.childNodes[0]);
-    } else if (type == 'prev') {
-      slider.style.marginLeft = '0rem';
-    }
+  function detailSlider(type: string) {
+    const slider = document.getElementById(`detail_slider_wrap`);
+    let num = detailPreviewNum;
     console.log(slider);
+
+    if (type == "next") {
+      num++;
+    } else {
+      num--;
+    }
+
+    if (num >= detailPreview.length) {
+      num = 0;
+    } else if (num < 0) {
+      num = detailPreview.length - 1;
+    }
+    setDetailPreviewNum(num);
+    slider.setAttribute(
+      "style",
+      `background-image: url(${detailPreview[num].imageUrl})`
+    );
+  }
+
+  function roomSlider(type: string, idx: string) {
+    const slider = document.getElementById(`detail_img_slider_${idx}`);
+    let items = [...roomDetail];
+    let item = items[idx];
+
+    if (type == "next") {
+      item.cur_num++;
+    } else {
+      item.cur_num--;
+    }
+
+    if (item.cur_num >= item.files.length) {
+      item.cur_num = 0;
+    } else if (item.cur_num < 0) {
+      item.cur_num = item.files.length - 1;
+    }
+
+    slider.children[
+      item.cur_num - 1 < 0 ? item.files.length - 1 : item.cur_num - 1
+    ].setAttribute("style", "display: none");
+    slider.children[item.cur_num].setAttribute("style", "display: block");
+    console.log(item.cur_num);
+
+    items[idx] = item;
+    setRoomDetail([...items]);
+  }
+
+  function addRoom() {
+    setRoomDetail((state) => [
+      ...state,
+      {
+        key: roomDetail.length.toString(),
+        title: "",
+        people: "",
+        max_people: "",
+        price: "",
+        files: [],
+        cur_num: 0,
+      },
+    ]);
+
+    console.log(roomDetail)
   }
 
   const preview = () => {
@@ -233,7 +319,38 @@ const Service = () => {
               <h1>상세 페이지</h1>
               <div>
                 <h2>대표 이미지</h2>
-                <div className={styles.detail_img}></div>
+                <div
+                  id="detail_slider_wrap"
+                  className={styles.detail_img}
+                  style={{ backgroundImage: `url(${previewFile.imageUrl})` }}
+                  onMouseEnter={() => toggleDetailImageSlider("enter")}
+                  onMouseLeave={() => toggleDetailImageSlider("leave")}
+                >
+                  {previewFile.file == null ? (
+                    <b
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        fontSize: "1.3rem",
+                        color: "#666",
+                      }}
+                    >
+                      대표이미지를 업로드해주세요.
+                    </b>
+                  ) : null}
+                  <div className={styles.detail_room_slider}>
+                    <HiChevronLeft
+                      style={{ width: "3rem", height: "3rem" }}
+                      onClick={() => detailSlider("next")}
+                    />
+                    <HiChevronRight
+                      style={{ width: "3rem", height: "3rem" }}
+                      onClick={() => detailSlider("prev")}
+                    />
+                  </div>
+                </div>
                 <div
                   style={{
                     width: "100%",
@@ -250,9 +367,17 @@ const Service = () => {
                     type="file"
                     onChange={(e) => uploadImage(e, "detail")}
                     id="detail_img"
+                    multiple
                   ></input>
-                  <span style={{ color: "#666", marginTop: "4px" }}>
-                    * 상세페이지의 대표이미지 설정입니다.
+                  <span
+                    style={{
+                      color: "#666",
+                      marginTop: "4px",
+                      textAlign: "right",
+                    }}
+                  >
+                    * 상세페이지의 대표이미지 설정입니다. <br />
+                    추가로 이미지를 등록하실 수 있습니다. <br />
                   </span>
                 </div>
               </div>
@@ -265,24 +390,30 @@ const Service = () => {
               </div>
               <div>
                 <h2>객실 정보</h2>
-                {roomDetail.map((data, index) => {
+                {roomDetail.map((data) => {
                   return (
-                    <div className={styles.detail_room} key={index}>
+                    <div className={styles.detail_room} key={data.key}>
                       <div className={styles.detail_room_img}>
                         <div
                           className={styles.detail_room_slider_wrap}
-                          id={`detail_slider_wrap_${index}`}
-                          onMouseEnter={() => toggleImageSlider(index, "enter")}
-                          onMouseLeave={() => toggleImageSlider(index, "leave")}
+                          id={`room_slider_wrap_${data.key}`}
+                          onMouseEnter={() =>
+                            toggleRoomImageSlider(data.key, "enter")
+                          }
+                          onMouseLeave={() =>
+                            toggleRoomImageSlider(data.key, "leave")
+                          }
                         >
-                          <ul id={`detail_img_slider_${index}`}></ul>
+                          <ul id={`detail_img_slider_${data.key}`}></ul>
                           <h3>객실 이미지를 등록해주세요.</h3>
                           <div className={styles.detail_room_slider}>
                             <HiChevronLeft
-                              onClick={() => detailSlider("prev", index)}
+                              onClick={() => roomSlider("prev", data.key)}
+                              style={{ width: "2.5rem", height: "2.5rem" }}
                             />
                             <HiChevronRight
-                              onClick={() => detailSlider("next", index)}
+                              onClick={() => roomSlider("next", data.key)}
+                              style={{ width: "2.5rem", height: "2.5rem" }}
                             />
                           </div>
                         </div>
@@ -296,14 +427,14 @@ const Service = () => {
                           </label>
                           <input
                             type="file"
-                            onChange={(e) => uploadImage(e, "room", index)}
+                            onChange={(e) => uploadImage(e, "room", data.key, data)}
                             id="rooms_img"
                             multiple
                           ></input>
                         </div>
                       </div>
                       <div className={styles.detail_room_intro}>
-                        <div className={styles.detailr_room_explain}>
+                        <div className={styles.detail_room_explain}>
                           <label>객실명</label>
                           <input
                             type="text"
@@ -311,7 +442,7 @@ const Service = () => {
                             onChange={() => console.log("hi")}
                           />
                         </div>
-                        <div className={styles.detailr_room_explain}>
+                        <div className={styles.detail_room_explain}>
                           <label>기준 인원</label>
                           <input
                             type="text"
@@ -319,7 +450,7 @@ const Service = () => {
                             onChange={() => console.log("hi")}
                           />
                         </div>
-                        <div className={styles.detailr_room_explain}>
+                        <div className={styles.detail_room_explain}>
                           <label>최대 인원</label>
                           <input
                             type="text"
@@ -327,7 +458,7 @@ const Service = () => {
                             onChange={() => console.log("hi")}
                           />
                         </div>
-                        <div className={styles.detailr_room_explain}>
+                        <div className={styles.detail_room_explain}>
                           <label>가격</label>
                           <input
                             type="text"
@@ -339,7 +470,9 @@ const Service = () => {
                     </div>
                   );
                 })}
-                <div className={styles.add_room_btn}>객실 추가</div>
+                <div className={styles.add_room_btn} onClick={addRoom}>
+                  객실 추가
+                </div>
               </div>
             </div>
           </div>
