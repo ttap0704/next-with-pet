@@ -253,18 +253,17 @@ const Service = () => {
             }}
           >
             {previewFile.file == null ? (
-              <b
+              <h3
                 style={{
                   position: "absolute",
                   top: "50%",
                   left: "50%",
                   transform: "translate(-50%, -50%)",
-                  fontSize: "1.3rem",
                   color: "#666",
                 }}
               >
                 대표이미지를 업로드해주세요.
-              </b>
+              </h3>
             ) : null}
           </div>
           <div className={accom_style.list_text_container}>
@@ -327,18 +326,17 @@ const Service = () => {
                   onMouseLeave={() => toggleDetailImageSlider("leave")}
                 >
                   {previewFile.file == null ? (
-                    <b
+                    <h3
                       style={{
                         position: "absolute",
                         top: "50%",
                         left: "50%",
                         transform: "translate(-50%, -50%)",
-                        fontSize: "1.3rem",
                         color: "#666",
                       }}
                     >
                       대표이미지를 업로드해주세요.
-                    </b>
+                    </h3>
                   ) : null}
                   <div className={styles.detail_room_slider}>
                     <HiChevronLeft

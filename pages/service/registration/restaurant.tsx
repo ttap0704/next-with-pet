@@ -21,25 +21,24 @@ import Typography from "@mui/material/Typography";
 
 const Service = () => {
   const router = useRouter();
-  let [curPage, setCurPage] = useState("exposure");
-  let [title, setTitle] = useState("제목을 입력해주세요.");
-  let [previewFile, setPreviewFile] = useState({
-    file: null,
-    imageUrl: "",
-  });
-  let [detailPreview, setDetailPreview] = useState([]);
-  let [detailPreviewNum, setDetailPreviewNum] = useState(0);
-  let [roomDetail, setRoomDetail] = useState([
+  const [exposureImages, setExposureImages] = useState([]);
+  const [exposureMenu, setExposureMenu] = useState([
     {
-      key: "0",
-      title: "",
-      people: "",
-      max_people: "",
+      file: {
+        file: null,
+        imageUrl: "",
+      },
+      label: "",
       price: "",
-      files: [],
-      cur_num: 0,
     },
   ]);
+  const [entireMenu, setEntireMenu] = useState([
+    {
+      category: "",
+      menu: [{ label: "", price: "" }],
+    },
+  ]);
+
   const [expanded, setExpanded] = React.useState<string | false>("panel1");
 
   const handleChange =
@@ -52,85 +51,7 @@ const Service = () => {
     type: string,
     key?: string,
     data?: object
-  ) {
-    const detail_slider = document.getElementById(`detail_img_slider_${key}`);
-    const detail_slider_wrap = document.getElementById(
-      `room_slider_wrap_${key}`
-    );
-    let file = event.currentTarget.files;
-    if (file.length > 0) {
-      if (type == "exposure") {
-        let reader = new FileReader();
-        reader.onload = () => {
-          setPreviewFile({ file: file[0], imageUrl: reader.result.toString() });
-          setDetailPreview((state) => [
-            ...state,
-            { file: file[0], imageUrl: reader.result.toString() },
-          ]);
-        };
-        reader.readAsDataURL(file[0]);
-      } else if (type == "detail") {
-        let files = Array.from(file);
-        files.forEach((file) => {
-          let reader = new FileReader();
-          reader.onloadend = () => {
-            setDetailPreview((state) => [
-              ...state,
-              { file: file, imageUrl: reader.result.toString() },
-            ]);
-          };
-          reader.readAsDataURL(file);
-        });
-      } else {
-        console.log(key, roomDetail, data);
-        let files = Array.from(file);
-        let items = [...roomDetail];
-        let item = items[key];
-        item.files = [];
-        files.forEach((file) => {
-          let reader = new FileReader();
-          reader.onloadend = () => {
-            item.files.push({
-              file: file,
-              imageUrl: reader.result.toString(),
-            });
-            const li_tag = document.createElement("li");
-            const image = document.createElement("img");
-            image.setAttribute("src", reader.result.toString());
-            li_tag.append(image);
-            detail_slider.append(li_tag);
-          };
-          reader.readAsDataURL(file);
-          detail_slider_wrap.children[1].setAttribute(
-            "style",
-            "display: none;"
-          );
-        });
-        detail_slider.style.width = `${files.length * 17}rem`;
-        items[key] = item;
-        setRoomDetail([...items]);
-      }
-    } else {
-      switch (type) {
-        case "exposure":
-          setPreviewFile({ file: null, imageUrl: "" });
-          break;
-        case "room":
-          console.log("room");
-          let items = [...roomDetail];
-          let item = items[key];
-          item.files = [];
-          items[key] = item;
-          setRoomDetail([...items]);
-          detail_slider.innerHTML = "";
-          detail_slider_wrap.children[1].setAttribute(
-            "style",
-            "display: block;"
-          );
-          detail_slider.style.width = `100%`;
-      }
-    }
-  }
+  ) {}
 
   const Accordion = styled((props: AccordionProps) => (
     <MuiAccordion disableGutters elevation={0} square {...props} />
@@ -148,14 +69,14 @@ const Service = () => {
     <MuiAccordionSummary {...props} />
   ))(({ theme }) => ({
     backgroundColor: "#fff",
-    flexDirection: "row-reverse",
+    flexDirection: "row",
     "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-      transform: "rotate(90deg)",
+      transform: "rotate(180deg)",
     },
   }));
 
   const AccordionDetails = styled(MuiAccordionDetails)(({ theme }) => ({
-    padding: theme.spacing(2),
+    padding: theme.spacing(1),
     paddingLeft: theme.spacing(3),
     borderTop: "1px solid rgba(0, 0, 0, .125)",
   }));
@@ -164,7 +85,21 @@ const Service = () => {
     return (
       <div className={styles.rest_preview}>
         <div className={res_style.list}>
-          <div className={res_style.list_img}></div>
+          <div className={res_style.list_img}>
+            {exposureImages.length == 0 ? (
+              <h3
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  color: "#666",
+                }}
+              >
+                대표이미지를 업로드해주세요.
+              </h3>
+            ) : null}
+          </div>
           <div className={res_style.list_text_container}>
             <div className={res_style.list_text}>
               <h2>제목 들어갈 자리</h2>
@@ -174,103 +109,187 @@ const Service = () => {
             <div className={res_style.list_deco}></div>
           </div>
         </div>
-        <div className={styles.rest_img_container}>이미지</div>
+        <div className={styles.rest_img_container}>
+          {exposureImages.length == 0 ? (
+            <h3>이미지를 업로드 해주세요.</h3>
+          ) : (
+            exposureImages.map((data) => {
+              <img src={data.imageUrl} alt="exposureImage" />;
+            })
+          )}
+        </div>
       </div>
     );
   };
 
+  function setMenuData(e, idx: number, type: string) {
+    e.preventDefault();
+    let items = [...entireMenu];
+    let item = items[idx];
+    // if (type == "category") {
+    //   item.category = e.target.value;
+    // } else if (type == "label") {
+    // }
+    items[idx] = item;
+    setEntireMenu([...items]);
+    console.log(entireMenu);
+  }
+
   return (
-    <>
-      <div className={styles.page} style={{ marginLeft: "0" }}>
-        <h1>상세 페이지</h1>
-        <div>
-          <h2>대표 이미지</h2>
-          {preview()}
-          <div
+    <div className={styles.page} style={{ marginLeft: "0" }}>
+      <h1>상세 페이지</h1>
+      <div>
+        <h2>대표 이미지</h2>
+        {preview()}
+        <div
+          style={{
+            width: "100%",
+            display: "flex",
+            alignItems: "flex-end",
+            flexDirection: "column",
+          }}
+        >
+          <label htmlFor="detail_img" className={common.file_input}>
+            대표이미지 업로드
+            <FaFileUpload />
+          </label>
+          <input
+            type="file"
+            onChange={(e) => uploadImage(e, "detail")}
+            id="detail_img"
+            multiple
+          ></input>
+          <span
             style={{
-              width: "100%",
-              display: "flex",
-              alignItems: "flex-end",
-              flexDirection: "column",
+              color: "#666",
+              marginTop: "4px",
+              textAlign: "right",
             }}
           >
-            <label htmlFor="detail_img" className={common.file_input}>
-              대표이미지 업로드
-              <FaFileUpload />
-            </label>
-            <input
-              type="file"
-              onChange={(e) => uploadImage(e, "detail")}
-              id="detail_img"
-              multiple
-            ></input>
-            <span
-              style={{
-                color: "#666",
-                marginTop: "4px",
-                textAlign: "right",
-              }}
-            >
-              * 식당의 대표이미지 설정입니다.
-            </span>
-          </div>
-        </div>
-        <div style={{ marginBottom: "1rem" }}>
-          <h2>식당 소개</h2>
-          <form className={styles.form_box}>
-            <input
-              type="text"
-              placeholder="식당 이름을 입력해주세요."
-              className={styles.custom_input}
-            ></input>
-            <div>위치 들어갈 자리</div>
-          </form>
-        </div>
-        <div>
-          <h2>식당 메뉴</h2>
-          <div className={styles.rest_menu}>
-            <Accordion
-              expanded={expanded === "panel1"}
-              onChange={handleChange("panel1")}
-            >
-              <AccordionSummary
-                aria-controls="panel1d-content"
-                id="panel1d-header"
-              >
-                <Typography>대표 메뉴</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <div className={styles.rest_exposure_menu}>
-                  <label htmlFor="detail_img">
-                    이미지
-                  </label>
-                  <input
-                    type="file"
-                    onChange={(e) => uploadImage(e, "detail")}
-                    id="detail_img"
-                    multiple
-                  />
-                </div>
-              </AccordionDetails>
-            </Accordion>
-            <Accordion
-              expanded={expanded === "panel2"}
-              onChange={handleChange("panel2")}
-            >
-              <AccordionSummary
-                aria-controls="panel2d-content"
-                id="panel2d-header"
-              >
-                <Typography>전체 메뉴</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Typography>전체 메뉴 1</Typography>
-              </AccordionDetails>
-            </Accordion>
-          </div>
+            * 식당의 대표이미지 설정입니다.
+          </span>
         </div>
       </div>
-    </>
+      <div style={{ marginBottom: "1rem" }}>
+        <h2>식당 소개</h2>
+        <form className={styles.form_box}>
+          <input
+            type="text"
+            placeholder="식당 이름을 입력해주세요."
+            className={styles.custom_input}
+          ></input>
+          <div>위치 들어갈 자리</div>
+        </form>
+      </div>
+      <div>
+        <h2>식당 메뉴</h2>
+        <div className={styles.rest_menu}>
+          <Accordion
+            expanded={expanded === "panel1"}
+            onChange={handleChange("panel1")}
+          >
+            <AccordionSummary
+              expandIcon={<HiChevronDown />}
+              aria-controls="panel1d-content"
+              id="panel1d-header"
+            >
+              <Typography>대표 메뉴</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              {exposureMenu.map((data, index) => {
+                return (
+                  <div
+                    className={styles.rest_exposure_menu}
+                    key={`exposure_menu_${index}`}
+                  >
+                    {data.file.file == null ? (
+                      <div>
+                        <label htmlFor="detail_img">이미지</label>
+                        <input
+                          type="file"
+                          onChange={(e) => uploadImage(e, "detail")}
+                          id="detail_img"
+                        />
+                      </div>
+                    ) : (
+                      <img src={data.file.imageUrl} alt="entire_image" />
+                    )}
+                  </div>
+                );
+              })}
+            </AccordionDetails>
+          </Accordion>
+          <Accordion
+            expanded={expanded === "panel2"}
+            onChange={handleChange("panel2")}
+          >
+            <AccordionSummary
+              expandIcon={<HiChevronDown />}
+              aria-controls="panel2d-content"
+              id="panel2d-header"
+            >
+              <Typography>전체 메뉴</Typography>
+            </AccordionSummary>
+            <AccordionDetails style={{ padding: 0 }}>
+              {entireMenu.map((data, idx) => {
+                return (
+                  <Accordion
+                    style={{ border: "none" }}
+                    key={`entire_category_${idx}`}
+                  >
+                    <AccordionSummary
+                      expandIcon={<HiChevronDown />}
+                      aria-controls="panel2d-content"
+                      id="panel2d-header"
+                      style={{ paddingLeft: "24px" }}
+                    >
+                      <input
+                        type="text"
+                        placeholder="카테고리 이름을 입력해주세요."
+                        style={{ padding: "8px", width: "70%" }}
+                        value={data.category}
+                        onChange={(e) => setMenuData(e, idx, "category")}
+                        onFocus={e => e.preventDefault()}
+                      />
+                    </AccordionSummary>
+                    <AccordionDetails style={{ paddingLeft: "36px" }}>
+                      {data.menu.map((menu, menu_idx) => {
+                        return (
+                          <div
+                            className={styles.rest_entire_menu}
+                            key={`entire_menu_${menu_idx}`}
+                          >
+                            <input
+                              type="text"
+                              placeholder="메뉴 이름을 입력해주세요."
+                              value={menu.label}
+                              onChange={(e) =>
+                                setMenuData(e, menu_idx, "label")
+                              }
+                            />
+                            <div>
+                              <input
+                                type="text"
+                                placeholder="메뉴 가격을 입력해주세요."
+                                value={menu.price}
+                                onChange={(e) =>
+                                  setMenuData(e, menu_idx, "price")
+                                }
+                              />{" "}
+                              원
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </AccordionDetails>
+                  </Accordion>
+                );
+              })}
+            </AccordionDetails>
+          </Accordion>
+        </div>
+      </div>
+    </div>
   );
 };
 
