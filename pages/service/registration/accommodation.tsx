@@ -28,7 +28,7 @@ const Service = () => {
   let [detailPreviewNum, setDetailPreviewNum] = useState(0);
   let [roomDetail, setRoomDetail] = useState([
     {
-      key: '0',
+      key: "0",
       title: "",
       people: "",
       max_people: "",
@@ -96,7 +96,7 @@ const Service = () => {
           reader.readAsDataURL(file);
         });
       } else {
-        console.log(key, roomDetail, data)
+        console.log(key, roomDetail, data);
         let files = Array.from(file);
         let items = [...roomDetail];
         let item = items[key];
@@ -237,7 +237,7 @@ const Service = () => {
       },
     ]);
 
-    console.log(roomDetail)
+    console.log(roomDetail);
   }
 
   const preview = () => {
@@ -425,7 +425,9 @@ const Service = () => {
                           </label>
                           <input
                             type="file"
-                            onChange={(e) => uploadImage(e, "room", data.key, data)}
+                            onChange={(e) =>
+                              uploadImage(e, "room", data.key, data)
+                            }
                             id="rooms_img"
                             multiple
                           ></input>
@@ -468,8 +470,8 @@ const Service = () => {
                     </div>
                   );
                 })}
-                <div className={styles.add_room_btn} onClick={addRoom}>
-                  객실 추가
+                <div className={styles.util_btn}>
+                  <div onClick={addRoom}>객실 추가</div>
                 </div>
               </div>
             </div>

@@ -42,15 +42,7 @@ const Service = () => {
         query: { type: data.type },
       });
     }
-    // console.log(type);
   };
-  // const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   dispatch({
-  //     type: RESET_USER,
-  //   });
-  // }, []);
 
   return (
     <div className={styles.service_container}>
