@@ -28,7 +28,6 @@ const Service = () => {
   let [detailPreviewNum, setDetailPreviewNum] = useState(0);
   let [roomDetail, setRoomDetail] = useState([
     {
-      key: "0",
       title: "",
       people: "",
       max_people: "",
@@ -64,7 +63,7 @@ const Service = () => {
   function uploadImage(
     event: React.ChangeEvent<HTMLInputElement>,
     type: string,
-    key?: string,
+    key?: number,
     data?: object
   ) {
     const detail_slider = document.getElementById(`detail_img_slider_${key}`);
@@ -161,7 +160,7 @@ const Service = () => {
     }
   }
 
-  function toggleRoomImageSlider(idx: string, type: string) {
+  function toggleRoomImageSlider(idx: number, type: string) {
     const slider = document.getElementById(`room_slider_wrap_${idx}`)
       .children[2];
     if (slider.tagName == "DIV" && roomDetail[idx].files.length > 0) {
@@ -196,7 +195,7 @@ const Service = () => {
     );
   }
 
-  function roomSlider(type: string, idx: string) {
+  function roomSlider(type: string, idx: number) {
     const slider = document.getElementById(`detail_img_slider_${idx}`);
     let items = [...roomDetail];
     let item = items[idx];
@@ -227,7 +226,6 @@ const Service = () => {
     setRoomDetail((state) => [
       ...state,
       {
-        key: roomDetail.length.toString(),
         title: "",
         people: "",
         max_people: "",
@@ -238,6 +236,18 @@ const Service = () => {
     ]);
 
     console.log(roomDetail);
+  }
+
+  function inputRoomsDetial (e, idx: number, type: string) {
+    let items = [...roomDetail];
+    let item = items[idx];
+    let value = e.target.value;
+
+    item[type] = value;
+    items[idx] = item;
+
+    setRoomDetail([...items]);
+    console.log(roomDetail)
   }
 
   const preview = () => {
@@ -388,36 +398,36 @@ const Service = () => {
               </div>
               <div>
                 <h2>객실 정보</h2>
-                {roomDetail.map((data) => {
+                {roomDetail.map((data, index) => {
                   return (
-                    <div className={styles.detail_room} key={data.key}>
+                    <div className={styles.detail_room} key={index}>
                       <div className={styles.detail_room_img}>
                         <div
                           className={styles.detail_room_slider_wrap}
-                          id={`room_slider_wrap_${data.key}`}
+                          id={`room_slider_wrap_${index}`}
                           onMouseEnter={() =>
-                            toggleRoomImageSlider(data.key, "enter")
+                            toggleRoomImageSlider(index, "enter")
                           }
                           onMouseLeave={() =>
-                            toggleRoomImageSlider(data.key, "leave")
+                            toggleRoomImageSlider(index, "leave")
                           }
                         >
-                          <ul id={`detail_img_slider_${data.key}`}></ul>
+                          <ul id={`detail_img_slider_${index}`}></ul>
                           <h3>객실 이미지를 등록해주세요.</h3>
                           <div className={styles.detail_room_slider}>
                             <HiChevronLeft
-                              onClick={() => roomSlider("prev", data.key)}
+                              onClick={() => roomSlider("prev", index)}
                               style={{ width: "2.5rem", height: "2.5rem" }}
                             />
                             <HiChevronRight
-                              onClick={() => roomSlider("next", data.key)}
+                              onClick={() => roomSlider("next", index)}
                               style={{ width: "2.5rem", height: "2.5rem" }}
                             />
                           </div>
                         </div>
                         <div>
                           <label
-                            htmlFor="rooms_img"
+                            htmlFor={`rooms_img_${index}`}
                             className={common.file_input}
                           >
                             객실이미지 업로드
@@ -426,9 +436,9 @@ const Service = () => {
                           <input
                             type="file"
                             onChange={(e) =>
-                              uploadImage(e, "room", data.key, data)
+                              uploadImage(e, "room", index, data)
                             }
-                            id="rooms_img"
+                            id={`rooms_img_${index}`}
                             multiple
                           ></input>
                         </div>
@@ -439,7 +449,7 @@ const Service = () => {
                           <input
                             type="text"
                             placeholder="객실명을 입력해주세요."
-                            onChange={() => console.log("hi")}
+                            onChange={(e) => inputRoomsDetial(e, index, 'title')}
                           />
                         </div>
                         <div className={styles.detail_room_explain}>
@@ -447,7 +457,7 @@ const Service = () => {
                           <input
                             type="text"
                             placeholder="기준 인원을 입력해주세요."
-                            onChange={() => console.log("hi")}
+                            onChange={(e) => inputRoomsDetial(e, index, 'people')}
                           />
                         </div>
                         <div className={styles.detail_room_explain}>
@@ -455,7 +465,7 @@ const Service = () => {
                           <input
                             type="text"
                             placeholder="최대 인원을 입력해주세요."
-                            onChange={() => console.log("hi")}
+                            onChange={(e) => inputRoomsDetial(e, index, 'max_people')}
                           />
                         </div>
                         <div className={styles.detail_room_explain}>
@@ -463,7 +473,7 @@ const Service = () => {
                           <input
                             type="text"
                             placeholder="가격을 입력해주세요."
-                            onChange={() => console.log("hi")}
+                            onChange={(e) => inputRoomsDetial(e, index, 'price')}
                           />
                         </div>
                       </div>

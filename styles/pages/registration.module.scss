@@ -287,6 +287,10 @@
       padding: 0 48px 0 32px;
       position: relative;
       gap: 12px;
+
+      & > .delete_btn {
+        top: 50%;
+      }
       .rest_exposure_menu_imgbox {
         width: 8rem;
         height: 8rem;
@@ -351,6 +355,23 @@
         margin-left: -1px;
 
       }
+      button {
+        padding: 0;
+        position: absolute;
+        top: 1.5rem;
+        right: 48px;
+        transform: translateY(-50%);
+        display: none;
+        height: 1.5rem;
+        svg {
+          color: $orange;
+          width: 1.5rem;
+          height: 1.5rem;
+          cursor: pointer;
+        }
+      }
+      
+      
       .rest_entire_menu_detail {
         display: flex;
         flex-direction: row;
@@ -358,28 +379,8 @@
         align-items: center;
         position: relative;
         gap: 8px;
-        button {
-          padding: 0;
-          position: absolute;
-          bottom: 0;
-          right: 56px;
-          transform: translateY(35%);
-          display: none;
-          
-        }
-        svg {
-          color: $orange;
-          width: 1.5rem;
-          height: 1.5rem;
-          cursor: pointer;
-        }
-        & > svg {
-          color: #e3e3e3;
-          position: absolute;
+        & > .deleteBtn {
           top: 50%;
-          right: 20px;
-          transform: translateY( -50%);
-          display: none;
         }
         & > .rest_menu_circle {
           left: 28px;
@@ -405,4 +406,16 @@
       }
     }
   }
+}
+
+.delete_btn {
+  color: #e3e3e3;
+  position: absolute;
+  top: 1.5rem;
+  right: 20px;
+  transform: translateY( -50%);
+  display: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
 }

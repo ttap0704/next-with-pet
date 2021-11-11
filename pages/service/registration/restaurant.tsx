@@ -98,28 +98,52 @@ const Service = () => {
     }
   }
 
-  function setMenuData(e, idx: number, type: string) {
+  function setMenuData(e, idx: number, type: string, menu_idx?: number) {
     e.preventDefault();
     let items = [...entireMenu];
     let item = items[idx];
-    // if (type == "category") {
-    //   item.category = e.target.value;
-    // } else if (type == "label") {
-    // }
+    if (type == "category") {
+      item.category = e.target.value;
+    } else {
+      item.menu[menu_idx][type] = e.target.value
+    }
     items[idx] = item;
     setEntireMenu([...items]);
     console.log(entireMenu);
   }
 
-  function toggleEntireMenubtn(type: string, idx: number, menu_idx: number) {
-    let del_btn = document.getElementById(`menu_del_btn_${idx}_${menu_idx}`);
-    let add_btn = document.getElementById(`menu_add_btn_${idx}_${menu_idx}`);
+  function toggleDelExposureMenuBtn (type: string, idx: number) {
+    let del_btn = document.getElementById(`exposure_del_btn_${idx}`);
     if (type == "enter") {
       del_btn.style.display = "block";
-      add_btn.style.display = "block";
     } else {
       del_btn.style.display = "none";
+    }
+  }
+  function toggleAddEntireMenuBtn(type: string, idx: number) {
+    let add_btn = document.getElementById(`menu_add_btn_${idx}`);
+    let category_del_btn = document.getElementById(`category_del_btn_${idx}`);
+    if (type == "enter") {
+      add_btn.style.display = "block";
+      category_del_btn.style.display = "block";
+    } else {
       add_btn.style.display = "none";
+      category_del_btn.style.display = "none";
+    }
+  }
+
+  
+
+  function toggleDeleteEntireMenubtn(
+    type: string,
+    idx: number,
+    menu_idx: number
+  ) {
+    let del_btn = document.getElementById(`menu_del_btn_${idx}_${menu_idx}`);
+    if (type == "enter") {
+      del_btn.style.display = "block";
+    } else {
+      del_btn.style.display = "none";
     }
   }
 
@@ -146,6 +170,22 @@ const Service = () => {
 
     item.menu.push({ label: "", price: "" });
     items[idx] = item;
+
+    setEntireMenu([...items]);
+  }
+
+  function deleteExposureMenu (idx: number) {
+    let items = exposureMenu;
+
+    items.splice(idx, 1);
+
+    setExposureMenu([...items])
+  }
+
+  function deleteEntireMenuCategory (idx: number) {
+    let items = entireMenu;
+
+    items.splice(idx, 1)
 
     setEntireMenu([...items]);
   }
@@ -260,8 +300,15 @@ const Service = () => {
             </div>
             <div className={styles.page}>
               <h1>상세 페이지</h1>
+              <div style={{ marginBottom: "3rem" }}>
+                <h2>소개</h2>
+                <textarea
+                  className={styles.detail_intro}
+                  placeholder="식당에 대해 자유롭게 작성해주시길 바랍니다."
+                />
+              </div>
               <div>
-                <h2>식당 메뉴</h2>
+                <h2>메뉴</h2>
                 <div className={styles.rest_menu}>
                   <div className={styles.rest_menu_title}>
                     <h3>대표 메뉴</h3>
@@ -283,6 +330,12 @@ const Service = () => {
                         <li
                           className={styles.rest_exposure_menu}
                           key={`exposure_menu_${index}`}
+                          onMouseEnter={() =>
+                            toggleDelExposureMenuBtn("enter", index)
+                          }
+                          onMouseLeave={() =>
+                            toggleDelExposureMenuBtn("leave", index)
+                          }
                         >
                           <div className={styles.rest_exposure_menu_imgbox}>
                             <div className={styles.rest_menu_circle}></div>
@@ -308,7 +361,13 @@ const Service = () => {
                               type="text"
                               placeholder="메뉴 이름을 입력해주세요."
                             />
-                            <div style={data.price.length > 0 ? {paddingRight: '8px'} : null}>
+                            <div
+                              style={
+                                data.price.length > 0
+                                  ? { paddingRight: "8px" }
+                                  : null
+                              }
+                            >
                               <input
                                 type="text"
                                 placeholder="메뉴 가격을 입력해주세요."
@@ -317,13 +376,18 @@ const Service = () => {
                                 }
                                 value={data.price}
                               />
-                              {data.price.length > 0 ? '원' : null}
+                              {data.price.length > 0 ? "원" : null}
                             </div>
                             <input
                               type="text"
                               placeholder="한 줄 설명을 입력해주세요."
                             />
                           </div>
+                          <TiDelete
+                            id={`exposure_del_btn_${index}`}
+                            className={styles.delete_btn}
+                            onClick={() => deleteExposureMenu(index)}
+                          />
                         </li>
                       );
                     })}
@@ -345,6 +409,12 @@ const Service = () => {
                         <li
                           className={styles.rest_entire_menu}
                           key={`entire_category_${idx}`}
+                          onMouseEnter={() =>
+                            toggleAddEntireMenuBtn("enter", idx)
+                          }
+                          onMouseLeave={() =>
+                            toggleAddEntireMenuBtn("leave", idx)
+                          }
                         >
                           <div className={styles.rest_menu_circle}></div>
                           <input
@@ -353,6 +423,22 @@ const Service = () => {
                             value={data.category}
                             onChange={(e) => setMenuData(e, idx, "category")}
                           />
+                          <TiDelete
+                            id={`category_del_btn_${idx}`}
+                            className={styles.delete_btn}
+                            onClick={() => deleteEntireMenuCategory(idx)}
+                          />
+                          <Tooltip
+                            title="클릭하여 메뉴를 추가할 수 있습니다."
+                            placement="bottom"
+                          >
+                            <IconButton
+                              id={`menu_add_btn_${idx}`}
+                              onClick={() => addEntireMenu(idx)}
+                            >
+                              <HiOutlinePlusCircle />
+                            </IconButton>
+                          </Tooltip>
                           <ul>
                             {data.menu.map((menu, menu_idx) => {
                               return (
@@ -360,10 +446,18 @@ const Service = () => {
                                   className={styles.rest_entire_menu_detail}
                                   key={`entire_menu_${menu_idx}`}
                                   onMouseEnter={() =>
-                                    toggleEntireMenubtn("enter", idx, menu_idx)
+                                    toggleDeleteEntireMenubtn(
+                                      "enter",
+                                      idx,
+                                      menu_idx
+                                    )
                                   }
                                   onMouseLeave={() =>
-                                    toggleEntireMenubtn("leave", idx, menu_idx)
+                                    toggleDeleteEntireMenubtn(
+                                      "leave",
+                                      idx,
+                                      menu_idx
+                                    )
                                   }
                                 >
                                   <div
@@ -374,37 +468,30 @@ const Service = () => {
                                     placeholder="메뉴 이름을 입력해주세요."
                                     value={menu.label}
                                     onChange={(e) =>
-                                      setMenuData(e, menu_idx, "label")
+                                      setMenuData(e, idx, "label", menu_idx)
                                     }
                                   />
                                   <div
                                     className={styles.rest_entire_menu_price}
+                                    style={menu.price.length > 0 ? {paddingRight: '56px'} : null}
                                   >
                                     <input
                                       type="text"
                                       placeholder="메뉴 가격을 입력해주세요."
                                       value={menu.price}
                                       onChange={(e) =>
-                                        setMenuData(e, menu_idx, "price")
+                                        setMenuData(e, idx, "price", menu_idx)
                                       }
                                     />{" "}
-                                    {menu.price.length > 0 ? '원' : null}
+                                    {menu.price.length > 0 ? "원" : null}
                                   </div>
-                                  <TiDelete 
-                                  id={`menu_del_btn_${idx}_${menu_idx}`}
-                                    onClick={() => deleteEntireMenu(idx, menu_idx)}
+                                  <TiDelete
+                                    id={`menu_del_btn_${idx}_${menu_idx}`}
+                                    className={styles.delete_btn}
+                                    onClick={() =>
+                                      deleteEntireMenu(idx, menu_idx)
+                                    }
                                   />
-                                  <Tooltip
-                                    title="클릭하여 메뉴를 추가할 수 있습니다."
-                                    placement="bottom"
-                                  >
-                                    <IconButton
-                                      id={`menu_add_btn_${idx}_${menu_idx}`}
-                                      onClick={() => addEntireMenu(idx)}
-                                    >
-                                      <HiOutlinePlusCircle />
-                                    </IconButton>
-                                  </Tooltip>
                                 </li>
                               );
                             })}
