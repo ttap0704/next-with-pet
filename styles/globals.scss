@@ -12,11 +12,10 @@ body {
   height: 100vh;
   margin: 0 auto;
   border: 1px solid #e3e3e3;
-  overflow: auto;
+  overflow-x: hidden;
   #__wrap {
     width: 100%;
     height: calc(100vh - 5rem);
-    overflow-y: auto;
     #__container {
       width: 60rem;
       height: 100%;

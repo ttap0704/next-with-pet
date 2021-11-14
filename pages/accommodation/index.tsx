@@ -1,4 +1,5 @@
-// import { useEffect } from "react";
+import { useEffect } from "react";
+import { getAllUsers } from "../../services/User";
 // import { useDispatch, useSelector } from "react-redux";
 // import { RootState } from "../../reducers";
 import color from "../../styles/color.module.scss";
@@ -34,6 +35,16 @@ const Accommodation = () => {
       location: "화성시 반월동",
     },
   ];
+
+  useEffect(() => {
+    getAllUsers().then(data => {
+      console.log(data);
+    })
+    console.log('컴포넌트가 화면에 나타남');
+    return () => {
+      console.log('컴포넌트가 화면에서 사라짐');
+    };
+  }, []);
   // const { no, text } = useSelector((state: RootState) => state.testReducer);
 
   // const dispatch = useDispatch();
