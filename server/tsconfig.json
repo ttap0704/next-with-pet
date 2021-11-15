@@ -4,10 +4,13 @@
     "sourceMap": true,
     "noImplicitAny": true,
     "module": "commonjs",
-    "target": "es5",
+    "target": "es6", // or a more recent ecmascript version
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
     "allowJs": true
   },
   "exclude":[
     "node_modules"
-  ]
+  ],
+  
 }

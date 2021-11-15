@@ -2,6 +2,7 @@ import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Logger } from "./logger/logger";
 import Routes from "./routes/routes";
+
 const path = require('path');
 
 class App {
