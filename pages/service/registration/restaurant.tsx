@@ -1,9 +1,4 @@
-import React, {
-  useEffect,
-  useState,
-  useLayoutEffect,
-  cloneElement,
-} from "react";
+import React, { useEffect, useState, useLayoutEffect, cloneElement } from "react";
 import styles from "../../../styles/pages/registration.module.scss";
 import common from "../../../styles/common.module.scss";
 import res_style from "../../../styles/pages/restaurant.module.scss";
@@ -19,6 +14,7 @@ import {
   HiOutlinePlusCircle,
 } from "react-icons/hi";
 import { Tooltip, IconButton } from "@mui/material";
+// import DaumPostcode from 'react-daum-postcode';
 
 const Service = () => {
   const router = useRouter();
@@ -64,26 +60,18 @@ const Service = () => {
     slider.style.transform = `translate3d(${distance}, 0px, 0px)`;
   }
 
-  function uploadImage(
-    event: React.ChangeEvent<HTMLInputElement>,
-    type: string,
-    key?: number,
-    data?: object
-  ) {
+  function uploadImage(event: React.ChangeEvent<HTMLInputElement>, type: string, key?: number, data?: object) {
     let file = event.currentTarget.files;
     if (file.length > 0) {
-      if (type == "exposure_menu") {
-        let items = exposureMenu;
-        let item = items[key];
-        let reader = new FileReader();
-        reader.onload = () => {
-          item.file.file = file[0];
-          item.file.imageUrl = reader.result.toString();
-
-          items[key] = item;
-          setExposureMenu([...items]);
-        };
-        reader.readAsDataURL(file[0]);
+      if (type == "exposure") {
+        let files = Array.from(file);
+        files.forEach((file) => {
+          let reader = new FileReader();
+          reader.onloadend = () => {
+            setExposureImages((state) => [...state, { file: file, imageUrl: reader.result.toString() }]);
+          };
+          reader.readAsDataURL(file);
+        });
       }
     } else {
       if (type == "exposure_menu") {
@@ -98,6 +86,11 @@ const Service = () => {
     }
   }
 
+  function changePreviewImg(idx: number) {
+    const el = document.getElementById("exposure_img");
+    el.setAttribute("style", `background-image: url(${exposureImages[idx].imageUrl})`);
+  }
+
   function setMenuData(e, idx: number, type: string, menu_idx?: number) {
     e.preventDefault();
     let items = [...entireMenu];
@@ -105,14 +98,14 @@ const Service = () => {
     if (type == "category") {
       item.category = e.target.value;
     } else {
-      item.menu[menu_idx][type] = e.target.value
+      item.menu[menu_idx][type] = e.target.value;
     }
     items[idx] = item;
     setEntireMenu([...items]);
     console.log(entireMenu);
   }
 
-  function toggleDelExposureMenuBtn (type: string, idx: number) {
+  function toggleDelExposureMenuBtn(type: string, idx: number) {
     let del_btn = document.getElementById(`exposure_del_btn_${idx}`);
     if (type == "enter") {
       del_btn.style.display = "block";
@@ -132,13 +125,7 @@ const Service = () => {
     }
   }
 
-  
-
-  function toggleDeleteEntireMenubtn(
-    type: string,
-    idx: number,
-    menu_idx: number
-  ) {
+  function toggleDeleteEntireMenubtn(type: string, idx: number, menu_idx: number) {
     let del_btn = document.getElementById(`menu_del_btn_${idx}_${menu_idx}`);
     if (type == "enter") {
       del_btn.style.display = "block";
@@ -174,18 +161,18 @@ const Service = () => {
     setEntireMenu([...items]);
   }
 
-  function deleteExposureMenu (idx: number) {
+  function deleteExposureMenu(idx: number) {
     let items = exposureMenu;
 
     items.splice(idx, 1);
 
-    setExposureMenu([...items])
+    setExposureMenu([...items]);
   }
 
-  function deleteEntireMenuCategory (idx: number) {
+  function deleteEntireMenuCategory(idx: number) {
     let items = entireMenu;
 
-    items.splice(idx, 1)
+    items.splice(idx, 1);
 
     setEntireMenu([...items]);
   }
@@ -228,8 +215,12 @@ const Service = () => {
   const preview = () => {
     return (
       <div className={styles.rest_preview}>
-        <div className={res_style.list}>
-          <div className={res_style.list_img}>
+        <div className={res_style.list} style={{ cursor: "unset" }}>
+          <div
+            id="exposure_img"
+            className={res_style.list_img}
+            style={exposureImages.length > 0 ? { backgroundImage: `url(${exposureImages[0].imageUrl})` } : null}
+          >
             {exposureImages.length == 0 ? (
               <h3
                 style={{
@@ -257,8 +248,14 @@ const Service = () => {
           {exposureImages.length == 0 ? (
             <h3>이미지를 업로드 해주세요.</h3>
           ) : (
-            exposureImages.map((data) => {
-              <img src={data.imageUrl} alt="exposureImage" />;
+            exposureImages.map((data, index) => {
+              return (
+                <div
+                  key={index}
+                  style={{ backgroundImage: `url(${data.imageUrl})` }}
+                  onClick={() => changePreviewImg(index)}
+                />
+              );
             })
           )}
         </div>
@@ -276,112 +273,89 @@ const Service = () => {
               {preview()}
               <form className={styles.form_box}>
                 <div style={{ marginBottom: "12px" }}>
-                  <label
-                    htmlFor="preview_img"
-                    className={common.file_input}
-                    style={{ float: "right" }}
-                  >
+                  <label htmlFor="preview_img" className={common.file_input} style={{ float: "right" }}>
                     대표이미지 업로드
                     <FaFileUpload />
                   </label>
-                  <input
-                    type="file"
-                    onChange={(e) => uploadImage(e, "exposure")}
-                    id="preview_img"
-                  ></input>
+                  <input type="file" onChange={(e) => uploadImage(e, "exposure")} id="preview_img" multiple></input>
+                </div>
+                <h3>식당 이름</h3>
+                <input
+                  type="text"
+                  placeholder="식당 이름을 입력해주세요."
+                  className={styles.custom_input}
+                  style={{ marginBottom: "16px" }}
+                />
+
+                <h3>주소</h3>
+                <div className={styles.with_btn} style={{ marginBottom: "4px" }}>
+                  <input type="text" placeholder="우편번호" className={styles.custom_input} />
+                  <div>우편번호 찾기</div>
                 </div>
                 <input
                   type="text"
-                  placeholder="제목을 입력해주세요."
+                  placeholder="도로명 주소"
                   className={styles.custom_input}
-                ></input>
-                <div>위치 선택 들어갈 자리!!!!!</div>
+                  style={{ marginBottom: "4px" }}
+                />
+                <input
+                  type="text"
+                  placeholder="상세주소"
+                  className={styles.custom_input}
+                  style={{ marginBottom: "4px" }}
+                />
               </form>
             </div>
             <div className={styles.page}>
               <h1>상세 페이지</h1>
               <div style={{ marginBottom: "3rem" }}>
                 <h2>소개</h2>
-                <textarea
-                  className={styles.detail_intro}
-                  placeholder="식당에 대해 자유롭게 작성해주시길 바랍니다."
-                />
+                <textarea className={styles.detail_intro} placeholder="식당에 대해 자유롭게 작성해주시길 바랍니다." />
               </div>
               <div>
                 <h2>메뉴</h2>
                 <div className={styles.rest_menu}>
                   <div className={styles.rest_menu_title}>
                     <h3>대표 메뉴</h3>
-                    <Tooltip
-                      title="클릭하여 대표메뉴를 추가할 수 있습니다. (최대 5개)"
-                      placement="top"
-                    >
+                    <Tooltip title="클릭하여 대표메뉴를 추가할 수 있습니다. (최대 5개)" placement="top">
                       <IconButton onClick={() => addExposureMenu()}>
                         <HiPlusCircle />
                       </IconButton>
                     </Tooltip>
                   </div>
-                  <ul
-                    className={styles.rest_menu_wrap}
-                    style={{ border: "1px solid #e3e3e3" }}
-                  >
+                  <ul className={styles.rest_menu_wrap} style={{ border: "1px solid #e3e3e3" }}>
                     {exposureMenu.map((data, index) => {
                       return (
                         <li
                           className={styles.rest_exposure_menu}
                           key={`exposure_menu_${index}`}
-                          onMouseEnter={() =>
-                            toggleDelExposureMenuBtn("enter", index)
-                          }
-                          onMouseLeave={() =>
-                            toggleDelExposureMenuBtn("leave", index)
-                          }
+                          onMouseEnter={() => toggleDelExposureMenuBtn("enter", index)}
+                          onMouseLeave={() => toggleDelExposureMenuBtn("leave", index)}
                         >
                           <div className={styles.rest_exposure_menu_imgbox}>
                             <div className={styles.rest_menu_circle}></div>
                             <label htmlFor={`exposure_menu_img_${index}`}>
                               이미지
-                              {data.file.file == null ? null : (
-                                <img
-                                  src={data.file.imageUrl}
-                                  alt="entire_image"
-                                />
-                              )}
+                              {data.file.file == null ? null : <img src={data.file.imageUrl} alt="entire_image" />}
                             </label>
                             <input
                               type="file"
-                              onChange={(e) =>
-                                uploadImage(e, "exposure_menu", index)
-                              }
+                              onChange={(e) => uploadImage(e, "exposure_menu", index)}
                               id={`exposure_menu_img_${index}`}
                             />
                           </div>
                           <div className={styles.rest_exposure_menu_textbox}>
-                            <input
-                              type="text"
-                              placeholder="메뉴 이름을 입력해주세요."
-                            />
-                            <div
-                              style={
-                                data.price.length > 0
-                                  ? { paddingRight: "8px" }
-                                  : null
-                              }
-                            >
+                            <input type="text" placeholder="메뉴 이름을 입력해주세요." />
+                            <div style={data.price.length > 0 ? { paddingRight: "8px" } : null}>
                               <input
                                 type="text"
                                 placeholder="메뉴 가격을 입력해주세요."
-                                onChange={(e) =>
-                                  inputExposureMenu(e, index, "price")
-                                }
+                                onChange={(e) => inputExposureMenu(e, index, "price")}
                                 value={data.price}
                               />
                               {data.price.length > 0 ? "원" : null}
                             </div>
-                            <input
-                              type="text"
-                              placeholder="한 줄 설명을 입력해주세요."
-                            />
+                            <input type="text" placeholder="한 줄 설명을 입력해주세요." />
                           </div>
                           <TiDelete
                             id={`exposure_del_btn_${index}`}
@@ -394,10 +368,7 @@ const Service = () => {
                   </ul>
                   <div className={styles.rest_menu_title}>
                     <h3>전체 메뉴</h3>
-                    <Tooltip
-                      title="클릭하여 카테고리를 추가할 수 있습니다. (최대 5개)"
-                      placement="top"
-                    >
+                    <Tooltip title="클릭하여 카테고리를 추가할 수 있습니다. (최대 5개)" placement="top">
                       <IconButton onClick={() => addEntireCategory()}>
                         <HiPlusCircle />
                       </IconButton>
@@ -409,12 +380,8 @@ const Service = () => {
                         <li
                           className={styles.rest_entire_menu}
                           key={`entire_category_${idx}`}
-                          onMouseEnter={() =>
-                            toggleAddEntireMenuBtn("enter", idx)
-                          }
-                          onMouseLeave={() =>
-                            toggleAddEntireMenuBtn("leave", idx)
-                          }
+                          onMouseEnter={() => toggleAddEntireMenuBtn("enter", idx)}
+                          onMouseLeave={() => toggleAddEntireMenuBtn("leave", idx)}
                         >
                           <div className={styles.rest_menu_circle}></div>
                           <input
@@ -428,14 +395,8 @@ const Service = () => {
                             className={styles.delete_btn}
                             onClick={() => deleteEntireMenuCategory(idx)}
                           />
-                          <Tooltip
-                            title="클릭하여 메뉴를 추가할 수 있습니다."
-                            placement="bottom"
-                          >
-                            <IconButton
-                              id={`menu_add_btn_${idx}`}
-                              onClick={() => addEntireMenu(idx)}
-                            >
+                          <Tooltip title="클릭하여 메뉴를 추가할 수 있습니다." placement="bottom">
+                            <IconButton id={`menu_add_btn_${idx}`} onClick={() => addEntireMenu(idx)}>
                               <HiOutlinePlusCircle />
                             </IconButton>
                           </Tooltip>
@@ -445,52 +406,32 @@ const Service = () => {
                                 <li
                                   className={styles.rest_entire_menu_detail}
                                   key={`entire_menu_${menu_idx}`}
-                                  onMouseEnter={() =>
-                                    toggleDeleteEntireMenubtn(
-                                      "enter",
-                                      idx,
-                                      menu_idx
-                                    )
-                                  }
-                                  onMouseLeave={() =>
-                                    toggleDeleteEntireMenubtn(
-                                      "leave",
-                                      idx,
-                                      menu_idx
-                                    )
-                                  }
+                                  onMouseEnter={() => toggleDeleteEntireMenubtn("enter", idx, menu_idx)}
+                                  onMouseLeave={() => toggleDeleteEntireMenubtn("leave", idx, menu_idx)}
                                 >
-                                  <div
-                                    className={styles.rest_menu_circle}
-                                  ></div>
+                                  <div className={styles.rest_menu_circle}></div>
                                   <input
                                     type="text"
                                     placeholder="메뉴 이름을 입력해주세요."
                                     value={menu.label}
-                                    onChange={(e) =>
-                                      setMenuData(e, idx, "label", menu_idx)
-                                    }
+                                    onChange={(e) => setMenuData(e, idx, "label", menu_idx)}
                                   />
                                   <div
                                     className={styles.rest_entire_menu_price}
-                                    style={menu.price.length > 0 ? {paddingRight: '56px'} : null}
+                                    style={menu.price.length > 0 ? { paddingRight: "56px" } : null}
                                   >
                                     <input
                                       type="text"
                                       placeholder="메뉴 가격을 입력해주세요."
                                       value={menu.price}
-                                      onChange={(e) =>
-                                        setMenuData(e, idx, "price", menu_idx)
-                                      }
+                                      onChange={(e) => setMenuData(e, idx, "price", menu_idx)}
                                     />{" "}
                                     {menu.price.length > 0 ? "원" : null}
                                   </div>
                                   <TiDelete
                                     id={`menu_del_btn_${idx}_${menu_idx}`}
                                     className={styles.delete_btn}
-                                    onClick={() =>
-                                      deleteEntireMenu(idx, menu_idx)
-                                    }
+                                    onClick={() => deleteEntireMenu(idx, menu_idx)}
                                   />
                                 </li>
                               );
@@ -502,6 +443,9 @@ const Service = () => {
                   </ul>
                 </div>
               </div>
+              <div className={styles.registration_btn}>
+                <span>등록</span>
+              </div>
             </div>
           </div>
         </div>
@@ -511,14 +455,8 @@ const Service = () => {
           onClick={() => movePage(curPage)}
           style={{ marginRight: "-10rem", right: 0 }}
         >
-          {curPage == "detail" ? (
-            <HiChevronDoubleLeft />
-          ) : (
-            <HiChevronDoubleRight />
-          )}
-          <p style={{ margin: "0 12px", display: "block" }}>
-            {curPage == "detail" ? "뒤로가기" : "상세페이지 등록"}
-          </p>
+          {curPage == "detail" ? <HiChevronDoubleLeft /> : <HiChevronDoubleRight />}
+          <p style={{ margin: "0 12px", display: "block" }}>{curPage == "detail" ? "뒤로가기" : "상세페이지 등록"}</p>
         </div>
       </div>
     </>

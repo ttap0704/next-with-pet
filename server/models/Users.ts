@@ -8,28 +8,30 @@ import {
   HasManyHasAssociationMixin,
   HasManyCountAssociationsMixin,
   HasManyCreateAssociationMixin,
-  Association
+  Association,
 } from 'sequelize';
 
 const { sequelize } = require('./index') 
 
 interface UsersAttributes {
-  // id: number | null;
-  email: string,
+  id: number | null;
+  login_id: string,
   password: string | null,
+  wrong_num: number,
   nickname: string,
-  age: number,
-  sex: boolean
+  license_id: number,
+  type: boolean
 }
 
 
 export class Users extends Model<UsersAttributes>{
   public readonly id!: number;
-  public email!: string;
+  public login_id!: string;
   public password!: string;
+  public wrong_num: number;
   public nickname!: string;
-  public age!: number;
-  public sex!: boolean;
+  public license_id!: number;
+  public type!: boolean;
 
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
@@ -47,24 +49,35 @@ export class Users extends Model<UsersAttributes>{
 
 Users.init(
   {
-    email: {
-      type: DataTypes.STRING(45),
+    id: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true
+    },
+    login_id: {
+      type: DataTypes.STRING(100),
       allowNull: false
     },
     password: {
-      type: DataTypes.STRING(45),
-      allowNull: true
+      type: DataTypes.STRING(100),
+      allowNull: false
+    },
+    wrong_num: {
+      type: DataTypes.SMALLINT,
+      allowNull: true,
+      defaultValue: 0,
     },
     nickname: {
       type: DataTypes.STRING(45),
-      allowNull: false
+      allowNull: true
     },
-    age: {
+    license_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: true
     },
-    sex: {
-      type: DataTypes.BOOLEAN,
+    type: {
+      type: DataTypes.TINYINT,
       allowNull: false
     }
   },

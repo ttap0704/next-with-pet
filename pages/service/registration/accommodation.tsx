@@ -145,10 +145,6 @@ const Service = () => {
     }
   }
 
-  function inputHandler(e) {
-    setTitle(e.target.value);
-  }
-
   function toggleDetailImageSlider(type: string) {
     const slider = document.getElementById(`detail_slider_wrap`).children[0];
     if (detailPreview.length > 0) {
@@ -319,7 +315,7 @@ const Service = () => {
                   type="text"
                   placeholder="제목을 입력해주세요."
                   className={styles.custom_input}
-                  onChange={(e) => inputHandler(e)}
+                  onChange={(e) => setTitle(e.target.value)}
                 ></input>
                 <div>위치 선택 들어갈 자리!!!!!</div>
               </form>
