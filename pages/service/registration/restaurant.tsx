@@ -14,11 +14,13 @@ import {
   HiOutlinePlusCircle,
 } from "react-icons/hi";
 import { Tooltip, IconButton } from "@mui/material";
-// import DaumPostcode from 'react-daum-postcode';
+import PostCode from "../../../src/components/postcode";
 
 const Service = () => {
   const router = useRouter();
   let [curPage, setCurPage] = useState("exposure");
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [title, setTitle] = useState("");
   const [exposureImages, setExposureImages] = useState([]);
   const [exposureMenu, setExposureMenu] = useState([
     {
@@ -28,6 +30,7 @@ const Service = () => {
       },
       label: "",
       price: "",
+      comment: "",
     },
   ]);
   const [entireMenu, setEntireMenu] = useState([
@@ -36,6 +39,34 @@ const Service = () => {
       menu: [{ label: "", price: "" }],
     },
   ]);
+  const [address, setAddress] = useState({
+    zonecode: "",
+    sido: "",
+    sigungu: "",
+    bname: "",
+    road_address: "",
+    detail_address: "",
+    building_name: "",
+  });
+
+  function updateAddress(data: object) {
+    if (data) {
+      setPopupVisible(false);
+      setAddress((state) => ({
+        ...state,
+        ...data,
+      }));
+      console.log(data);
+    }
+  }
+
+  function updateDetailAddress(e) {
+    const val = e.target.value;
+    setAddress((state) => ({
+      ...state,
+      detail_address: val,
+    }));
+  }
 
   function movePage(type: string) {
     const slider_btn = document.getElementById("slider_btn");
@@ -72,6 +103,21 @@ const Service = () => {
           };
           reader.readAsDataURL(file);
         });
+      } else if (type == "exposure_menu") {
+        let items = [...exposureMenu];
+        let item = items[key];
+
+        let files = Array.from(file);
+        let reader = new FileReader();
+        reader.onloadend = () => {
+          item.file.file = files[0];
+          item.file.imageUrl = reader.result.toString();
+
+          items[key] = item;
+
+          setExposureMenu([...items]);
+        };
+        reader.readAsDataURL(files[0]);
       }
     } else {
       if (type == "exposure_menu") {
@@ -146,6 +192,7 @@ const Service = () => {
       },
       label: "",
       price: "",
+      comment: ""
     });
 
     setExposureMenu([...items]);
@@ -210,6 +257,13 @@ const Service = () => {
     items[idx] = item;
     setExposureMenu([...items]);
     console.log(items, value);
+  }
+
+  function addRestaurant() {
+    console.log(exposureImages, "exposureImages");
+    console.log(exposureMenu, "exposureMenu");
+    console.log(entireMenu, "entireMenu");
+    console.log(address, "address");
   }
 
   const preview = () => {
@@ -285,24 +339,46 @@ const Service = () => {
                   placeholder="식당 이름을 입력해주세요."
                   className={styles.custom_input}
                   style={{ marginBottom: "16px" }}
+                  value={title}
+                  onChange={(e) => setTitle(e.target.value)}
                 />
 
                 <h3>주소</h3>
                 <div className={styles.with_btn} style={{ marginBottom: "4px" }}>
-                  <input type="text" placeholder="우편번호" className={styles.custom_input} />
-                  <div>우편번호 찾기</div>
+                  <input
+                    type="text"
+                    placeholder="우편번호"
+                    className={styles.custom_input}
+                    value={address.zonecode ?? ""}
+                    disabled
+                  />
+                  <div onClick={() => setPopupVisible(true)}>우편번호 찾기</div>
                 </div>
-                <input
-                  type="text"
-                  placeholder="도로명 주소"
-                  className={styles.custom_input}
-                  style={{ marginBottom: "4px" }}
-                />
+                <div>
+                  <input
+                    type="text"
+                    placeholder="도로명 주소"
+                    className={styles.custom_input}
+                    style={{ marginBottom: "4px" }}
+                    value={address.road_address ?? ""}
+                    disabled
+                  />
+                  <input
+                    type="text"
+                    placeholder="참고항목"
+                    className={styles.custom_input}
+                    style={{ marginBottom: "4px" }}
+                    value={address.building_name ? `(${address.building_name})` : ""}
+                    disabled
+                  />
+                </div>
                 <input
                   type="text"
                   placeholder="상세주소"
                   className={styles.custom_input}
                   style={{ marginBottom: "4px" }}
+                  value={address.detail_address}
+                  onChange={(e) => updateDetailAddress(e)}
                 />
               </form>
             </div>
@@ -336,7 +412,9 @@ const Service = () => {
                             <div className={styles.rest_menu_circle}></div>
                             <label htmlFor={`exposure_menu_img_${index}`}>
                               이미지
-                              {data.file.file == null ? null : <img src={data.file.imageUrl} alt="entire_image" />}
+                              {data.file.file == null ? null : (
+                                <div style={{ backgroundImage: `url(${data.file.imageUrl})` }} />
+                              )}
                             </label>
                             <input
                               type="file"
@@ -345,7 +423,12 @@ const Service = () => {
                             />
                           </div>
                           <div className={styles.rest_exposure_menu_textbox}>
-                            <input type="text" placeholder="메뉴 이름을 입력해주세요." />
+                            <input
+                              type="text"
+                              placeholder="메뉴 이름을 입력해주세요."
+                              onChange={(e) => inputExposureMenu(e, index, "label")}
+                              value={data.label}
+                            />
                             <div style={data.price.length > 0 ? { paddingRight: "8px" } : null}>
                               <input
                                 type="text"
@@ -355,7 +438,12 @@ const Service = () => {
                               />
                               {data.price.length > 0 ? "원" : null}
                             </div>
-                            <input type="text" placeholder="한 줄 설명을 입력해주세요." />
+                            <input
+                              type="text"
+                              placeholder="한 줄 설명을 입력해주세요."
+                              onChange={(e) => inputExposureMenu(e, index, "comment")}
+                              value={data.comment}
+                            />
                           </div>
                           <TiDelete
                             id={`exposure_del_btn_${index}`}
@@ -444,7 +532,7 @@ const Service = () => {
                 </div>
               </div>
               <div className={styles.registration_btn}>
-                <span>등록</span>
+                <span onClick={() => addRestaurant()}>등록</span>
               </div>
             </div>
           </div>
@@ -459,6 +547,11 @@ const Service = () => {
           <p style={{ margin: "0 12px", display: "block" }}>{curPage == "detail" ? "뒤로가기" : "상세페이지 등록"}</p>
         </div>
       </div>
+      {popupVisible ? (
+        <div className={styles.postcode_back} onClick={() => setPopupVisible(false)}>
+          <PostCode complete={(data) => updateAddress(data)} />
+        </div>
+      ) : null}
     </>
   );
 };

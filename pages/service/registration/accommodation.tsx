@@ -95,7 +95,6 @@ const Service = () => {
           reader.readAsDataURL(file);
         });
       } else {
-        console.log(key, roomDetail, data);
         let files = Array.from(file);
         let items = [...roomDetail];
         let item = items[key];
