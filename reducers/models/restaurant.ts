@@ -5,7 +5,7 @@ import {
 } from 'typesafe-actions';
 
 interface RestaurantReducer {
-
+  
 }
 
 const initialState: RestaurantReducer = {

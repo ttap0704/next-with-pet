@@ -1,3 +1,4 @@
+'use strict';
 import {
   Sequelize,
   DataTypes,
@@ -11,16 +12,18 @@ import {
   Association,
 } from 'sequelize';
 
-const { sequelize } = require('./index') 
+const { sequelize } = require('./index')
 
 interface UsersAttributes {
-  id: number | null;
-  login_id: string,
-  password: string | null,
-  wrong_num: number,
-  nickname: string,
-  license_id: number,
-  type: boolean
+  id: number;
+  login_id: string;
+  password: string | null;
+  wrong_num: number;
+  nickname: string;
+  license_id: number;
+  type: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
 
@@ -36,15 +39,8 @@ export class Users extends Model<UsersAttributes>{
   public readonly createdAt!: Date;
   public readonly updatedAt!: Date;
 
-  // public getScores!: HasManyGetAssociationsMixin<Scores>; 
-  // public addScores!: HasManyAddAssociationMixin<Scores, number>;
-  // public hasScores!: HasManyHasAssociationMixin<Scores, number>;
-  // public countScores!: HasManyCountAssociationsMixin;
-  // public createScores!: HasManyCreateAssociationMixin<Scores>;
-
-  // public static associations: {
-  //   userHasManyScores: Association<Users, Scores>;
-  // };
+  public static associations: {
+  };
 }
 
 Users.init(
@@ -57,7 +53,8 @@ Users.init(
     },
     login_id: {
       type: DataTypes.STRING(100),
-      allowNull: false
+      allowNull: false,
+      unique: true
     },
     password: {
       type: DataTypes.STRING(100),
@@ -70,7 +67,8 @@ Users.init(
     },
     nickname: {
       type: DataTypes.STRING(45),
-      allowNull: true
+      allowNull: true,
+      unique: true
     },
     license_id: {
       type: DataTypes.INTEGER,
@@ -79,11 +77,19 @@ Users.init(
     type: {
       type: DataTypes.TINYINT,
       allowNull: false
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false
+    },
+    updatedAt: {
+      type: DataTypes.DATE,
+      allowNull: true
     }
   },
   {
     modelName: 'Users',
-    tableName: 'Users',
+    tableName: 'users',
     sequelize,
     freezeTableName: true,
     timestamps: true,
