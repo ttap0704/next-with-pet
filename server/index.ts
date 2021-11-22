@@ -5,11 +5,12 @@ const port = 3080;
 const dotenv = require('dotenv');
 
 dotenv.config()
-const { sequelize } = require('./models');
+// const { sequelize } = require('./models');
+import db from "./models/index"
 
 App.set("port", port);
 const server = http.createServer(App);
-sequelize.sync({ force: false })
+db.sequelize.sync({ force: true })
     .then(() => {
         console.log('Success DB Connection')
     })
