@@ -1,15 +1,6 @@
 'use strict';
-import { any } from 'bluebird';
 import {
-  Sequelize,
   Model,
-  Optional,
-  HasManyGetAssociationsMixin,
-  HasManyAddAssociationMixin,
-  HasManyHasAssociationMixin,
-  HasManyCountAssociationsMixin,
-  HasManyCreateAssociationMixin,
-  Association,
 } from 'sequelize';
 
 const { sequelize } = require('./index')
@@ -42,7 +33,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
       Users.hasMany(models.Restaurant, {
         sourceKey: "id",
         foreignKey: "manager",
-        as: 'userHasManyRestaurant'
       });
     };
   }

@@ -7,8 +7,6 @@ interface RestaurantAttributes {
   baname: string | null;
   building_name: string | null;
   detail_address: string | null;
-  entire_menus: string;
-  exposure_menus: string;
   label: string;
   sido: string | null;
   sigungu: string | null;
@@ -22,8 +20,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public baname!: string;
     public building_name!: string;
     public detail_address!: string;
-    public entire_menus!: string;
-    public exposure_menus!: string;
     public label!: string;
     public sido!: string;
     public sigungu!: string;
@@ -65,14 +61,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
       detail_address: {
         type: DataTypes.STRING(45),
         allowNull: true,
-      },
-      entire_menus: {
-        type: DataTypes.STRING(1000),
-        allowNull: true
-      },
-      exposure_menus: {
-        type: DataTypes.STRING(100),
-        allowNull: true
       },
       label: {
         type: DataTypes.STRING(45),
