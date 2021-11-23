@@ -6,7 +6,7 @@ const dotenv = require('dotenv');
 
 dotenv.config()
 // const { sequelize } = require('./models');
-import db from "./models/index"
+import db from "./models"
 
 App.set("port", port);
 const server = http.createServer(App);

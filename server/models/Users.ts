@@ -11,8 +11,6 @@ import {
   HasManyCreateAssociationMixin,
   Association,
 } from 'sequelize';
-const Restaurant = require("./Restaurant")
-type Restaurant = InstanceType<typeof Restaurant>;
 
 const { sequelize } = require('./index')
 
@@ -41,9 +39,9 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public readonly updatedAt!: Date;
 
     public static associate(models: any) {
-      Users.hasMany(Restaurant, {
-        sourceKey: "manager",
-        foreignKey: "user_id",
+      Users.hasMany(models.Restaurant, {
+        sourceKey: "id",
+        foreignKey: "manager",
         as: 'userHasManyRestaurant'
       });
     };
@@ -94,4 +92,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
       updatedAt: 'updateTimestamp'
     }
   )
+
+  return Users;
 }

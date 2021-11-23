@@ -1,19 +1,6 @@
 import {
-  Sequelize,
-  DataTypes,
   Model,
-  Optional,
-  HasManyGetAssociationsMixin,
-  HasManyAddAssociationMixin,
-  HasManyHasAssociationMixin,
-  HasManyCountAssociationsMixin,
-  HasManyCreateAssociationMixin,
-  Association,
-  BelongsTo,
 } from 'sequelize';
-const Users = require("./Users")
-type Users = InstanceType<typeof Users>;
-const { sequelize } = require('./index')
 
 interface RestaurantAttributes {
   id: number;
@@ -23,7 +10,6 @@ interface RestaurantAttributes {
   entire_menus: string;
   exposure_menus: string;
   label: string;
-  manager: number;
   sido: string | null;
   sigungu: string | null;
   zonecode: string | null;
@@ -39,24 +25,24 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public entire_menus!: string;
     public exposure_menus!: string;
     public label!: string;
-    public manager!: number;
     public sido!: string;
     public sigungu!: string;
     public zonecode!: string;
 
     public readonly createdAt!: Date;
 
-    // public getScores!: HasManyGetAssociationsMixin<Scores>; 
-    // public addScores!: HasManyAddAssociationMixin<Scores, number>;
-    // public hasScores!: HasManyHasAssociationMixin<Scores, number>;
-    // public countScores!: HasManyCountAssociationsMixin;
-    // public createScores!: HasManyCreateAssociationMixin<Scores>;
-
     public static associate(models: any) {
-      Restaurant.belongsTo(Users, {
-        foreignKey: "user_id",
-        as: 'mangerBelongsToUserId'
+      Restaurant.belongsTo(models.Users, {
+        foreignKey: "manager",
       });
+      Restaurant.hasMany(models.ExposureMenu, {
+        sourceKey: "id",
+        foreignKey: "restraunt_id",
+      })
+      Restaurant.hasMany(models.EntireMenu, {
+        sourceKey: "id",
+        foreignKey: "restraunt_id",
+      })
     };
   }
 
@@ -92,10 +78,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.STRING(45),
         allowNull: false
       },
-      manager: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
-      },
       sido: {
         type: DataTypes.STRING(45),
         allowNull: true
@@ -118,5 +100,5 @@ module.exports = (sequelize: any, DataTypes: any) => {
     }
   )
 
-
+  return Restaurant;
 }
