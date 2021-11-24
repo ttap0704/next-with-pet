@@ -79,7 +79,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
       sequelize,
       freezeTableName: true,
       timestamps: true,
-      updatedAt: 'updateTimestamp'
     }
   )
 

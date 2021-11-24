@@ -2,31 +2,35 @@ import {
   Model,
 } from 'sequelize';
 
-interface ExposureMenuAttributes {
+interface RoomsAttributes {
   id: number;
   label: string;
   price: number;
+  standard_num: number;
+  maximum_num: number;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
-  class ExposureMenu extends Model<ExposureMenuAttributes>
-    implements ExposureMenuAttributes {
+  class Rooms extends Model<RoomsAttributes>
+    implements RoomsAttributes {
     public readonly id!: number;
     public label!: string;
     public price!: number;
+    public standard_num!: number;
+    public maximum_num!: number;
 
     public static associate(models: any) {
-      ExposureMenu.hasMany(models.Images, {
+      Rooms.hasMany(models.Images, {
         sourceKey: 'id',
         foreignKey: "target",
       });
-      ExposureMenu.belongsTo(models.Restaurant, {
-        foreignKey: "restraunt_id",
+      Rooms.belongsTo(models.Restaurant, {
+        foreignKey: "accommodation_id",
       });
     };
   }
 
-  ExposureMenu.init(
+  Rooms.init(
     {
       id: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -36,16 +40,24 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       label: {
         type: DataTypes.STRING(45),
-        allowNull: false
+        allowNull: true
       },
       price: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+      },
+      standard_num: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      },
+      maximum_num: {
         type: DataTypes.INTEGER,
         allowNull: false
       },
     },
     {
-      modelName: 'ExposureMenu',
-      tableName: 'exposure_menu',
+      modelName: 'Rooms',
+      tableName: 'rooms',
       sequelize,
       freezeTableName: true,
       timestamps: true,
@@ -54,5 +66,5 @@ module.exports = (sequelize: any, DataTypes: any) => {
     }
   )
 
-  return ExposureMenu;
+  return Rooms;
 };

@@ -15,11 +15,13 @@ import {
   HiChevronLeft,
   HiChevronRight,
 } from "react-icons/hi";
+import PostCode from "../../../src/components/postcode";
 
 const Service = () => {
   const router = useRouter();
+  const [popupVisible, setPopupVisible] = useState(false);
   let [curPage, setCurPage] = useState("exposure");
-  let [title, setTitle] = useState("제목을 입력해주세요.");
+  let [title, setTitle] = useState("");
   let [previewFile, setPreviewFile] = useState({
     file: null,
     imageUrl: "",
@@ -36,6 +38,34 @@ const Service = () => {
       cur_num: 0,
     },
   ]);
+
+  const [address, setAddress] = useState({
+    zonecode: "",
+    sido: "",
+    sigungu: "",
+    bname: "",
+    road_address: "",
+    detail_address: "",
+    building_name: "",
+  });
+  
+  function addAccommodation() {
+    console.log(title, "title");
+    console.log(detailPreview, "detailPreview");
+    console.log(roomDetail, "roomDetail");
+    console.log(address, "address");
+  }
+
+
+  function updateAddress(data: object) {
+    if (data) {
+      setPopupVisible(false);
+      setAddress((state) => ({
+        ...state,
+        ...data,
+      }));
+    }
+  }
 
   function movePage(type: string) {
     const slider_btn = document.getElementById("slider_btn");
@@ -128,7 +158,6 @@ const Service = () => {
           setPreviewFile({ file: null, imageUrl: "" });
           break;
         case "room":
-          console.log("room");
           let items = [...roomDetail];
           let item = items[key];
           item.files = [];
@@ -170,8 +199,6 @@ const Service = () => {
   function detailSlider(type: string) {
     const slider = document.getElementById(`detail_slider_wrap`);
     let num = detailPreviewNum;
-    console.log(slider);
-
     if (type == "next") {
       num++;
     } else {
@@ -211,7 +238,6 @@ const Service = () => {
       item.cur_num - 1 < 0 ? item.files.length - 1 : item.cur_num - 1
     ].setAttribute("style", "display: none");
     slider.children[item.cur_num].setAttribute("style", "display: block");
-    console.log(item.cur_num);
 
     items[idx] = item;
     setRoomDetail([...items]);
@@ -229,8 +255,6 @@ const Service = () => {
         cur_num: 0,
       },
     ]);
-
-    console.log(roomDetail);
   }
 
   function inputRoomsDetial (e, idx: number, type: string) {
@@ -242,7 +266,14 @@ const Service = () => {
     items[idx] = item;
 
     setRoomDetail([...items]);
-    console.log(roomDetail)
+  }
+
+  function updateDetailAddress(e) {
+    const val = e.target.value;
+    setAddress((state) => ({
+      ...state,
+      detail_address: val,
+    }));
   }
 
   const preview = () => {
@@ -310,13 +341,52 @@ const Service = () => {
                     id="preview_img"
                   ></input>
                 </div>
+                <h3>숙박업소 이름</h3>
                 <input
                   type="text"
                   placeholder="제목을 입력해주세요."
+                  style={{ marginBottom: "16px" }}
                   className={styles.custom_input}
                   onChange={(e) => setTitle(e.target.value)}
+                  value={title}
                 ></input>
-                <div>위치 선택 들어갈 자리!!!!!</div>
+                <h3>주소</h3>
+                <div className={styles.with_btn} style={{ marginBottom: "4px" }}>
+                  <input
+                    type="text"
+                    placeholder="우편번호"
+                    className={styles.custom_input}
+                    value={address.zonecode ?? ""}
+                    disabled
+                  />
+                  <div onClick={() => setPopupVisible(true)}>우편번호 찾기</div>
+                </div>
+                <div>
+                  <input
+                    type="text"
+                    placeholder="도로명 주소"
+                    className={styles.custom_input}
+                    style={{ marginBottom: "4px" }}
+                    value={address.road_address ?? ""}
+                    disabled
+                  />
+                  <input
+                    type="text"
+                    placeholder="참고항목"
+                    className={styles.custom_input}
+                    style={{ marginBottom: "4px" }}
+                    value={address.building_name ? `(${address.building_name})` : ""}
+                    disabled
+                  />
+                </div>
+                <input
+                  type="text"
+                  placeholder="상세주소"
+                  className={styles.custom_input}
+                  style={{ marginBottom: "4px" }}
+                  value={address.detail_address}
+                  onChange={(e) => updateDetailAddress(e)}
+                />
               </form>
             </div>
             <div className={styles.page}>
@@ -479,6 +549,9 @@ const Service = () => {
                   <div onClick={addRoom}>객실 추가</div>
                 </div>
               </div>
+              <div className={styles.registration_btn}>
+                <span onClick={() => addAccommodation()}>등록</span>
+              </div>
             </div>
           </div>
         </div>
@@ -498,6 +571,11 @@ const Service = () => {
           </p>
         </div>
       </div>
+      {popupVisible ? (
+        <div className={styles.postcode_back} onClick={() => setPopupVisible(false)}>
+          <PostCode complete={(data) => updateAddress(data)} />
+        </div>
+      ) : null}
     </>
   );
 };

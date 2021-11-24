@@ -2,7 +2,7 @@ import {
   Model,
 } from 'sequelize';
 
-interface RestaurantAttributes {
+interface AccommodationAttributes {
   id: number;
   bname: string | null;
   building_name: string | null;
@@ -14,8 +14,8 @@ interface RestaurantAttributes {
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
-  class Restaurant extends Model<RestaurantAttributes>
-    implements RestaurantAttributes {
+  class Accommodation extends Model<AccommodationAttributes>
+    implements AccommodationAttributes {
     public readonly id!: number;
     public bname!: string;
     public building_name!: string;
@@ -28,25 +28,17 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public readonly createdAt!: Date;
 
     public static associate(models: any) {
-      Restaurant.belongsTo(models.Users, {
+      Accommodation.belongsTo(models.Users, {
         foreignKey: "manager",
       });
-      Restaurant.hasMany(models.ExposureMenu, {
+      Accommodation.hasMany(models.Rooms, {
         sourceKey: "id",
-        foreignKey: "restraunt_id",
-      })
-      Restaurant.hasMany(models.EntireMenu, {
-        sourceKey: "id",
-        foreignKey: "restraunt_id",
-      })
-      Restaurant.hasMany(models.Images, {
-        sourceKey: "id",
-        foreignKey: "target",
+        foreignKey: "accommodation_id",
       })
     };
   }
 
-  Restaurant.init(
+  Accommodation.init(
     {
       id: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -84,13 +76,13 @@ module.exports = (sequelize: any, DataTypes: any) => {
       }
     },
     {
-      modelName: 'Restaurant',
-      tableName: 'restaurant',
+      modelName: 'Accommodation',
+      tableName: 'accommodation',
       sequelize,
       freezeTableName: true,
       timestamps: true
     }
   )
 
-  return Restaurant;
+  return Accommodation;
 }

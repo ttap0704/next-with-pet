@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useLayoutEffect, cloneElement } from "react";
+import React, { useEffect, useState} from "react";
+import { useDispatch } from "react-redux";
 import styles from "../../../styles/pages/registration.module.scss";
 import common from "../../../styles/common.module.scss";
 import res_style from "../../../styles/pages/restaurant.module.scss";
@@ -8,15 +9,23 @@ import { TiDelete } from "react-icons/ti";
 import {
   HiChevronDoubleRight,
   HiChevronDoubleLeft,
-  HiChevronLeft,
-  HiChevronRight,
   HiPlusCircle,
   HiOutlinePlusCircle,
 } from "react-icons/hi";
 import { Tooltip, IconButton } from "@mui/material";
 import PostCode from "../../../src/components/postcode";
+import { actions, RESET_RESTRAURANT } from "../../../reducers/models/restaurant";
+
 
 const Service = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch({
+      type: RESET_RESTRAURANT,
+    });
+  }, []);
+
   const router = useRouter();
   let [curPage, setCurPage] = useState("exposure");
   const [popupVisible, setPopupVisible] = useState(false);
@@ -260,10 +269,22 @@ const Service = () => {
   }
 
   function addRestaurant() {
+    // dispatch(
+    //   actions.addRestaurant()
+    // );
     console.log(exposureImages, "exposureImages");
     console.log(exposureMenu, "exposureMenu");
     console.log(entireMenu, "entireMenu");
     console.log(address, "address");
+    const data = {
+      bname: address.bname,
+      building_name: address.building_name,
+      detail_address: address.detail_address,
+      road_address: address.road_address,
+      sido: address.sido,
+      sigungu: address.sigungu,
+      zonecode: address.zonecode,
+    }
   }
 
   const preview = () => {

@@ -32,11 +32,11 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       label: {
         type: DataTypes.STRING(45),
-        allowNull: true
+        allowNull: false
       },
       price: {
-        type: DataTypes.STRING(45),
-        allowNull: true
+        type: DataTypes.INTEGER,
+        allowNull: false
       },
     },
     {
@@ -44,7 +44,9 @@ module.exports = (sequelize: any, DataTypes: any) => {
       tableName: 'entire_menu',
       sequelize,
       freezeTableName: true,
-      timestamps: true
+      timestamps: true,
+      createdAt: false,
+      updatedAt: false
     }
   )
 
