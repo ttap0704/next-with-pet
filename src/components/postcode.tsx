@@ -9,7 +9,7 @@ const Post = (props) => {
       zonecode: data.zonecode,
       sido: data.sido,
       sigungu: data.sigungu,
-      bname1: data.bname,
+      bname: data.bname,
       road_address: data.roadAddress,
       building_name: data.buildingName
     };

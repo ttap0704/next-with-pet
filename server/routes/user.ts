@@ -27,7 +27,7 @@ class User {
     private routes(): void {
 
         // request to get all the users
-        this.express.get("/users", (req, res, next) => {
+        this.express.get("/", (req, res, next) => {
             this.logger.info("url:" + req.url);
             res.json(this.users);
         });
@@ -45,7 +45,7 @@ class User {
 
         // request to post the user
         // req.body has object of type {firstName:"fnam1",lastName:"lnam1",userName:"username1"}
-        this.express.post("/user", (req, res, next) => {
+        this.express.post("/", (req, res, next) => {
             this.logger.info("url:::::::" + req.url);
             this.users.push(req.body.user);
             res.json(this.users);

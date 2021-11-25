@@ -15,6 +15,7 @@ import {
 import { Tooltip, IconButton } from "@mui/material";
 import PostCode from "../../../src/components/postcode";
 import { actions, RESET_RESTRAURANT } from "../../../reducers/models/restaurant";
+import { addRestaurantApi } from "../../../services/Restautrant";
 
 
 const Service = () => {
@@ -157,7 +158,6 @@ const Service = () => {
     }
     items[idx] = item;
     setEntireMenu([...items]);
-    console.log(entireMenu);
   }
 
   function toggleDelExposureMenuBtn(type: string, idx: number) {
@@ -254,7 +254,6 @@ const Service = () => {
     });
 
     setEntireMenu([...items]);
-    console.log(entireMenu);
   }
 
   function inputExposureMenu(e, idx: number, type: string) {
@@ -265,17 +264,31 @@ const Service = () => {
 
     items[idx] = item;
     setExposureMenu([...items]);
-    console.log(items, value);
   }
 
   function addRestaurant() {
-    // dispatch(
-    //   actions.addRestaurant()
-    // );
     console.log(exposureImages, "exposureImages");
     console.log(exposureMenu, "exposureMenu");
     console.log(entireMenu, "entireMenu");
     console.log(address, "address");
+
+    let exposure_images = [];
+    let exposure_menu = [];
+    for (let x of exposureImages) {
+      exposure_images.push({
+        file: x.file,
+      })
+    }
+
+    for (let x of exposureMenu) {
+      exposure_menu.push({
+        comment: x.comment,
+        file: x.file.file,
+        label: x.label,
+        price: x.price
+      })
+    }
+
     const data = {
       bname: address.bname,
       building_name: address.building_name,
@@ -284,7 +297,16 @@ const Service = () => {
       sido: address.sido,
       sigungu: address.sigungu,
       zonecode: address.zonecode,
+      exposure_images,
+      exposure_menu,
+      entireMenu
     }
+
+    console.log(data);
+
+    addRestaurantApi("/add", data).then(res => {
+      console.log(res)
+    });
   }
 
   const preview = () => {

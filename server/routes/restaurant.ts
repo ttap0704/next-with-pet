@@ -1,21 +1,20 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Logger } from "../logger/logger";
-import User from "./user";
-import Restaurant from "./restaurant";
 
-class Routes {
+class Restraunt {
 
     public express: express.Application;
     public logger: Logger;
 
     // array to hold users
-    public users: any[];
+    public data: object;
 
     constructor() {
         this.express = express();
         this.middleware();
         this.routes();
+        this.data = {};
         this.logger = new Logger();
     }
 
@@ -26,11 +25,11 @@ class Routes {
     }
 
     private routes(): void {
-
-        // user route
-        this.express.use("/user", User);
-        this.express.use("/restaurant", Restaurant);
+        this.express.post("/add", (req, res, next) => {
+            this.data = req.body;
+            res.json(this.data);
+        });
     }
 }
 
-export default new Routes().express;
+export default new Restraunt().express;
