@@ -1,6 +1,7 @@
 import { fetchPostApi, fetchGetApi } from "./_API";
 
 const path = "/restaurant";
+
 export function addRestaurantApi(path2, data) {
   return new Promise((resolve, reject) => {
     try {

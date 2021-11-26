@@ -16,9 +16,13 @@
   "license": "ISC",
   "dependencies": {
     "@types/bluebird": "^3.5.36",
+    "@types/multer": "^1.4.7",
     "@types/node": "^16.11.7",
     "@types/validator": "^13.6.6",
+    "ejs": "^3.1.6",
     "express": "^4.17.1",
+    "express-formidable": "^1.2.0",
+    "multer": "^1.4.3",
     "mysql2": "^2.3.3",
     "reflect-metadata": "^0.1.13",
     "sequelize": "^6.9.0",

@@ -3,6 +3,7 @@ import App from "./app";
 import { Logger } from "./logger/logger";
 const port = 3080;
 const dotenv = require('dotenv');
+const fs = require('fs');
 
 dotenv.config()
 // const { sequelize } = require('./models');
@@ -22,6 +23,9 @@ server.listen(port);
 const logger = new Logger();
 
 server.on("listening", function (): void {
+    const dir = './uploads';
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+
     const addr = server.address();
     const bind = (typeof addr === "string") ? `pipe ${addr}` : `port ${addr.port}`;
     logger.info(`Listening on ${bind}`);
