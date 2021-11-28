@@ -287,7 +287,9 @@ const Service = () => {
       console.log(pair[0] + ", " + pair[1]);
     }
 
-    uploadImages("/image/single", exposure_images).then((res) => console.log(res, "1"));
+    console.log(exposure_images);
+
+    uploadImages("/image/multi", exposure_images).then((res) => console.log(res, "1"));
     uploadImages("/image/multi", exposure_menu_images).then((res) => console.log(res, "2"));
 
     const data = {
@@ -304,10 +306,6 @@ const Service = () => {
     };
 
     console.log(data);
-
-    addRestaurantApi("/add", data).then((res) => {
-      console.log(res);
-    });
   }
 
   const preview = () => {
@@ -369,7 +367,7 @@ const Service = () => {
             <div className={styles.page}>
               <h1>노출 페이지</h1>
               {preview()}
-              <form className={styles.form_box}>
+              <form className={styles.form_box} id="preview_images">
                 <div style={{marginBottom: "12px"}}>
                   <label htmlFor="preview_img" className={common.file_input} style={{float: "right"}}>
                     대표이미지 업로드
