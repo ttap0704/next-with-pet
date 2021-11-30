@@ -283,14 +283,12 @@ const Service = () => {
       });
     }
 
-    for (var pair of exposure_menu_images.entries()) {
+    for (var pair of exposure_images.entries()) {
       console.log(pair[0] + ", " + pair[1]);
     }
 
-    console.log(exposure_images);
-
     uploadImages("/image/multi", exposure_images).then((res) => console.log(res, "1"));
-    uploadImages("/image/multi", exposure_menu_images).then((res) => console.log(res, "2"));
+    // uploadImages("/image/multi", exposure_menu_images).then((res) => console.log(res, "2"));
 
     const data = {
       bname: address.bname,
@@ -373,7 +371,13 @@ const Service = () => {
                     대표이미지 업로드
                     <FaFileUpload />
                   </label>
-                  <input type="file" onChange={(e) => uploadImage(e, "exposure")} id="preview_img" multiple></input>
+                  <input
+                    type="file"
+                    onChange={(e) => uploadImage(e, "exposure")}
+                    id="preview_img"
+                    name="preview_img"
+                    multiple
+                  ></input>
                 </div>
                 <h3>식당 이름</h3>
                 <input
