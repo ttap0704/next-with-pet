@@ -1,6 +1,18 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Logger } from "../logger/logger";
+const multer   = require('multer');
+const storage  = multer.diskStorage({ 
+  destination(req:any, file:any, cb:any) {
+    console.log(file)
+    cb(null, '../uploads');
+  },
+  filename(req:any, file:any, cb:any) {
+    console.log(file)
+    cb(null, `${Date.now()}__${file.originalname}`);
+  },
+});
+const upload = multer({ storage: storage });
 
 class Upload {
 
@@ -16,7 +28,6 @@ class Upload {
     this.routes();
     this.data = {};
     this.logger = new Logger();
-
   }
 
   // Configure Express middleware.
@@ -27,7 +38,13 @@ class Upload {
 
   private routes(): void {
 
-    this.express.post("/image/multi", (req: any, res: any, next) => {
+    // this.express.post("/image/single",, (req:any, res:any, next) => {
+    //   res.send('성공')
+    // });
+
+    this.express.post("/image/multi", upload.single('images'), (req: any, res: any, next) => {
+        console.log(req);
+      res.send('hi')
     });
   }
 }

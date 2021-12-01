@@ -27,6 +27,7 @@ const Service = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [title, setTitle] = useState("");
   const [exposureImages, setExposureImages] = useState([]);
+  const [exposureImageFiles, setExposureImageFiles] = useState([]);
   const [exposureMenu, setExposureMenu] = useState([
     {
       file: {
@@ -105,6 +106,7 @@ const Service = () => {
           let reader = new FileReader();
           reader.onloadend = () => {
             setExposureImages((state) => [...state, {file: file, imageUrl: reader.result.toString()}]);
+            setExposureImageFiles((state => [...state, file]))
           };
           reader.readAsDataURL(file);
         });
@@ -262,16 +264,15 @@ const Service = () => {
   }
 
   function addRestaurant() {
-    console.log(exposureImages, "exposureImages");
-    console.log(exposureMenu, "exposureMenu");
-    console.log(entireMenu, "entireMenu");
-    console.log(address, "address");
-
     let exposure_images = new FormData();
     let exposure_menu = [];
     let exposure_menu_images = new FormData();
-    for (let i = 0, leng = exposureImages.length; i < leng; i++) {
-      exposure_images.append(`file_${i}`, exposureImages[i].file);
+    // for (let i = 0, leng = exposureImages.length; i < leng; i++) {
+    //   exposure_images.append(`files`, exposureImages[i].file);
+    // }
+
+    for (let i = 0, leng = exposureImageFiles.length; i < leng; i++) {
+      exposure_images.append(`images`, exposureImageFiles[i]);
     }
 
     for (let i = 0, leng = exposureMenu.length; i < leng; i++) {
