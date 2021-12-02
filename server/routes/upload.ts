@@ -1,18 +1,7 @@
 import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Logger } from "../logger/logger";
-const multer   = require('multer');
-const storage  = multer.diskStorage({ 
-  destination(req:any, file:any, cb:any) {
-    console.log(file)
-    cb(null, '../uploads');
-  },
-  filename(req:any, file:any, cb:any) {
-    console.log(file)
-    cb(null, `${Date.now()}__${file.originalname}`);
-  },
-});
-const upload = multer({ storage: storage });
+const fs = require('fs');
 
 class Upload {
 
@@ -20,20 +9,20 @@ class Upload {
   public logger: Logger;
 
   // array to hold users
-  public data: object;
+  public data: [];
 
   constructor() {
     this.express = express();
     this.middleware();
     this.routes();
-    this.data = {};
+    this.data = [];
     this.logger = new Logger();
   }
 
   // Configure Express middleware.
   private middleware(): void {
-    this.express.use(bodyParser.json());
-    this.express.use(bodyParser.urlencoded({ extended: true }));
+    // this.express.use(bodyParser.json());
+    // this.express.use(bodyParser.urlencoded({ extended: true }));
   }
 
   private routes(): void {
@@ -42,10 +31,31 @@ class Upload {
     //   res.send('성공')
     // });
 
-    this.express.post("/image/multi", upload.single('images'), (req: any, res: any, next) => {
-        console.log(req);
-      res.send('hi')
-    });
+    this.express.post("/image/multi", (req: any, res: any, next) => {
+      const length = req.fields.length;
+      const files = req.files;
+      let f_res:object[] = [];
+      for (let [key,val] of Object.entries(files)) {
+        const file = files[key];
+        const file_name_arr = file.name.split(".")
+        const file_extention = file_name_arr[file_name_arr.length - 1];
+        const file_name = new Date().getTime() + (Math.random() * 100).toFixed(0).toString() + "." + file_extention;
+        const file_path = __dirname + '/../uploads/' + file_name;
+        fs.readFile(file.path, (error: any, data:any) => {
+          fs.writeFile(file_path, data, function (error:any) {
+            if(error) {
+              console.error(error);
+            } else {
+              f_res.push({
+                org_key: key,
+                new_file_name: file_name,
+              })
+              if (f_res.length == length) res.json(f_res);
+            }
+          })
+        })
+      }
+    })
   }
 }
 

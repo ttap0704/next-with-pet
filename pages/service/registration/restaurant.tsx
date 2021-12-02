@@ -27,7 +27,6 @@ const Service = () => {
   const [popupVisible, setPopupVisible] = useState(false);
   const [title, setTitle] = useState("");
   const [exposureImages, setExposureImages] = useState([]);
-  const [exposureImageFiles, setExposureImageFiles] = useState([]);
   const [exposureMenu, setExposureMenu] = useState([
     {
       file: {
@@ -106,7 +105,6 @@ const Service = () => {
           let reader = new FileReader();
           reader.onloadend = () => {
             setExposureImages((state) => [...state, {file: file, imageUrl: reader.result.toString()}]);
-            setExposureImageFiles((state => [...state, file]))
           };
           reader.readAsDataURL(file);
         });
@@ -267,29 +265,23 @@ const Service = () => {
     let exposure_images = new FormData();
     let exposure_menu = [];
     let exposure_menu_images = new FormData();
-    // for (let i = 0, leng = exposureImages.length; i < leng; i++) {
-    //   exposure_images.append(`files`, exposureImages[i].file);
-    // }
-
-    for (let i = 0, leng = exposureImageFiles.length; i < leng; i++) {
-      exposure_images.append(`images`, exposureImageFiles[i]);
+    for (let i = 0, leng = exposureImages.length; i < leng; i++) {
+      exposure_images.append(`files_${i}`, exposureImages[i].file);
     }
+    exposure_images.append('length', exposureImages.length.toString());
 
     for (let i = 0, leng = exposureMenu.length; i < leng; i++) {
-      exposure_menu_images.append(`file_${i}`, exposureMenu[i].file.file);
+      exposure_menu_images.append(`files_${i}`, exposureMenu[i].file.file);
       exposure_menu.push({
         comment: exposureMenu[i].comment,
         label: exposureMenu[i].label,
         price: exposureMenu[i].price,
       });
     }
-
-    for (var pair of exposure_images.entries()) {
-      console.log(pair[0] + ", " + pair[1]);
-    }
+    exposure_menu_images.append('length', exposureMenu.length.toString());
 
     uploadImages("/image/multi", exposure_images).then((res) => console.log(res, "1"));
-    // uploadImages("/image/multi", exposure_menu_images).then((res) => console.log(res, "2"));
+    uploadImages("/image/multi", exposure_menu_images).then((res) => console.log(res, "2"));
 
     const data = {
       bname: address.bname,
