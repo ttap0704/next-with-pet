@@ -1,4 +1,3 @@
-import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Logger } from "../logger/logger";
 
@@ -20,13 +19,12 @@ class Restraunt {
 
   // Configure Express middleware.
   private middleware(): void {
-    this.express.use(bodyParser.json());
-    this.express.use(bodyParser.urlencoded({ extended: false }));
   }
 
   private routes(): void {
     this.express.post("/add", (req, res, next) => {
       this.data = req.body;
+      this.logger.info("url:::::::" + req.url);
       res.json(this.data);
     });
   }

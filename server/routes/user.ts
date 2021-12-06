@@ -1,54 +1,35 @@
-import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Logger } from "../logger/logger";
+// import Model from '../models'
 
 class User {
-
     public express: express.Application;
     public logger: Logger;
 
-    // array to hold users
-    public users: any[];
+    public data: object;
 
     constructor() {
         this.express = express();
         this.middleware();
         this.routes();
-        this.users = ['안녕하세요'];
         this.logger = new Logger();
+        this.data = {};
     }
 
     // Configure Express middleware.
     private middleware(): void {
-        this.express.use(bodyParser.json());
-        this.express.use(bodyParser.urlencoded({ extended: false }));
     }
 
     private routes(): void {
-
-        // request to get all the users
-        this.express.get("/", (req, res, next) => {
-            this.logger.info("url:" + req.url);
-            res.json(this.users);
-        });
-
-        // request to get all the users by userName
-        this.express.get("/users/:userName", (req, res, next) => {
-            this.logger.info("url:::::" + req.url);
-            const user = this.users.filter(function(user) {
-                if (req.params.userName === user.userName) {
-                    return user;
-                }
-            });
-            res.json(user);
-        });
-
-        // request to post the user
-        // req.body has object of type {firstName:"fnam1",lastName:"lnam1",userName:"username1"}
-        this.express.post("/", (req, res, next) => {
+        this.express.post("/join", (req:any, res:any, next) => {
             this.logger.info("url:::::::" + req.url);
-            this.users.push(req.body.user);
-            res.json(this.users);
+            // console.log(Model.Users, 'users')
+            // const user = await Users.create({
+            //     username: 'alice123',
+            //     isAdmin: true‹
+            //   }, { fields: ['username'] });
+            this.data = req.body;
+            res.json(this.data);
         });
     }
 }

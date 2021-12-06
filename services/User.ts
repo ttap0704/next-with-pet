@@ -1,14 +1,16 @@
-export async function getAllUsers() {
+import { fetchPostApi,  } from "./_API";
 
-  const response = await fetch('/api/user');
-  return await response.json();
-}
+const path = "/user";
 
-export async function createUser(data) {
-  const response = await fetch(`/api/user`, {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({user: data})
-    })
-  return await response.json();
+export function createUserApi(path2, data) {
+  return new Promise((resolve, reject) => {
+    try {
+      const res = fetchPostApi(path + path2, data)
+      resolve(res);
+    } catch (error) {
+      console.error(error);
+      reject(error);
+      return false;
+    }
+  })
 }

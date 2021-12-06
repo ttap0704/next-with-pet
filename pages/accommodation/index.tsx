@@ -1,5 +1,4 @@
 import { useEffect } from "react";
-import { getAllUsers } from "../../services/User";
 // import { useDispatch, useSelector } from "react-redux";
 // import { RootState } from "../../reducers";
 import color from "../../styles/color.module.scss";
@@ -37,10 +36,6 @@ const Accommodation = () => {
   ];
 
   useEffect(() => {
-    getAllUsers().then(data => {
-      console.log(data);
-    })
-    console.log('컴포넌트가 화면에 나타남');
     return () => {
       console.log('컴포넌트가 화면에서 사라짐');
     };

@@ -1,7 +1,7 @@
-import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Logger } from "../logger/logger";
 const fs = require('fs');
+const formidableMiddleware = require("express-formidable");
 
 class Upload {
 
@@ -21,8 +21,7 @@ class Upload {
 
   // Configure Express middleware.
   private middleware(): void {
-    // this.express.use(bodyParser.json());
-    // this.express.use(bodyParser.urlencoded({ extended: true }));
+    this.express.use(formidableMiddleware())
   }
 
   private routes(): void {
@@ -32,6 +31,7 @@ class Upload {
     // });
 
     this.express.post("/image/multi", (req: any, res: any, next) => {
+      this.logger.info("url:::::::" + req.url);
       const length = req.fields.length;
       const files = req.files;
       let f_res:object[] = [];

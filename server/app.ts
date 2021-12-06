@@ -2,7 +2,6 @@ import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Logger } from "./logger/logger";
 import Routes from "./routes/routes";
-const formidableMiddleware = require("express-formidable");
 
 const path = require('path');
 
@@ -33,7 +32,6 @@ class App {
         this.express.get("/", (req, res, next) => {
             res.sendFile(path.join(__dirname, "../out/"));
         });
-        this.express.use(formidableMiddleware())
         // user route
         this.express.use("/api", Routes);
 

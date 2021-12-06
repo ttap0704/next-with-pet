@@ -1,4 +1,3 @@
-import * as bodyParser from "body-parser";
 import * as express from "express";
 import { Logger } from "../logger/logger";
 import User from "./user";
@@ -22,8 +21,8 @@ class Routes {
 
     // Configure Express middleware.
     private middleware(): void {
-        this.express.use(bodyParser.json());
-        this.express.use(bodyParser.urlencoded({ extended: false }));
+        this.express.use(express.urlencoded({ extended: false }));
+        this.express.use(express.json());
     }
 
     private routes(): void {

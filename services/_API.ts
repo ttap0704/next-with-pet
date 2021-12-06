@@ -1,20 +1,17 @@
 const servername = "/api";
 
-// Fetch POSt
+// Fetch POST
 export const fetchPostApi = async function (uri: string, args: object) {
   let response = await fetch(servername + uri, {
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
     body: JSON.stringify(args)
   });
   let responseJson = await response.json();
+  console.log(responseJson)
   return responseJson;
 };
 
-// Fetch POSt
+// Fetch POST FILES
 export const fetchFileApi = async function (uri: string, args: FormData) {
   let response = await fetch(servername + uri, {
     method: 'POST',
