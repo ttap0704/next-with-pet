@@ -2,18 +2,8 @@
 import {
   Model,
 } from 'sequelize';
-
-const { sequelize } = require('./index')
-
-interface UsersAttributes {
-  id: number;
-  login_id: string;
-  password: string | null;
-  wrong_num: number;
-  nickname: string;
-  // license_id: number;
-  type: boolean;
-}
+const bcrypt = require('bcrypt');
+import {UsersAttributes} from "../interfaces/IUser";
 
 module.exports = (sequelize: any, DataTypes: any) => {
   class Users extends Model<UsersAttributes>
@@ -21,13 +11,17 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public readonly id!: number;
     public login_id!: string;
     public password!: string;
+    public name!: string;
+    public phone!: string;
     public wrong_num: number;
     public nickname!: string;
+    public profile_path!: string;
     // public license_id!: number;
     public type!: boolean;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
+    public validPassword: (password: any, hash: any) => Promise<any>;
 
     public static associate(models: any) {
       Users.hasMany(models.Restaurant, {
@@ -54,6 +48,14 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.STRING(100),
         allowNull: false
       },
+      name: {
+        type: DataTypes.STRING(10),
+        allowNull: false
+      },
+      phone: {
+        type: DataTypes.STRING(15),
+        allowNull: false
+      },
       wrong_num: {
         type: DataTypes.SMALLINT,
         allowNull: true,
@@ -63,6 +65,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.STRING(45),
         allowNull: true,
         unique: true
+      },
+      profile_path: {
+        type: DataTypes.STRING(100),
+        allowNull: true,
       },
       // license_id: {
       //   type: DataTypes.INTEGER,
@@ -79,8 +85,25 @@ module.exports = (sequelize: any, DataTypes: any) => {
       sequelize,
       freezeTableName: true,
       timestamps: true,
+      hooks: {
+        beforeCreate: async (user) => {
+          if (user.password) {
+            const salt = await bcrypt.genSaltSync(10, 'a');
+            user.password = bcrypt.hashSync(user.password, salt);
+          }
+        },
+        beforeUpdate: async (user) => {
+          if (user.password) {
+            const salt = await bcrypt.genSaltSync(10, 'a');
+            user.password = bcrypt.hashSync(user.password, salt);
+          }
+        }
+      },
     }
   )
+   Users.prototype.validPassword = async (password, hash) => {
+    return await bcrypt.compareSync(password, hash);
+   }
 
   return Users;
 }

@@ -2,8 +2,13 @@ const servername = "/api";
 
 // Fetch POST
 export const fetchPostApi = async function (uri: string, args: object) {
+  console.log(args);
   let response = await fetch(servername + uri, {
     method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify(args)
   });
   let responseJson = await response.json();

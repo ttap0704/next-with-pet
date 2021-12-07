@@ -8,14 +8,14 @@ import {
 interface UserReducer {
   uid: number,
   unick: string,
-  profile_img_path: string
+  profile_path: string
 }
 
 // 상태 초기화
 const initialState: UserReducer = {
   uid: 0,
   unick: "",
-  profile_img_path: ""
+  profile_path: ""
 }
 
 // 액션타입 선언
@@ -35,13 +35,13 @@ const userReducer = createReducer<UserReducer, UserReducerActions>(initialState,
   [RESET_USER]: () => ({
     uid: 0,
     unick: "",
-    profile_img_path: ""
+    profile_path: ""
   }),
   [ADD_USER]: (state, action) => {
     return ({
       uid: action.payload.uid,
       unick: action.payload.unick,
-      profile_img_path: action.payload.profile_img_path
+      profile_path: action.payload.profile_path
     })
   },
 })

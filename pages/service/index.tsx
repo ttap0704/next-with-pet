@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 
 const Service = () => {
   const router = useRouter();
-  const { unick, profile_img_path } = useSelector(
+  const { unick, profile_path } = useSelector(
     (state: RootState) => state.userReducer
   );
 
@@ -48,7 +48,7 @@ const Service = () => {
     <div className={styles.service_container}>
       <div
         className={styles.service_profile_img}
-        style={{ backgroundImage: `url(${profile_img_path})` }}
+        style={{ backgroundImage: `url(${profile_path})` }}
       ></div>
       <div className={styles.service_service}>
         <h2>{unick}님</h2>

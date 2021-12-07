@@ -6,7 +6,7 @@ import {useRouter} from "next/router";
 import styles from "../../styles/pages/login.module.scss";
 import {actions, RESET_USER} from "../../reducers/models/user";
 
-import {createUserApi} from "../../services/User";
+import {createUserApi, checkUser} from "../../services/User";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -27,12 +27,12 @@ const Login = () => {
       {
         label: "아이디",
         placeholder: "아이디를 입력해주세요.",
-        target: "id"
+        target: "id",
       },
       {
         label: "비밀번호",
         placeholder: "비밀번호를 입력해주세요.",
-        target: "password"
+        target: "password",
       },
     ];
 
@@ -40,17 +40,27 @@ const Login = () => {
       {
         label: "아이디",
         placeholder: "아이디를 입력해주세요.",
-        target: "id"
+        target: "id",
       },
       {
         label: "비밀번호",
         placeholder: "비밀번호를 입력해주세요.",
-        target: "password"
+        target: "password",
+      },
+      {
+        label: "이름",
+        placeholder: "이름을 입력해주세요.",
+        target: "name",
+      },
+      {
+        label: "휴대폰 번호",
+        placeholder: "휴대폰 번호를 입력해주세요.",
+        target: "phone",
       },
       {
         label: "닉네임",
         placeholder: "닉네임을 입력해주세요.",
-        target: "nickname"
+        target: "nickname",
       },
     ];
 
@@ -58,37 +68,37 @@ const Login = () => {
       {
         label: "사업자등록번호 *",
         placeholder: "아이디를 입력해주세요.",
-        target: "password"
+        target: "password",
       },
       {
         label: "개업일자 *",
         placeholder: "닉네임을 입력해주세요.",
-        target: "password"
+        target: "password",
       },
       {
         label: "대표자성명 *",
         placeholder: "비밀번호를 입력해주세요.",
-        target: "password"
+        target: "password",
       },
       {
         label: "대표자성명2",
         placeholder: "닉네임을 입력해주세요.",
-        target: "password"
+        target: "password",
       },
       {
         label: "법인등록번호",
         placeholder: "닉네임을 입력해주세요.",
-        target: "password"
+        target: "password",
       },
       {
         label: "주업태 *",
         placeholder: "닉네임을 입력해주세요.",
-        target: "password"
+        target: "password",
       },
       {
         label: "주종목 *",
         placeholder: "닉네임을 입력해주세요.",
-        target: "password"
+        target: "password",
       },
     ];
 
@@ -136,13 +146,13 @@ const Login = () => {
   function handleInput(e, target) {
     let item;
 
-    if (contentsText == 'login') item = loginContents;
-    else if (contentsText == 'join') item = joinContents;
+    if (contentsText == "login") item = loginContents;
+    else if (contentsText == "join") item = joinContents;
 
     item[target] = e.target.value;
 
-    if (contentsText == 'login') setLoginContents({...item});
-    else if (contentsText == 'join') setJoinContents({...item});;
+    if (contentsText == "login") setLoginContents({...item});
+    else if (contentsText == "join") setJoinContents({...item});
   }
 
   function onSubmit(e) {
@@ -150,20 +160,24 @@ const Login = () => {
     if (contentsText == "certification") {
       setContentsText("join");
     } else if (contentsText == "join") {
-      createUserApi('/join', joinContents).then(res => {
+      createUserApi("/join", joinContents).then((res) => {
         console.log(res);
-      })
+      });
       // setContentsText("login");
     } else {
-      console.log(contentsText, "2");
-      dispatch(
-        actions.addUser({
-          uid: 1,
-          unick: "쪼앙",
-          profile_img_path: "https://fluffyhund.com/wp-content/uploads/Toy-Poodle-thumb-300x300.jpg",
-        })
-      );
-      router.push("/service");
+      checkUser("/login", loginContents).then((res:any) => {
+        alert(res.message)
+        if (res.pass) {
+          dispatch(
+            actions.addUser({
+              uid: res.uid,
+              unick: res.nickname,
+              profile_path: "http://localhost:3080/uploads/profile/" + res.profile_path,
+            })
+          );
+          router.push("/service");
+        }
+      });
     }
   }
 
