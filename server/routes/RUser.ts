@@ -22,7 +22,7 @@ class User {
   }
 
   private routes(): void {
-    this.express.post("/login", (req, res, next) => {
+    this.express.post("/login", (req:any, res:any, next) => {
       const login_id = req.body.id;
       const password = req.body.password;
 
@@ -52,6 +52,8 @@ class User {
             pass
           }
 
+          req.session.uid = user.id;
+          req.session.save();
           res.json(data);
         }) 
     })

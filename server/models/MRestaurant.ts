@@ -2,16 +2,7 @@ import {
   Model,
 } from 'sequelize';
 
-interface RestaurantAttributes {
-  id: number;
-  bname: string | null;
-  building_name: string | null;
-  detail_address: string | null;
-  label: string;
-  sido: string | null;
-  sigungu: string | null;
-  zonecode: string | null;
-}
+import {RestaurantAttributes} from "../interfaces/IRestaurant";
 
 module.exports = (sequelize: any, DataTypes: any) => {
   class Restaurant extends Model<RestaurantAttributes>
@@ -24,6 +15,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public sido!: string;
     public sigungu!: string;
     public zonecode!: string;
+    public road_address!: string;
 
     public readonly createdAt!: Date;
 
@@ -80,6 +72,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       zonecode: {
         type: DataTypes.STRING(45),
+        allowNull: true
+      },
+      road_address:{
+        type: DataTypes.STRING(100),
         allowNull: true
       }
     },

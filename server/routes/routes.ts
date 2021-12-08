@@ -1,8 +1,8 @@
 import * as express from "express";
 import { Logger } from "../logger/logger";
-import User from "./user";
-import Restaurant from "./restaurant";
-import Upload from "./upload";
+import User from "./RUser";
+import Restaurant from "./RRestaurant";
+import Upload from "./RUpload";
 
 class Routes {
 

@@ -280,10 +280,10 @@ const Service = () => {
     }
     exposure_menu_images.append('length', exposureMenu.length.toString());
 
-    uploadImages("/image/multi", exposure_images).then((res) => console.log(res, "1"));
-    uploadImages("/image/multi", exposure_menu_images).then((res) => console.log(res, "2"));
+    
 
     const data = {
+      label: title,
       bname: address.bname,
       building_name: address.building_name,
       detail_address: address.detail_address,
@@ -291,10 +291,14 @@ const Service = () => {
       sido: address.sido,
       sigungu: address.sigungu,
       zonecode: address.zonecode,
-      exposure_images,
-      exposure_menu,
       entireMenu,
     };
+
+    // uploadImages("/image/multi", exposure_images).then((res) => console.log(res, "1"));
+    // uploadImages("/image/multi", exposure_menu_images).then((res) => console.log(res, "2"));
+    addRestaurantApi('/add', data).then(res => {
+      console.log(res);
+    })
 
     console.log(data);
   }

@@ -1,8 +1,20 @@
 import * as express from "express";
 import { Logger } from "./logger/logger";
-import Routes from "./routes/routes";
+import Routes from "./routes/Routes";
 
 const path = require('path');
+const session = require('express-session');
+const dotenv = require('dotenv');
+const cookieParser = require('cookie-parser');
+const sessionOption = {
+    resave: false,
+    saveUninitialized: false,
+    secret: process.env.COOKIE_SECRET,
+    cookie: {
+        httpOnly: true,
+        secure: false,
+    },
+};
 
 class App {
     public express: express.Application;
@@ -21,14 +33,16 @@ class App {
 
     // Configure Express middleware.
     private middleware(): void {
-        this.express.use(express.urlencoded({extended: false}));
+        this.express.use(express.urlencoded({ extended: false }));
         this.express.use(express.json());
         this.express.use(express.static(path.join(__dirname, "../out/")));
+        this.express.use(cookieParser(process.env.COOKIE_SECRET));
+        this.express.use(session(sessionOption));
     }
 
     private routes(): void {
 
-        this.express.get("/", (req, res, next) => {
+        this.express.get("/", (req: any, res: any, next) => {
             res.sendFile(path.join(__dirname, "../out/"));
         });
         // user route
