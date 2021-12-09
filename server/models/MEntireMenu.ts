@@ -19,6 +19,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
       EntireMenu.belongsTo(models.Restaurant, {
         foreignKey: "restraunt_id",
       });
+
+      EntireMenu.belongsTo(models.EntireMenuCategory, {
+        foreignKey: "category_id",
+      });
     };
   }
 

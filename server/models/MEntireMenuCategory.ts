@@ -2,22 +2,26 @@ import {
   Model,
 } from 'sequelize';
 
-interface EntireMenuAttributes {
+interface EntireMenuCategoryAttributes {
   id: number;
   category: string;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
-  class EntireMenu extends Model<EntireMenuAttributes>
-    implements EntireMenuAttributes {
+  class EntireMenuCategory extends Model<EntireMenuCategoryAttributes>
+    implements EntireMenuCategoryAttributes {
     public readonly id!: number;
     public category!: string;
 
     public static associate(models: any) {
+      EntireMenuCategory.hasMany(models.Images, {
+        sourceKey: 'id',
+        foreignKey: "category_id",
+      });
     };
   }
 
-  EntireMenu.init(
+  EntireMenuCategory.init(
     {
       id: {
         type: DataTypes.INTEGER.UNSIGNED,
@@ -35,11 +39,11 @@ module.exports = (sequelize: any, DataTypes: any) => {
       tableName: 'entire_menu_category',
       sequelize,
       freezeTableName: true,
-      timestamps: true,
+      timestamps: false,
       createdAt: false,
-      updatedAt: false
+      updatedAt: false,
     }
   )
 
-  return EntireMenu;
+  return EntireMenuCategory;
 }

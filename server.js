@@ -13,7 +13,8 @@ const apiPaths = {
     pathRewrite: {
       "^/api": "/api",
     },
-    changeOrigin: true
+    changeOrigin: true,
+    cookieDomainRewrite: 'localhost',
   },
 };
 
