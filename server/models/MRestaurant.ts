@@ -16,6 +16,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public sigungu!: string;
     public zonecode!: string;
     public road_address!: string;
+    public introduction!: string;
 
     public readonly createdAt!: Date;
 
@@ -25,11 +26,11 @@ module.exports = (sequelize: any, DataTypes: any) => {
       });
       Restaurant.hasMany(models.ExposureMenu, {
         sourceKey: "id",
-        foreignKey: "restraunt_id",
+        foreignKey: "restaurant_id",
       })
       Restaurant.hasMany(models.EntireMenu, {
         sourceKey: "id",
-        foreignKey: "restraunt_id",
+        foreignKey: "restaurant_id",
       })
       Restaurant.hasMany(models.Images, {
         sourceKey: "id",
@@ -76,6 +77,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       road_address:{
         type: DataTypes.STRING(100),
+        allowNull: true
+      },
+      introduction: {
+        type: DataTypes.STRING(1000),
         allowNull: true
       }
     },

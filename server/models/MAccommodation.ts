@@ -11,6 +11,7 @@ interface AccommodationAttributes {
   sido: string | null;
   sigungu: string | null;
   zonecode: string | null;
+  introduction: string | null;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -24,6 +25,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public sido!: string;
     public sigungu!: string;
     public zonecode!: string;
+    public introduction!: string;
 
     public readonly createdAt!: Date;
 
@@ -72,6 +74,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
       zonecode: {
         type: DataTypes.STRING(45),
+        allowNull: true
+      },
+      introduction: {
+        type: DataTypes.STRING(1000),
         allowNull: true
       }
     },

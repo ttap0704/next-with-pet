@@ -24,7 +24,11 @@ const logger = new Logger();
 
 server.on("listening", function (): void {
     const dir = './uploads';
+    const contents_dir = ['restaurant', 'exposure_menu', 'accommodation', 'rooms', 'profile'];
     if (!fs.existsSync(dir)) fs.mkdirSync(dir);
+    for (let x of contents_dir) {
+        if (!fs.existsSync(`${dir}/${x}`)) fs.mkdirSync(`${dir}/${x}`);
+    }
 
     const addr = server.address();
     const bind = (typeof addr === "string") ? `pipe ${addr}` : `port ${addr.port}`;

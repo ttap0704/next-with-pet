@@ -26,6 +26,7 @@ const Service = () => {
   let [curPage, setCurPage] = useState("exposure");
   const [popupVisible, setPopupVisible] = useState(false);
   const [title, setTitle] = useState("");
+  const [intro, setIntro] = useState("");
   const [exposureImages, setExposureImages] = useState([]);
   const [exposureMenu, setExposureMenu] = useState([
     {
@@ -262,25 +263,14 @@ const Service = () => {
   }
 
   function addRestaurant() {
-    let exposure_images = new FormData();
     let exposure_menu = [];
-    let exposure_menu_images = new FormData();
-    for (let i = 0, leng = exposureImages.length; i < leng; i++) {
-      exposure_images.append(`files_${i}`, exposureImages[i].file);
-    }
-    exposure_images.append('length', exposureImages.length.toString());
-
     for (let i = 0, leng = exposureMenu.length; i < leng; i++) {
-      exposure_menu_images.append(`files_${i}`, exposureMenu[i].file.file);
       exposure_menu.push({
         comment: exposureMenu[i].comment,
         label: exposureMenu[i].label,
         price: exposureMenu[i].price,
       });
     }
-    exposure_menu_images.append('length', exposureMenu.length.toString());
-
-    
 
     const data = {
       label: title,
@@ -292,13 +282,49 @@ const Service = () => {
       sigungu: address.sigungu,
       zonecode: address.zonecode,
       entireMenu,
+      exposureMenu: exposure_menu,
+      introduction: intro
     };
 
-    // uploadImages("/image/multi", exposure_images).then((res) => console.log(res, "1"));
-    // uploadImages("/image/multi", exposure_menu_images).then((res) => console.log(res, "2"));
-    addRestaurantApi('/add', data).then(res => {
-      console.log(res);
-    })
+
+    addRestaurantApi("/add", data).then((res:{restaurant_id: number, exposure_menu: object[]}) => {
+      const res_restaraunt_id = res.restaurant_id;
+      const res_exposure_menu:any = res.exposure_menu;
+
+      let exposure_images = new FormData();
+      let exposure_menu_images = new FormData();
+      for (let i = 0, leng = exposureImages.length; i < leng; i++) {
+        const file_name_arr = exposureImages[i].file.name.split(".")
+        const file_extention = file_name_arr[file_name_arr.length - 1];
+        const new_file = new File(exposureImages[i].file, `${res_restaraunt_id}_${i}.${file_extention}`);
+        exposure_images.append(`files_${i}`, new_file);
+      }
+
+      for (let i = 0, leng = res_exposure_menu.length; i < leng; i++) {
+        const file_name_arr = exposureImages[i].file.name.split(".")
+        const file_extention = file_name_arr[file_name_arr.length - 1];
+        const menu_idx = exposureMenu.findIndex(menu => {return menu.label == res_exposure_menu[i].label})
+
+        const new_file = new File(exposureImages[menu_idx].file, `${res_restaraunt_id}_${res_exposure_menu[i].id}.${file_extention}`);
+        exposure_menu_images.append(`files_${i}`, new_file);
+      }
+      exposure_images.append("length", exposureImages.length.toString());
+      exposure_images.append("category", '1');
+      exposure_menu_images.append("length", exposureMenu.length.toString());
+      exposure_menu_images.append("category", '2');
+  
+  
+      uploadImages("/image/multi", exposure_images).then((res) => console.log(res, "1"));
+      uploadImages("/image/multi", exposure_menu_images).then((res) => console.log(res, "2"));
+    });
+
+        // {comment: "멋지다"
+    // id: 1
+    // label: "야경"
+    // price: "300"
+    // restaurant_id: 2}
+
+    
 
     console.log(data);
   }
@@ -429,7 +455,11 @@ const Service = () => {
               <h1>상세 페이지</h1>
               <div style={{marginBottom: "3rem"}}>
                 <h2>소개</h2>
-                <textarea className={styles.detail_intro} placeholder="식당에 대해 자유롭게 작성해주시길 바랍니다." />
+                <textarea
+                  className={styles.detail_intro}
+                  placeholder="식당에 대해 자유롭게 작성해주시길 바랍니다."
+                  onChange={(e) => setIntro(e.target.value)}
+                />
               </div>
               <div>
                 <h2>메뉴</h2>

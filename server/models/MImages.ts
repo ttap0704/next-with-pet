@@ -46,6 +46,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       category: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        comment: "1: Restaurant / 2: ExposureMenu / 11: Accomodation / 12: Rooms"
       }
     },
     {

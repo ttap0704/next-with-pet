@@ -34,26 +34,28 @@ class Upload {
       this.logger.info("url:::::::" + req.url);
       const length = req.fields.length;
       const files = req.files;
+      const uid = req.session.uid;
       let f_res:object[] = [];
       for (let [key,val] of Object.entries(files)) {
         const file = files[key];
-        const file_name_arr = file.name.split(".")
-        const file_extention = file_name_arr[file_name_arr.length - 1];
-        const file_name = new Date().getTime() + (Math.random() * 100).toFixed(0).toString() + "." + file_extention;
-        const file_path = __dirname + '/../uploads/' + file_name;
-        fs.readFile(file.path, (error: any, data:any) => {
-          fs.writeFile(file_path, data, function (error:any) {
-            if(error) {
-              console.error(error);
-            } else {
-              f_res.push({
-                org_key: key,
-                new_file_name: file_name,
-              })
-              if (f_res.length == length) res.json(f_res);
-            }
-          })
-        })
+        console.log(file)
+        // const file_name_arr = file.name.split(".")
+        // const file_extention = file_name_arr[file_name_arr.length - 1];
+        // const file_name = uid + '_' + new Date().getTime() + (Math.random() * 100).toFixed(0).toString() + "." + file_extention;
+        // const file_path = __dirname + '/../uploads/' + file_name;
+        // fs.readFile(file.path, (error: any, data:any) => {
+        //   fs.writeFile(file_path, data, function (error:any) {
+        //     if(error) {
+        //       console.error(error);
+        //     } else {
+        //       f_res.push({
+        //         org_key: key,
+        //         new_file_name: file_name,
+        //       })
+        //       if (f_res.length == length) res.json(f_res);
+        //     }
+        //   })
+        // })
       }
     })
   }

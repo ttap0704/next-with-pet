@@ -8,4 +8,10 @@ export interface RestaurantAttributes {
   sigungu: string | null;
   zonecode: string | null;
   road_address: string | null;
+  introduction: string | null;
+}
+
+export interface Category {
+  id: number;
+  category: string;
 }

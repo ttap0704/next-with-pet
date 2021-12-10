@@ -6,6 +6,7 @@ interface ExposureMenuAttributes {
   id: number;
   label: string;
   price: number;
+  comment: string;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -14,15 +15,16 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public readonly id!: number;
     public label!: string;
     public price!: number;
+    public comment!: string;
 
     public static associate(models: any) {
       ExposureMenu.hasMany(models.Images, {
         sourceKey: 'id',
         foreignKey: "target",
       });
-      
+
       ExposureMenu.belongsTo(models.Restaurant, {
-        foreignKey: "restraunt_id",
+        foreignKey: "restaurant_id",
       });
     };
   }
@@ -42,6 +44,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
       price: {
         type: DataTypes.INTEGER,
         allowNull: false
+      },
+      comment: {
+        type: DataTypes.STRING(100),
+        allowNull: true
       },
     },
     {

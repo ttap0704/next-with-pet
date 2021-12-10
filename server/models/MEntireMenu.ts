@@ -17,7 +17,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
 
     public static associate(models: any) {
       EntireMenu.belongsTo(models.Restaurant, {
-        foreignKey: "restraunt_id",
+        foreignKey: "restaurant_id",
       });
 
       EntireMenu.belongsTo(models.EntireMenuCategory, {
