@@ -300,14 +300,15 @@ const Service = () => {
         exposure_images.append(`files_${i}`, new_file);
       }
 
-      for (let i = 0, leng = res_exposure_menu.length; i < leng; i++) {
-        const file_name_arr = exposureImages[i].file.name.split(".")
-        const file_extention = file_name_arr[file_name_arr.length - 1];
-        const menu_idx = exposureMenu.findIndex(menu => {return menu.label == res_exposure_menu[i].label})
+      // 여기 수정 필요 => exposureImage x exposureMemu o
+      // for (let i = 0, leng = res_exposure_menu.length; i < leng; i++) {
+      //   const file_name_arr = exposureImages[i].file.name.split(".")
+      //   const file_extention = file_name_arr[file_name_arr.length - 1];
+      //   const menu_idx = exposureMenu.findIndex(menu => {return menu.label == res_exposure_menu[i].label})
 
-        const new_file = new File(exposureImages[menu_idx].file, `${res_restaraunt_id}_${res_exposure_menu[i].id}.${file_extention}`);
-        exposure_menu_images.append(`files_${i}`, new_file);
-      }
+      //   const new_file = new File(exposureImages[menu_idx].file, `${res_restaraunt_id}_${res_exposure_menu[i].id}.${file_extention}`);
+      //   exposure_menu_images.append(`files_${i}`, new_file);
+      // }
       exposure_images.append("length", exposureImages.length.toString());
       exposure_images.append("category", '1');
       exposure_menu_images.append("length", exposureMenu.length.toString());
