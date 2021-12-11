@@ -40,7 +40,13 @@ ul, ol, li {
   list-style: none;
 }
 
-input,button, textarea {
+input, textarea {
+  &:focus-visible {
+    outline: unset;
+  }
+}
+
+input, button, textarea {
   border-color: #e3e3e3;
   box-shadow: none !important;
   border-radius: 6px;
@@ -67,6 +73,8 @@ input[type="file"] {
    clip:rect(0,0,0,0); 
    border: 0;
 } 
+
+
 
 
 

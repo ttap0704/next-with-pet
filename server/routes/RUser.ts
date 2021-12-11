@@ -23,8 +23,19 @@ class User {
 
   private routes(): void {
     this.express.post("/login", (req:any, res:any, next) => {
-      const login_id = req.body.id;
-      const password = req.body.password;
+      const login_id:string = req.body.id;
+      const password:string = req.body.password;
+      let message: string = "";
+        let pass:boolean = false;
+
+      if (login_id.length == 0 || password.length == 0) {
+        const data = {
+          message: "아이디, 비밀번호를 모두 입력해주세요.",
+          pass: false,
+        };
+
+        res.json(data);
+      }
 
       Model.Users.findOne(
         {
@@ -34,8 +45,7 @@ class User {
         })
         .then(async (user:UsersAttributes) => {
           const validate = await Model.Users.prototype.validPassword(password, user.password)
-          let message: string = "";
-          let pass:boolean = false;
+          
           if (validate) {
             message= `${user.nickname}님 환영합니다!`
             pass= true

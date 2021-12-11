@@ -263,6 +263,27 @@ const Service = () => {
   }
 
   function addRestaurant() {
+    // 예외 처리
+    let notice:string = "";
+    if (title.length <= 0) {
+      notice = "식당 이름을 입력해주세요";
+    } else if (intro.length <= 0) {
+      notice = "식당 소개 입력해주세요";
+    } else if (exposureImages.length <= 0) {
+      notice = "대표 이미지를 1개이상 등록해주세요";
+    } else if (exposureMenu.length <= 0) {
+      notice = "대표 메뉴를 1개이상 등록해주세요";
+    } else if (address.road_address.length <= 0) {
+      notice = "주소를 등록해주세요";
+    } else if (address.detail_address.length <= 0) {
+      notice = "상세 주소를 입력해주세요";
+    }
+
+    if (notice.length > 0) {
+      alert(notice);
+      return false;
+    }
+    
     let exposure_menu = [];
     for (let i = 0, leng = exposureMenu.length; i < leng; i++) {
       exposure_menu.push({
