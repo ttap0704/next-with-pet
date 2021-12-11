@@ -18,11 +18,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public comment!: string;
 
     public static associate(models: any) {
-      ExposureMenu.hasMany(models.Images, {
-        sourceKey: 'id',
-        foreignKey: "target",
-      });
-
       ExposureMenu.belongsTo(models.Restaurant, {
         foreignKey: "restaurant_id",
       });

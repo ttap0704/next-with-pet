@@ -40,9 +40,9 @@ class Restraunt {
         zonecode: data.zonecode,
         road_address: data.road_address,
         manager: manager,
-        indtroduction: data.introduction
+        introduction: data.introduction
       }, {
-        fields: ['bname', 'building_name', 'detail_address', 'label', 'sido', 'sigungu', 'zonecode', 'road_address', 'manager', 'indtroduction']
+        fields: ['bname', 'building_name', 'detail_address', 'label', 'sido', 'sigungu', 'zonecode', 'road_address', 'manager', 'introduction']
       });
 
       let category: { category: string }[] = [];
@@ -76,9 +76,9 @@ class Restraunt {
         }
       }
 
-      let expousre_menu_bulk = [];
+      let exposure_menu_bulk = [];
       for (let x of data.exposureMenu) {
-        expousre_menu_bulk.push({
+        exposure_menu_bulk.push({
           label: x.label,
           price: x.price,
           comment: x.comment,
@@ -90,7 +90,7 @@ class Restraunt {
         individualHooks: true,
         fields: ['label', 'price', 'category_id', 'restaurant_id']
       });
-      const exposure_menu = await Model.ExposureMenu.bulkCreate(expousre_menu_bulk, {
+      const exposure_menu = await Model.ExposureMenu.bulkCreate(exposure_menu_bulk, {
         individualHooks: true,
         fields: ['label', 'price', 'comment', 'restaurant_id']
       })

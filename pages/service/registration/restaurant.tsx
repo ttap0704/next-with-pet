@@ -1,17 +1,17 @@
-import React, {useEffect, useState} from "react";
-import {useDispatch} from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useDispatch } from "react-redux";
 import styles from "../../../styles/pages/registration.module.scss";
 import common from "../../../styles/common.module.scss";
 import res_style from "../../../styles/pages/restaurant.module.scss";
-import {useRouter} from "next/router";
-import {FaFileUpload} from "react-icons/fa";
-import {TiDelete} from "react-icons/ti";
-import {HiChevronDoubleRight, HiChevronDoubleLeft, HiPlusCircle, HiOutlinePlusCircle} from "react-icons/hi";
-import {Tooltip, IconButton} from "@mui/material";
+import { useRouter } from "next/router";
+import { FaFileUpload } from "react-icons/fa";
+import { TiDelete } from "react-icons/ti";
+import { HiChevronDoubleRight, HiChevronDoubleLeft, HiPlusCircle, HiOutlinePlusCircle } from "react-icons/hi";
+import { Tooltip, IconButton } from "@mui/material";
 import PostCode from "../../../src/components/postcode";
-import {actions, RESET_RESTRAURANT} from "../../../reducers/models/restaurant";
-import {addRestaurantApi} from "../../../services/Restautrant";
-import {uploadImages} from "../../../services/Upload";
+import { actions, RESET_RESTRAURANT } from "../../../reducers/models/restaurant";
+import { addRestaurantApi } from "../../../services/Restautrant";
+import { uploadImages } from "../../../services/Upload";
 
 const Service = () => {
   const dispatch = useDispatch();
@@ -42,7 +42,7 @@ const Service = () => {
   const [entireMenu, setEntireMenu] = useState([
     {
       category: "",
-      menu: [{label: "", price: ""}],
+      menu: [{ label: "", price: "" }],
     },
   ]);
   const [address, setAddress] = useState({
@@ -105,7 +105,7 @@ const Service = () => {
         files.forEach((file) => {
           let reader = new FileReader();
           reader.onloadend = () => {
-            setExposureImages((state) => [...state, {file: file, imageUrl: reader.result.toString()}]);
+            setExposureImages((state) => [...state, { file: file, imageUrl: reader.result.toString() }]);
           };
           reader.readAsDataURL(file);
         });
@@ -207,7 +207,7 @@ const Service = () => {
     let items = entireMenu;
     let item = items[idx];
 
-    item.menu.push({label: "", price: ""});
+    item.menu.push({ label: "", price: "" });
     items[idx] = item;
 
     setEntireMenu([...items]);
@@ -246,7 +246,7 @@ const Service = () => {
     }
     items.push({
       category: "",
-      menu: [{label: "", price: ""}],
+      menu: [{ label: "", price: "" }],
     });
 
     setEntireMenu([...items]);
@@ -287,45 +287,45 @@ const Service = () => {
     };
 
 
-    addRestaurantApi("/add", data).then((res:{restaurant_id: number, exposure_menu: object[]}) => {
+    addRestaurantApi("/add", data).then((res: { restaurant_id: number, exposure_menu: object[] }) => {
       const res_restaraunt_id = res.restaurant_id;
-      const res_exposure_menu:any = res.exposure_menu;
+      const res_exposure_menu: any = res.exposure_menu;
 
       let exposure_images = new FormData();
       let exposure_menu_images = new FormData();
       for (let i = 0, leng = exposureImages.length; i < leng; i++) {
         const file_name_arr = exposureImages[i].file.name.split(".")
         const file_extention = file_name_arr[file_name_arr.length - 1];
-        const new_file = new File(exposureImages[i].file, `${res_restaraunt_id}_${i}.${file_extention}`);
+        const new_file = new File(
+          [exposureImages[i].file],
+          `${res_restaraunt_id}_${i}.${file_extention}`,
+          { type: 'image/jpeg' }
+        );
         exposure_images.append(`files_${i}`, new_file);
       }
 
       // 여기 수정 필요 => exposureImage x exposureMemu o
-      // for (let i = 0, leng = res_exposure_menu.length; i < leng; i++) {
-      //   const file_name_arr = exposureImages[i].file.name.split(".")
-      //   const file_extention = file_name_arr[file_name_arr.length - 1];
-      //   const menu_idx = exposureMenu.findIndex(menu => {return menu.label == res_exposure_menu[i].label})
+      for (let i = 0, leng = res_exposure_menu.length; i < leng; i++) {
+        const file_name_arr = exposureMenu[i].file.file.name.split(".")
+        const file_extention = file_name_arr[file_name_arr.length - 1];
+        const menu_idx = exposureMenu.findIndex(menu => { return menu.label == res_exposure_menu[i].label })
 
-      //   const new_file = new File(exposureImages[menu_idx].file, `${res_restaraunt_id}_${res_exposure_menu[i].id}.${file_extention}`);
-      //   exposure_menu_images.append(`files_${i}`, new_file);
-      // }
+        const new_file = new File(
+          [exposureMenu[menu_idx].file.file],
+          `${res_restaraunt_id}_${res_exposure_menu[i].id}_${i}.${file_extention}`,
+          { type: 'image/jpeg' }
+        );
+        exposure_menu_images.append(`files_${i}`, new_file);
+      }
       exposure_images.append("length", exposureImages.length.toString());
       exposure_images.append("category", '1');
       exposure_menu_images.append("length", exposureMenu.length.toString());
-      exposure_menu_images.append("category", '2');
-  
-  
+      exposure_menu_images.append("category", '11');
+
+
       uploadImages("/image/multi", exposure_images).then((res) => console.log(res, "1"));
       uploadImages("/image/multi", exposure_menu_images).then((res) => console.log(res, "2"));
     });
-
-        // {comment: "멋지다"
-    // id: 1
-    // label: "야경"
-    // price: "300"
-    // restaurant_id: 2}
-
-    
 
     console.log(data);
   }
@@ -333,11 +333,11 @@ const Service = () => {
   const preview = () => {
     return (
       <div className={styles.rest_preview}>
-        <div className={res_style.list} style={{cursor: "unset"}}>
+        <div className={res_style.list} style={{ cursor: "unset" }}>
           <div
             id="exposure_img"
             className={res_style.list_img}
-            style={exposureImages.length > 0 ? {backgroundImage: `url(${exposureImages[0].imageUrl})`} : null}
+            style={exposureImages.length > 0 ? { backgroundImage: `url(${exposureImages[0].imageUrl})` } : null}
           >
             {exposureImages.length == 0 ? (
               <h3
@@ -370,7 +370,7 @@ const Service = () => {
               return (
                 <div
                   key={index}
-                  style={{backgroundImage: `url(${data.imageUrl})`}}
+                  style={{ backgroundImage: `url(${data.imageUrl})` }}
                   onClick={() => changePreviewImg(index)}
                 />
               );
@@ -390,8 +390,8 @@ const Service = () => {
               <h1>노출 페이지</h1>
               {preview()}
               <form className={styles.form_box} id="preview_images">
-                <div style={{marginBottom: "12px"}}>
-                  <label htmlFor="preview_img" className={common.file_input} style={{float: "right"}}>
+                <div style={{ marginBottom: "12px" }}>
+                  <label htmlFor="preview_img" className={common.file_input} style={{ float: "right" }}>
                     대표이미지 업로드
                     <FaFileUpload />
                   </label>
@@ -408,13 +408,13 @@ const Service = () => {
                   type="text"
                   placeholder="식당 이름을 입력해주세요."
                   className={styles.custom_input}
-                  style={{marginBottom: "16px"}}
+                  style={{ marginBottom: "16px" }}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
 
                 <h3>주소</h3>
-                <div className={styles.with_btn} style={{marginBottom: "4px"}}>
+                <div className={styles.with_btn} style={{ marginBottom: "4px" }}>
                   <input
                     type="text"
                     placeholder="우편번호"
@@ -429,7 +429,7 @@ const Service = () => {
                     type="text"
                     placeholder="도로명 주소"
                     className={styles.custom_input}
-                    style={{marginBottom: "4px"}}
+                    style={{ marginBottom: "4px" }}
                     value={address.road_address ?? ""}
                     disabled
                   />
@@ -437,7 +437,7 @@ const Service = () => {
                     type="text"
                     placeholder="참고항목"
                     className={styles.custom_input}
-                    style={{marginBottom: "4px"}}
+                    style={{ marginBottom: "4px" }}
                     value={address.building_name ? `(${address.building_name})` : ""}
                     disabled
                   />
@@ -446,7 +446,7 @@ const Service = () => {
                   type="text"
                   placeholder="상세주소"
                   className={styles.custom_input}
-                  style={{marginBottom: "4px"}}
+                  style={{ marginBottom: "4px" }}
                   value={address.detail_address}
                   onChange={(e) => updateDetailAddress(e)}
                 />
@@ -454,7 +454,7 @@ const Service = () => {
             </div>
             <div className={styles.page}>
               <h1>상세 페이지</h1>
-              <div style={{marginBottom: "3rem"}}>
+              <div style={{ marginBottom: "3rem" }}>
                 <h2>소개</h2>
                 <textarea
                   className={styles.detail_intro}
@@ -473,7 +473,7 @@ const Service = () => {
                       </IconButton>
                     </Tooltip>
                   </div>
-                  <ul className={styles.rest_menu_wrap} style={{border: "1px solid #e3e3e3"}}>
+                  <ul className={styles.rest_menu_wrap} style={{ border: "1px solid #e3e3e3" }}>
                     {exposureMenu.map((data, index) => {
                       return (
                         <li
@@ -487,7 +487,7 @@ const Service = () => {
                             <label htmlFor={`exposure_menu_img_${index}`}>
                               이미지
                               {data.file.file == null ? null : (
-                                <div style={{backgroundImage: `url(${data.file.imageUrl})`}} />
+                                <div style={{ backgroundImage: `url(${data.file.imageUrl})` }} />
                               )}
                             </label>
                             <input
@@ -503,7 +503,7 @@ const Service = () => {
                               onChange={(e) => inputExposureMenu(e, index, "label")}
                               value={data.label}
                             />
-                            <div style={data.price.length > 0 ? {paddingRight: "8px"} : null}>
+                            <div style={data.price.length > 0 ? { paddingRight: "8px" } : null}>
                               <input
                                 type="text"
                                 placeholder="메뉴 가격을 입력해주세요."
@@ -580,7 +580,7 @@ const Service = () => {
                                   />
                                   <div
                                     className={styles.rest_entire_menu_price}
-                                    style={menu.price.length > 0 ? {paddingRight: "56px"} : null}
+                                    style={menu.price.length > 0 ? { paddingRight: "56px" } : null}
                                   >
                                     <input
                                       type="text"
@@ -615,10 +615,10 @@ const Service = () => {
           id="slider_btn"
           className={styles.slider_btn}
           onClick={() => movePage(curPage)}
-          style={{marginRight: "-10rem", right: 0}}
+          style={{ marginRight: "-10rem", right: 0 }}
         >
           {curPage == "detail" ? <HiChevronDoubleLeft /> : <HiChevronDoubleRight />}
-          <p style={{margin: "0 12px", display: "block"}}>{curPage == "detail" ? "뒤로가기" : "상세페이지 등록"}</p>
+          <p style={{ margin: "0 12px", display: "block" }}>{curPage == "detail" ? "뒤로가기" : "상세페이지 등록"}</p>
         </div>
       </div>
       {popupVisible ? (

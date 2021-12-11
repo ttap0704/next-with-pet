@@ -33,6 +33,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       Accommodation.belongsTo(models.Users, {
         foreignKey: "manager",
       });
+      
       Accommodation.hasMany(models.Rooms, {
         sourceKey: "id",
         foreignKey: "accommodation_id",

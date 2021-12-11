@@ -20,10 +20,6 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public maximum_num!: number;
 
     public static associate(models: any) {
-      Rooms.hasMany(models.Images, {
-        sourceKey: 'id',
-        foreignKey: "target",
-      });
       Rooms.belongsTo(models.Restaurant, {
         foreignKey: "accommodation_id",
       });
