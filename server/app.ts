@@ -1,6 +1,6 @@
 import * as express from "express";
 import { Logger } from "./logger/logger";
-import Routes from "./routes/Routes";
+import Routes from "./routes/_routes";
 
 const path = require('path');
 const session = require('express-session');

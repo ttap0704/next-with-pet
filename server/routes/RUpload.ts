@@ -8,6 +8,7 @@ import {
 } from "../constrant";
 import Model from '../models'
 
+const path = require('path');
 const fs = require('fs');
 const formidableMiddleware = require("express-formidable");
 
@@ -34,11 +35,6 @@ class Upload {
   }
 
   private routes(): void {
-
-    // this.express.post("/image/single",, (req:any, res:any, next) => {
-    //   res.send('성공')
-    // });
-
     this.express.post("/image/multi", async (req: any, res: any, next) => {
       this.logger.info("url:::::::" + req.url);
       const length = req.fields.length;

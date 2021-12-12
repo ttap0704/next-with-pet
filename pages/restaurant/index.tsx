@@ -5,6 +5,7 @@ import color from "../../styles/color.module.scss";
 import styles from "../../styles/pages/restaurant.module.scss";
 import { fetchGetApi } from "../../services/_API";
 import { actions, RESET_RESTRAURANT } from "../../reducers/models/restaurant"
+import Image from "next/image"
 
 const Restaurant = () => {
   const { list } = useSelector((state: RootState) => state.restaurantReducer);
@@ -27,9 +28,12 @@ const Restaurant = () => {
         <div className={styles.list} key={idx}>
           <div
             className={styles.list_img}
-            style={{ backgroundImage: `url(https://news.kbs.co.kr/data/news/2017/01/04/3405677_bH6.jpg)` }}
-          // style={{ backgroundImage: `url(http://localhost:3080/uploads/exposure_menu/${data.exposure_menu[0].exposure_menu_image.file_name})` }}
+            style={{ backgroundImage: `url('api/image/exposure_menu/1_2_1.jpg')`}}
           ></div>
+          {/* <img
+            className={styles.list_img}
+            src='api/image/exposure_menu/1_2_1.jpg'
+          /> */}
           <div className={styles.list_text_container}>
             <div className={styles.list_text}>
               <h2>{data.label}</h2>
