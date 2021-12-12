@@ -37,6 +37,12 @@ module.exports = (sequelize: any, DataTypes: any) => {
       Accommodation.hasMany(models.Rooms, {
         sourceKey: "id",
         foreignKey: "accommodation_id",
+      });
+
+      Accommodation.hasMany(models.Images, {
+        sourceKey: "id",
+        as: 'accommodation_images',
+        foreignKey: "accommodation_id",
       })
     };
   }

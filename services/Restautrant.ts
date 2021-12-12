@@ -14,11 +14,14 @@ export function addRestaurantApi(path2, data) {
   })
 }
 
-export async function createUser(data) {
-  const response = await fetch(`/api/user`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ user: data })
+export function getRestaurantApi(path2) {
+  return new Promise((resolve, reject) => {
+    try {
+      const res = fetchGetApi(path + path2)
+      resolve(res);
+    } catch (error) {
+      console.error(error);
+      return false;
+    }
   })
-  return await response.json();
 }

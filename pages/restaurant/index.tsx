@@ -1,65 +1,41 @@
-// import { useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { RootState } from "../../reducers";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../reducers";
 import color from "../../styles/color.module.scss";
 import styles from "../../styles/pages/restaurant.module.scss";
+import { fetchGetApi } from "../../services/_API";
+import { actions, RESET_RESTRAURANT } from "../../reducers/models/restaurant"
 
 const Restaurant = () => {
-  // const { no, text } = useSelector((state: RootState) => state.testReducer);
+  const { list } = useSelector((state: RootState) => state.restaurantReducer);
 
-  // const dispatch = useDispatch();
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   dispatch({
-  //     type: RESET_TEXT,
-  //   });
-  // }, []);
-  const data = [
-    {
-      idx: 0,
-      title: "수영장 펜션, 반려동물과 함께 즐가세요.",
-      img_path:
-        "https://uploads-ssl.webflow.com/5e5cad32512f4ebf86ae2fa1/5e942f6e5f867827a4659114_mrp_6140-hdr.jpeg",
-      rating: 3.5,
-      review_cnt: 1,
-      hashtags: "#햄버거 #맛집",
-    },
-    {
-      idx: 1,
-      title: "수영장 펜션, 반려동물과 함께 즐가세요.",
-      img_path:
-        "https://uploads-ssl.webflow.com/5e5cad32512f4ebf86ae2fa1/5e942f6e5f867827a4659114_mrp_6140-hdr.jpeg",
-      rating: 3.5,
-      review_cnt: 1,
-      hashtags: "#햄버거 #맛집",
-    },
-    {
-      idx: 2,
-      title: "수영장 펜션, 반려동물과 함께 즐가세요.",
-      img_path:
-        "https://uploads-ssl.webflow.com/5e5cad32512f4ebf86ae2fa1/5e942f6e5f867827a4659114_mrp_6140-hdr.jpeg",
-      rating: 3.5,
-      review_cnt: 1,
-      hashtags: "#햄버거 #맛집",
-    },
-  ];
+  useEffect(() => {
+    console.log('ho')
+    fetchGetApi('/restaurant').then(res => {
+      dispatch(actions.pushRestaurantList(res))
+    })
+    return () => {
+      dispatch({ type: RESET_RESTRAURANT })
+    }
+  }, []);
 
-  const list = () => {
-    return data.map((data) => {
+  const restaurant_list = () => {
+    return list.map((data: any, idx) => {
       return (
-        <div className={styles.list} key={data.idx}>
+        <div className={styles.list} key={idx}>
           <div
             className={styles.list_img}
-            style={{ backgroundImage: `url(${data.img_path})` }}
+            style={{ backgroundImage: `url(https://news.kbs.co.kr/data/news/2017/01/04/3405677_bH6.jpg)` }}
+          // style={{ backgroundImage: `url(http://localhost:3080/uploads/exposure_menu/${data.exposure_menu[0].exposure_menu_image.file_name})` }}
           ></div>
           <div className={styles.list_text_container}>
             <div className={styles.list_text}>
-              <h2>{data.title}</h2>
+              <h2>{data.label}</h2>
               <span className={styles.list_rating}>
-                <span className={color.text_red}>{data.rating}</span>/5 (
-                {data.review_cnt})
+                {`${data.sigungu} ${data.bname}`}
               </span>
-              <p className={styles.list_hashtags}>{data.hashtags}</p>
             </div>
             <div className={styles.list_deco}></div>
           </div>
@@ -71,7 +47,7 @@ const Restaurant = () => {
   return (
     <>
       <div className={styles.restaurant_wrap}>
-        {list()}
+        {restaurant_list()}
       </div>
     </>
   );

@@ -3,11 +3,8 @@ import { Logger } from "../logger/logger";
 import {
   RESTAURANT,
   ACCOMMODATION,
-  EXPOSURE_MENU,
-  ENTIRE_MENU,
-  ROOMS,
   UPLOAD_PATH,
-  CATEGORY_LIST
+  IMAGES_ID_LIST
 } from "../constrant";
 import Model from '../models'
 
@@ -53,8 +50,14 @@ class Upload {
       for (let [key, val] of Object.entries(files)) {
         const file = files[key];
         const file_name = file.name
-        const target = Number(file_name.split(".")[0].split("_")[1]);
-        console.log(target)
+        const target_text = IMAGES_ID_LIST[category]
+        let target_idx = undefined;
+        if ([RESTAURANT, ACCOMMODATION].includes(category) == true) {
+          target_idx = 0;
+        } else {
+          target_idx = 1;
+        }
+        const target = Number(file_name.split(".")[0].split("_")[target_idx]);
         const file_path = __dirname + '/../uploads' + dir + file_name;
         fs.readFile(file.path, (error: any, data: any) => {
           fs.writeFile(file_path, data, async function (error: any) {
@@ -64,7 +67,7 @@ class Upload {
               image_bulk.push({
                 file_name: file_name,
                 category: category,
-                target: target
+                [target_text]: target
               })
 
               if (image_bulk.length == length) {
@@ -72,8 +75,6 @@ class Upload {
                   individualHooks: true,
                   fields: ['file_name', 'category', 'target']
                 });
-
-                console.log(upload_images)
 
                 res.json(upload_images)
               }

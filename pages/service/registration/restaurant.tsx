@@ -325,7 +325,6 @@ const Service = () => {
         exposure_images.append(`files_${i}`, new_file);
       }
 
-      // 여기 수정 필요 => exposureImage x exposureMemu o
       for (let i = 0, leng = res_exposure_menu.length; i < leng; i++) {
         const file_name_arr = exposureMenu[i].file.file.name.split(".")
         const file_extention = file_name_arr[file_name_arr.length - 1];

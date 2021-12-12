@@ -1,3 +1,8 @@
+@font-face {
+  font-family: "NanumGothic"; 
+  src: url("../src/fonts/NanumGothicCoding-Regular.ttf"); 
+}
+
 html,
 body {
   padding: 0;
@@ -6,6 +11,7 @@ body {
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
   box-sizing: border-box;
   font-size: 14px;
+  font-family: 'NanumGothic';
 }
 
 #__next {

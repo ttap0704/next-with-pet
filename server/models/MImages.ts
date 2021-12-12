@@ -6,7 +6,6 @@ interface ImagesAttributes {
   id: number;
   file_name: string;
   category: number;
-  target: number;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -15,7 +14,21 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public readonly id!: number;
     public file_name!: string;
     public category!: number;
-    public target!: number;
+
+    public static associate(models: any) {
+      Images.belongsTo(models.Restaurant, {
+        foreignKey: "exposure_menu_id",
+      });
+      Images.belongsTo(models.Accommodation, {
+        foreignKey: "accommodation_id",
+      });
+      Images.belongsTo(models.ExposureMenu, {
+        foreignKey: "exposure_menu_id",
+      });
+      Images.belongsTo(models.Rooms, {
+        foreignKey: "rooms_id",
+      });
+    };
   }
 
   Images.init(
@@ -33,11 +46,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       category: {
         type: DataTypes.INTEGER,
         allowNull: false,
-        comment: "1: Restaurant / 11: ExposureMenu / 2: Accomodation / 21: Rooms"
-      },
-      target: {
-        type: DataTypes.INTEGER.UNSIGNED,
-        allowNull: false
+        comment: "1: Restaurant / 11: ExposureMenu / 2: Accommodation / 21: Rooms"
       }
     },
     {

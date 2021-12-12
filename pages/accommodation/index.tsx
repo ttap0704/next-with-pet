@@ -40,15 +40,6 @@ const Accommodation = () => {
       console.log('컴포넌트가 화면에서 사라짐');
     };
   }, []);
-  // const { no, text } = useSelector((state: RootState) => state.testReducer);
-
-  // const dispatch = useDispatch();
-
-  // useEffect(() => {
-  //   dispatch({
-  //     type: RESET_TEXT,
-  //   });
-  // }, []);
 
   const list = () => {
     return data.map((data) => {

@@ -23,6 +23,11 @@ module.exports = (sequelize: any, DataTypes: any) => {
       Rooms.belongsTo(models.Restaurant, {
         foreignKey: "accommodation_id",
       });
+      Rooms.hasMany(models.Images, {
+        sourceKey: "id",
+        as: 'rooms_images',
+        foreignKey: "rooms_id",
+      })
     };
   }
 

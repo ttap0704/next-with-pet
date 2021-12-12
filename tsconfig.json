@@ -1,7 +1,9 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es5",
     "lib": [
+      "ES5",
+      "ES6",
       "dom",
       "dom.iterable",
       "esnext"
@@ -22,7 +24,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "server.js"  ],
+, "server-register.js"  ],
   "exclude": [
     "node_modules"
   ]

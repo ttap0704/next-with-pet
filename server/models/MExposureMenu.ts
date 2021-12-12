@@ -21,6 +21,12 @@ module.exports = (sequelize: any, DataTypes: any) => {
       ExposureMenu.belongsTo(models.Restaurant, {
         foreignKey: "restaurant_id",
       });
+
+      ExposureMenu.hasOne(models.Images, {
+        sourceKey: "id",
+        as: 'exposure_menu_image',
+        foreignKey: "exposure_menu_id",
+      })
     };
   }
 

@@ -11,7 +11,7 @@ export const UPLOAD_PATH:{
   [RESTAURANT]: '/restaurant/',
   [EXPOSURE_MENU]: '/exposure_menu/',
   [ACCOMMODATION]: '/accommodation/',
-  [ROOMS]: 'rooms/',
+  [ROOMS]: '/rooms/',
 }
 
 export const CATEGORY_LIST: {

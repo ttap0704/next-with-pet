@@ -2,6 +2,7 @@ import * as express from "express";
 import { Logger } from "../logger/logger";
 import Model from '../models'
 
+import { RESTAURANT } from "../constrant";
 import { Category } from "../interfaces/IRestaurant"
 
 class Restraunt {
@@ -25,6 +26,29 @@ class Restraunt {
   }
 
   private routes(): void {
+    this.express.get("", async (req: any, res: any, next) => {
+      const list = await Model.Restaurant.findAll({
+        include: [
+          {
+            model: Model.ExposureMenu,
+            as: 'exposure_menu',
+            require: true,
+            include: [
+              {
+                model: Model.Images,
+                as: 'exposure_menu_image',
+                require: true,
+                attributes: ['file_name']
+              }
+            ],
+          }
+        ],
+        attributes: ['sigungu', 'bname', 'label', 'id']
+      });
+
+      res.json(list)
+    });
+
     this.express.post("/add", async (req: any, res: any, next) => {
       this.logger.info("url:::::::" + req.url);
       console.log(req.session)
