@@ -3,9 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../reducers";
 import color from "../../styles/color.module.scss";
 import styles from "../../styles/pages/restaurant.module.scss";
-import { fetchGetApi } from "../../services/_API";
+import { fetchGetApi } from "../../src/tools/api"
 import { actions, RESET_RESTRAURANT } from "../../reducers/models/restaurant"
-import Image from "next/image"
 
 const Restaurant = () => {
   const { list } = useSelector((state: RootState) => state.restaurantReducer);
@@ -28,12 +27,9 @@ const Restaurant = () => {
         <div className={styles.list} key={idx}>
           <div
             className={styles.list_img}
-            style={{ backgroundImage: `url('api/image/exposure_menu/1_2_1.jpg')`}}
-          ></div>
-          {/* <img
-            className={styles.list_img}
-            src='api/image/exposure_menu/1_2_1.jpg'
-          /> */}
+          >
+            <img src={`api/image/exposure_menu/${data.exposure_menu[0].exposure_menu_image.file_name}`} alt="exposure_image"/>
+          </div>
           <div className={styles.list_text_container}>
             <div className={styles.list_text}>
               <h2>{data.label}</h2>

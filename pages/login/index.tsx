@@ -6,7 +6,7 @@ import {useRouter} from "next/router";
 import styles from "../../styles/pages/login.module.scss";
 import {actions, RESET_USER} from "../../reducers/models/user";
 
-import {createUserApi, checkUser} from "../../services/User";
+import {fetchPostApi} from "../../src/tools/api";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -160,13 +160,13 @@ const Login = () => {
     if (contentsText == "certification") {
       setContentsText("join");
     } else if (contentsText == "join") {
-      createUserApi("/join", joinContents).then((res) => {
+      fetchPostApi("/user/join", joinContents).then((res) => {
         console.log(res);
       });
       // setContentsText("login");
     } else {
-      checkUser("/login", loginContents).then((res:any) => {
-        alert(res.message)
+      fetchPostApi("/user/login", loginContents).then((res: any) => {
+        alert(res.message);
         if (res.pass) {
           dispatch(
             actions.addUser({
