@@ -30,6 +30,23 @@ class Restraunt {
       const list = await Model.Restaurant.findAll({
         include: [
           {
+            model: Model.Images,
+            as: 'restaurant_images',
+            require: true,
+          }
+        ],
+        attributes: ['sigungu', 'bname', 'label', 'id']
+      });
+
+      res.json(list)
+    });
+
+    this.express.get("/:id", async (req:express.Request, res:express.Response, next) => {
+      const id = req.params.id;
+
+      const restaurant = await Model.Restaurant.findOne({
+        include: [
+          {
             model: Model.ExposureMenu,
             as: 'exposure_menu',
             require: true,
@@ -38,16 +55,24 @@ class Restraunt {
                 model: Model.Images,
                 as: 'exposure_menu_image',
                 require: true,
-                attributes: ['file_name']
               }
-            ],
+            ]
+          },
+          {
+            model: Model.EntireMenu,
+            as: 'entire_menu',
+            require: true
+          },
+          {
+            model: Model.Images,
+            as: 'restaurant_images',
+            require: true
           }
-        ],
-        attributes: ['sigungu', 'bname', 'label', 'id']
-      });
+        ]
+      })
 
-      res.json(list)
-    });
+      res.json(restaurant)
+    })
 
     this.express.post("/add", async (req: any, res: any, next) => {
       this.logger.info("url:::::::" + req.url);

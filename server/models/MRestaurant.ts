@@ -31,6 +31,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       })
       Restaurant.hasMany(models.EntireMenu, {
         sourceKey: "id",
+        as: 'entire_menu',
         foreignKey: "restaurant_id",
       })
       Restaurant.hasMany(models.Images, {

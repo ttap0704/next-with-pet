@@ -11,6 +11,7 @@ import {Tooltip, IconButton} from "@mui/material";
 import PostCode from "../../../src/components/postcode";
 import {actions, RESET_RESTRAURANT} from "../../../reducers/models/restaurant";
 import {fetchPostApi, fetchFileApi} from "../../../src/tools/api";
+import {toggleButton} from "../../../src/tools/common";
 
 const Service = () => {
   const dispatch = useDispatch();
@@ -153,44 +154,6 @@ const Service = () => {
     }
     items[idx] = item;
     setEntireMenu([...items]);
-  }
-
-  function toggleDelExposureImageBtn(type: string, idx: number) {
-    let del_btn = document.getElementById(`exposure_image_del_btn_${idx}`);
-    if (type == "enter") {
-      del_btn.style.display = "block";
-    } else {
-      del_btn.style.display = "none";
-    }
-  }
-
-  function toggleDelExposureMenuBtn(type: string, idx: number) {
-    let del_btn = document.getElementById(`exposure_del_btn_${idx}`);
-    if (type == "enter") {
-      del_btn.style.display = "block";
-    } else {
-      del_btn.style.display = "none";
-    }
-  }
-  function toggleAddEntireMenuBtn(type: string, idx: number) {
-    let add_btn = document.getElementById(`menu_add_btn_${idx}`);
-    let category_del_btn = document.getElementById(`category_del_btn_${idx}`);
-    if (type == "enter") {
-      add_btn.style.display = "block";
-      category_del_btn.style.display = "block";
-    } else {
-      add_btn.style.display = "none";
-      category_del_btn.style.display = "none";
-    }
-  }
-
-  function toggleDeleteEntireMenubtn(type: string, idx: number, menu_idx: number) {
-    let del_btn = document.getElementById(`menu_del_btn_${idx}_${menu_idx}`);
-    if (type == "enter") {
-      del_btn.style.display = "block";
-    } else {
-      del_btn.style.display = "none";
-    }
   }
 
   function addExposureMenu() {
@@ -396,8 +359,8 @@ const Service = () => {
                 <div
                   key={index}
                   onClick={() => changePreviewImg(index)}
-                  onMouseEnter={() => toggleDelExposureImageBtn("enter", index)}
-                  onMouseLeave={() => toggleDelExposureImageBtn("leave", index)}
+                  onMouseEnter={() => toggleButton([`exposure_image_del_btn_${index}`], "enter")}
+                  onMouseLeave={() => toggleButton([`exposure_image_del_btn_${index}`], "leave")}
                 >
                   <TiDelete
                     id={`exposure_image_del_btn_${index}`}
@@ -499,8 +462,8 @@ const Service = () => {
               </div>
               <div>
                 <h2>메뉴</h2>
-                <div className={styles.rest_menu}>
-                  <div className={styles.rest_menu_title}>
+                <div className={res_style.rest_menu}>
+                  <div className={res_style.rest_menu_title}>
                     <h3>대표 메뉴</h3>
                     <Tooltip title="클릭하여 대표메뉴를 추가할 수 있습니다. (최대 5개)" placement="top">
                       <IconButton onClick={() => addExposureMenu()}>
@@ -508,17 +471,17 @@ const Service = () => {
                       </IconButton>
                     </Tooltip>
                   </div>
-                  <ul className={styles.rest_menu_wrap} style={{border: "1px solid #e3e3e3"}}>
+                  <ul className={res_style.rest_menu_wrap} style={{border: "1px solid #e3e3e3"}}>
                     {exposureMenu.map((data, index) => {
                       return (
                         <li
-                          className={styles.rest_exposure_menu}
+                          className={res_style.rest_exposure_menu}
                           key={`exposure_menu_${index}`}
-                          onMouseEnter={() => toggleDelExposureMenuBtn("enter", index)}
-                          onMouseLeave={() => toggleDelExposureMenuBtn("leave", index)}
+                          onMouseEnter={() => toggleButton([`exposure_del_btn_${index}`], "enter")}
+                          onMouseLeave={() => toggleButton([`exposure_del_btn_${index}`], "leave")}
                         >
-                          <div className={styles.rest_exposure_menu_imgbox}>
-                            <div className={styles.rest_menu_circle}></div>
+                          <div className={res_style.rest_exposure_menu_imgbox}>
+                            <div className={res_style.rest_menu_circle}></div>
                             <label htmlFor={`exposure_menu_img_${index}`}>
                               이미지
                               {data.file.file == null ? null : (
@@ -533,7 +496,7 @@ const Service = () => {
                               id={`exposure_menu_img_${index}`}
                             />
                           </div>
-                          <div className={styles.rest_exposure_menu_textbox}>
+                          <div className={res_style.rest_exposure_menu_textbox}>
                             <input
                               type="text"
                               placeholder="메뉴 이름을 입력해주세요."
@@ -565,7 +528,7 @@ const Service = () => {
                       );
                     })}
                   </ul>
-                  <div className={styles.rest_menu_title}>
+                  <div className={res_style.rest_menu_title}>
                     <h3>전체 메뉴</h3>
                     <Tooltip title="클릭하여 카테고리를 추가할 수 있습니다. (최대 5개)" placement="top">
                       <IconButton onClick={() => addEntireCategory()}>
@@ -573,16 +536,16 @@ const Service = () => {
                       </IconButton>
                     </Tooltip>
                   </div>
-                  <ul className={styles.rest_menu_wrap}>
+                  <ul className={res_style.rest_menu_wrap}>
                     {entireMenu.map((data, idx) => {
                       return (
                         <li
-                          className={styles.rest_entire_menu}
+                          className={res_style.rest_entire_menu}
                           key={`entire_category_${idx}`}
-                          onMouseEnter={() => toggleAddEntireMenuBtn("enter", idx)}
-                          onMouseLeave={() => toggleAddEntireMenuBtn("leave", idx)}
+                          onMouseEnter={() => toggleButton([`menu_add_btn_${idx}`, `category_del_btn_${idx}`], "enter")}
+                          onMouseLeave={() => toggleButton([`menu_add_btn_${idx}`, `category_del_btn_${idx}`], "leave")}
                         >
-                          <div className={styles.rest_menu_circle}></div>
+                          <div className={res_style.rest_menu_circle}></div>
                           <input
                             type="text"
                             placeholder="이 곳에 카테고리 이름을 입력해주세요."
@@ -603,12 +566,12 @@ const Service = () => {
                             {data.menu.map((menu, menu_idx) => {
                               return (
                                 <li
-                                  className={styles.rest_entire_menu_detail}
+                                  className={res_style.rest_entire_menu_detail}
                                   key={`entire_menu_${menu_idx}`}
-                                  onMouseEnter={() => toggleDeleteEntireMenubtn("enter", idx, menu_idx)}
-                                  onMouseLeave={() => toggleDeleteEntireMenubtn("leave", idx, menu_idx)}
+                                  onMouseEnter={() => toggleButton([`menu_del_btn_${idx}_${menu_idx}`], "enter")}
+                                  onMouseLeave={() => toggleButton([`menu_del_btn_${idx}_${menu_idx}`], "leave")}
                                 >
-                                  <div className={styles.rest_menu_circle}></div>
+                                  <div className={res_style.rest_menu_circle}></div>
                                   <input
                                     type="text"
                                     placeholder="메뉴 이름을 입력해주세요."
@@ -616,7 +579,7 @@ const Service = () => {
                                     onChange={(e) => setMenuData(e, idx, "label", menu_idx)}
                                   />
                                   <div
-                                    className={styles.rest_entire_menu_price}
+                                    className={res_style.rest_entire_menu_price}
                                     style={menu.price.length > 0 ? {paddingRight: "56px"} : null}
                                   >
                                     <input
