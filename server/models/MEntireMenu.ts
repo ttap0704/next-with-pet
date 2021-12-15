@@ -22,7 +22,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
 
       EntireMenu.belongsTo(models.EntireMenuCategory, {
         foreignKey: "category_id",
-      });
+      })
     };
   }
 

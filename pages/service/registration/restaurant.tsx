@@ -480,8 +480,8 @@ const Service = () => {
                           onMouseEnter={() => toggleButton([`exposure_del_btn_${index}`], "enter")}
                           onMouseLeave={() => toggleButton([`exposure_del_btn_${index}`], "leave")}
                         >
+                          <div className={res_style.rest_menu_circle}></div>
                           <div className={res_style.rest_exposure_menu_imgbox}>
-                            <div className={res_style.rest_menu_circle}></div>
                             <label htmlFor={`exposure_menu_img_${index}`}>
                               이미지
                               {data.file.file == null ? null : (

@@ -151,6 +151,7 @@
   
   .rest_menu_wrap {
     width: 100%;
+    border-radius: 6px;
     .rest_menu_circle  {
       width: 0.75rem !important;
       height: 0.75rem !important;
@@ -183,6 +184,7 @@
       .rest_exposure_menu_imgbox {
         width: 8rem;
         height: 8rem;
+        position: relative;
         label {
           width: 8rem;
           height: 8rem;
@@ -205,6 +207,20 @@
               left: 50%;
               transform: translate(-50%, -50%);
             }
+          }
+        }
+
+        .rest_exposure_menu_img_wrap {
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
+          position: relative;
+          & > img {
+            height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
           }
         }
       }
@@ -250,7 +266,6 @@
         width: calc(100% + 2px);
         height: auto;
         margin-left: -1px;
-
       }
       button {
         padding: 0;
@@ -301,6 +316,14 @@
           }
         }
       }
+
+      .res_entire_menu_category {
+        width: 100%;
+        height: 3rem;
+        display: block;
+        padding: 0px 32px;
+        line-height: 3rem;
+      }
     }
   }
 }
@@ -308,4 +331,27 @@
 .detail_warp {
   width: 100%;
   height: auto;
+  .detail_contents {
+    width: 100%;
+    height: auto;
+    & > h2 {
+      margin-bottom: 8px;
+    }
+
+    h3 {
+      height: unset !important;
+      line-height: unset !important;
+    }
+
+    .detail_introduction {
+      width: 100%;
+      min-height: 10rem;
+      max-height: 20rem;
+      overflow-y: auto;
+      padding: 1rem;
+      border:1px solid #e3e3e3;
+      border-radius: 6px;
+      white-space: pre;
+    }
+  }
 }

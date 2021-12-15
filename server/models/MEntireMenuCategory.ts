@@ -14,6 +14,11 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public category!: string;
 
     public static associate(models: any) {
+      EntireMenuCategory.hasMany(models.EntireMenu, {
+        sourceKey: 'id',
+        foreignKey: "category_id",
+        as: "entire_menu_category"
+      });
     };
   }
 

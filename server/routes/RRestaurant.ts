@@ -41,7 +41,7 @@ class Restraunt {
       res.json(list)
     });
 
-    this.express.get("/:id", async (req:express.Request, res:express.Response, next) => {
+    this.express.get("/:id", async (req: express.Request, res: express.Response, next) => {
       const id = req.params.id;
 
       const restaurant = await Model.Restaurant.findOne({
@@ -61,7 +61,16 @@ class Restraunt {
           {
             model: Model.EntireMenu,
             as: 'entire_menu',
-            require: true
+            require: true,
+            attributes: ['category_id',
+              [Model.sequelize.literal(`(
+              SELECT category
+              FROM entire_menu_category
+              WHERE
+                  category_id = entire_menu_category.id
+              )`), 'category'
+              ]
+            ],
           },
           {
             model: Model.Images,
