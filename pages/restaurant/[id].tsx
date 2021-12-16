@@ -16,7 +16,7 @@ const Detail = () => {
   const [exposureMenu, setExposureMenu] = useState([]);
   const [entireMenu, setEntireMenu] = useState([]);
   useEffect(() => {
-    fetchGetApi(`/restaurant/${id}`).then((data) => {
+    fetchGetApi(`/restaurant/${id}`).then(async (data) => {
       setExposureImages([...data.restaurant_images]);
       setTitle(data.label);
       setAddress(`${data.sigungu} ${data.bname}`);
@@ -30,6 +30,42 @@ const Detail = () => {
   function changePreviewImg(idx: number) {
     const img_tag: HTMLElement = document.getElementById("exposure_image");
     img_tag.setAttribute("src", `http://localhost:3000/api/image/restaurant/${exposureImages[idx].file_name}`);
+  }
+
+  function setEntireMenuViews() {
+    let data = {};
+
+    for (let x of entireMenu) {
+      if (!data[x.category]) {
+        data[x.category] = [];
+      }
+
+      data[x.category].push({label: x.label, price: x.price});
+    }
+
+    // <li className={res_style.rest_entire_menu} key={`entire_category_${idx}`}>
+    //   <div className={res_style.rest_menu_circle}></div>
+    //   <div className={res_style.res_entire_menu_category}>
+    //     {data.category}
+    //     <ul>
+    //       {data.menu.map((menu, menu_idx) => {
+    //         return (
+    //           <li className={res_style.rest_entire_menu_detail} key={`entire_menu_${menu_idx}`}>
+    //             <div className={res_style.rest_menu_circle}></div>
+    //             <input type="text" placeholder="메뉴 이름을 입력해주세요." value={menu.label} />
+    //             <div
+    //               className={res_style.rest_entire_menu_price}
+    //               style={menu.price.length > 0 ? {paddingRight: "56px"} : null}
+    //             >
+    //               <input type="text" placeholder="메뉴 가격을 입력해주세요." value={menu.price} />{" "}
+    //               {menu.price.length > 0 ? "원" : null}
+    //             </div>
+    //           </li>
+    //         );
+    //       })}
+    //     </ul>
+    //   </div>
+    // </li>
   }
 
   const preview = () => {
@@ -119,14 +155,14 @@ const Detail = () => {
             </ul>
             <h3>전체 메뉴</h3>
             <ul className={res_style.rest_menu_wrap}>
-              {entireMenu.map((data, idx) => {
+              {/* {entireMenu.map((data, idx) => {
                 return (
                   <li className={res_style.rest_entire_menu} key={`entire_category_${idx}`}>
                     <div className={res_style.rest_menu_circle}></div>
                     <div className={res_style.res_entire_menu_category}>
                       {data.category}
                       <ul>
-                        {/* {data.menu.map((menu, menu_idx) => {
+                        {data.menu.map((menu, menu_idx) => {
                               return (
                                 <li
                                   className={res_style.rest_entire_menu_detail}
@@ -151,12 +187,12 @@ const Detail = () => {
                                   </div>
                                 </li>
                               );
-                            })} */}
+                            })}
                       </ul>
                     </div>
                   </li>
                 );
-              })}
+              })} */}
             </ul>
           </div>
         </div>

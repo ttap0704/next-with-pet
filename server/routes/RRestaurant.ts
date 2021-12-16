@@ -62,30 +62,30 @@ class Restraunt {
             model: Model.EntireMenu,
             as: 'entire_menu',
             require: true,
-            attributes: ['category_id',
-              [Model.sequelize.literal(`(
-              SELECT category
-              FROM entire_menu_category
-              WHERE
-                  category_id = entire_menu_category.id
+            attributes: ['price', 'label', [
+              Model.sequelize.literal(`(
+                SELECT category
+                FROM entire_menu_category
+                WHERE
+                category_id = entire_menu_category.id
               )`), 'category'
-              ]
-            ],
+            ]]
           },
           {
             model: Model.Images,
             as: 'restaurant_images',
             require: true
           }
-        ]
+        ],
+        where: {id: id}
       })
 
+      
       res.json(restaurant)
     })
 
     this.express.post("/add", async (req: any, res: any, next) => {
       this.logger.info("url:::::::" + req.url);
-      console.log(req.session)
       const data = req.body;
       const manager = req.session.uid;
       const restaurant = await Model.Restaurant.create({
