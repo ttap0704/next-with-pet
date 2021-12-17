@@ -20,15 +20,16 @@ import PostCode from "../../../src/components/postcode";
 const Service = () => {
   const router = useRouter();
   const [popupVisible, setPopupVisible] = useState(false);
-  let [curPage, setCurPage] = useState("exposure");
-  let [title, setTitle] = useState("");
-  let [previewFile, setPreviewFile] = useState({
+  const [curPage, setCurPage] = useState("exposure");
+  const [title, setTitle] = useState("");
+  const [intro, setIntro] = useState("");
+  const [previewFile, setPreviewFile] = useState({
     file: null,
     imageUrl: "",
   });
-  let [detailPreview, setDetailPreview] = useState([]);
-  let [detailPreviewNum, setDetailPreviewNum] = useState(0);
-  let [roomDetail, setRoomDetail] = useState([
+  const [detailPreview, setDetailPreview] = useState([]);
+  const [detailPreviewNum, setDetailPreviewNum] = useState(0);
+  const [roomDetail, setRoomDetail] = useState([
     {
       title: "",
       people: "",
@@ -50,10 +51,31 @@ const Service = () => {
   });
   
   function addAccommodation() {
-    console.log(title, "title");
-    console.log(detailPreview, "detailPreview");
-    console.log(roomDetail, "roomDetail");
-    console.log(address, "address");
+
+    let rooms = [];
+    for (let i = 0, leng = roomDetail.length; i < leng; i++) {
+      rooms.push({
+        label: roomDetail[i].title,
+        maximum_num: roomDetail[i].max_people,
+        standard_num: roomDetail[i].people,
+        price: roomDetail[i].price,
+      });
+    }
+
+    const data = {
+      label: title,
+      bname: address.bname,
+      building_name: address.building_name,
+      detail_address: address.detail_address,
+      road_address: address.road_address,
+      sido: address.sido,
+      sigungu: address.sigungu,
+      zonecode: address.zonecode,
+      introduction: intro,
+      rooms
+    };
+
+    console.log(data);
   }
 
 
@@ -304,11 +326,10 @@ const Service = () => {
           </div>
           <div className={accom_style.list_text_container}>
             <div className={accom_style.list_text}>
-              <h2>{title.length == 0 ? "제목을 입력해주세요." : title}</h2>
+            <h2>{title ? title : "식당 이름을 입력해주세요."}</h2>
               <span className={accom_style.list_rating}>
-                <span className={common.text_red}>5</span>/5 (1)
+                {address.bname ? `${address.sigungu} ${address.bname}` : "장소를 등록해주세요."}
               </span>
-              <p className={accom_style.list_location}>위치</p>
             </div>
             <div className={accom_style.list_deco}></div>
           </div>
@@ -459,6 +480,8 @@ const Service = () => {
                 <textarea
                   className={styles.detail_intro}
                   placeholder="숙소에 대해 자유롭게 작성해주시길 바랍니다."
+                  value={intro}
+                  onChange={(e) => setIntro(e.target.value)}
                 />
               </div>
               <div>

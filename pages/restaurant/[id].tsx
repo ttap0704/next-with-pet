@@ -5,6 +5,7 @@ import color from "../../styles/color.module.scss";
 import res_style from "../../styles/pages/restaurant.module.scss";
 import {useRouter} from "next/router";
 import {fetchGetApi} from "../../src/tools/api";
+import {HiChevronUp} from "react-icons/hi";
 
 const Detail = () => {
   const router = useRouter();
@@ -14,15 +15,24 @@ const Detail = () => {
   const [address, setAddress] = useState("");
   const [introduction, setIntroduction] = useState("");
   const [exposureMenu, setExposureMenu] = useState([]);
-  const [entireMenu, setEntireMenu] = useState([]);
+  const [entireMenu, setEntireMenu] = useState({});
   useEffect(() => {
-    fetchGetApi(`/restaurant/${id}`).then(async (data) => {
+    fetchGetApi(`/restaurant/${id}`).then((data) => {
       setExposureImages([...data.restaurant_images]);
       setTitle(data.label);
       setAddress(`${data.sigungu} ${data.bname}`);
       setIntroduction(data.introduction);
       setExposureMenu([...data.exposure_menu]);
-      setEntireMenu([...data.entire_menu]);
+      let entrie_menu = {};
+
+      for (let x of data.entire_menu) {
+        if (!entrie_menu[x.category]) {
+          entrie_menu[x.category] = [];
+        }
+
+        entrie_menu[x.category].push({label: x.label, price: x.price});
+      }
+      setEntireMenu({...entrie_menu});
     });
     return () => {};
   }, []);
@@ -32,40 +42,17 @@ const Detail = () => {
     img_tag.setAttribute("src", `http://localhost:3000/api/image/restaurant/${exposureImages[idx].file_name}`);
   }
 
-  function setEntireMenuViews() {
-    let data = {};
+  function showEntireMenu(idx: number) {
+    const icon: HTMLElement = document.getElementById(`entire_menu_category_icon_${idx}`);
+    const list: HTMLElement = document.getElementById(`entire_menu_list_${idx}`);
 
-    for (let x of entireMenu) {
-      if (!data[x.category]) {
-        data[x.category] = [];
-      }
-
-      data[x.category].push({label: x.label, price: x.price});
+    if (list.style.display == "none") {
+      list.style.display = "block";
+      icon.style.transform = "rotate(0deg)"
+    } else {
+      list.style.display = "none";
+      icon.style.transform = "rotate(180deg)"
     }
-
-    // <li className={res_style.rest_entire_menu} key={`entire_category_${idx}`}>
-    //   <div className={res_style.rest_menu_circle}></div>
-    //   <div className={res_style.res_entire_menu_category}>
-    //     {data.category}
-    //     <ul>
-    //       {data.menu.map((menu, menu_idx) => {
-    //         return (
-    //           <li className={res_style.rest_entire_menu_detail} key={`entire_menu_${menu_idx}`}>
-    //             <div className={res_style.rest_menu_circle}></div>
-    //             <input type="text" placeholder="메뉴 이름을 입력해주세요." value={menu.label} />
-    //             <div
-    //               className={res_style.rest_entire_menu_price}
-    //               style={menu.price.length > 0 ? {paddingRight: "56px"} : null}
-    //             >
-    //               <input type="text" placeholder="메뉴 가격을 입력해주세요." value={menu.price} />{" "}
-    //               {menu.price.length > 0 ? "원" : null}
-    //             </div>
-    //           </li>
-    //         );
-    //       })}
-    //     </ul>
-    //   </div>
-    // </li>
   }
 
   const preview = () => {
@@ -155,44 +142,35 @@ const Detail = () => {
             </ul>
             <h3>전체 메뉴</h3>
             <ul className={res_style.rest_menu_wrap}>
-              {/* {entireMenu.map((data, idx) => {
+              {Object.keys(entireMenu).map((category, idx) => {
                 return (
                   <li className={res_style.rest_entire_menu} key={`entire_category_${idx}`}>
                     <div className={res_style.rest_menu_circle}></div>
-                    <div className={res_style.res_entire_menu_category}>
-                      {data.category}
-                      <ul>
-                        {data.menu.map((menu, menu_idx) => {
-                              return (
-                                <li
-                                  className={res_style.rest_entire_menu_detail}
-                                  key={`entire_menu_${menu_idx}`}
-                                >
-                                  <div className={res_style.rest_menu_circle}></div>
-                                  <input
-                                    type="text"
-                                    placeholder="메뉴 이름을 입력해주세요."
-                                    value={menu.label}
-                                  />
-                                  <div
-                                    className={res_style.rest_entire_menu_price}
-                                    style={menu.price.length > 0 ? {paddingRight: "56px"} : null}
-                                  >
-                                    <input
-                                      type="text"
-                                      placeholder="메뉴 가격을 입력해주세요."
-                                      value={menu.price}
-                                    />{" "}
-                                    {menu.price.length > 0 ? "원" : null}
-                                  </div>
-                                </li>
-                              );
-                            })}
-                      </ul>
+                    <div className={res_style.res_entire_menu_category} onClick={() => showEntireMenu(idx)}>
+                      {category}
+                      <div className={res_style.res_entire_menu_category_icon}>
+                        <HiChevronUp 
+                        style={{transform: "rotate(180deg)"}} 
+                        id={`entire_menu_category_icon_${idx}`} 
+                        />
+                      </div>
                     </div>
+                    <ul id={`entire_menu_list_${idx}`} style={{display: "none"}}>
+                      {entireMenu[category].map((menu, menu_idx) => {
+                        return (
+                          <li className={res_style.rest_entire_menu_detail} key={`entire_menu_${menu_idx}`}>
+                            <div className={res_style.rest_menu_circle}></div>
+                            <div className={res_style.rest_entire_menu_detail_box}>
+                              <span>{menu.label}</span>
+                              <span>{menu.price} 원</span>
+                            </div>
+                          </li>
+                        );
+                      })}
+                    </ul>
                   </li>
                 );
-              })} */}
+              })}
             </ul>
           </div>
         </div>

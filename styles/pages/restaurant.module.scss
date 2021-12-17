@@ -323,6 +323,33 @@
         display: block;
         padding: 0px 32px;
         line-height: 3rem;
+        position: relative;
+        cursor: pointer;
+        .res_entire_menu_category_icon {
+          width: 1.5rem;
+          height: 1.5rem;
+          position: absolute;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          top: 50%;
+          right: 48px;
+          transform: translateY(-50%);
+          svg {
+            width: 100%;
+            height: 100%;
+            transition: 0.4s ease-in-out;
+          }
+        }
+      }
+
+      .rest_entire_menu_detail_box {
+        width: 100%;
+        height: 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0 48px;
       }
     }
   }
@@ -331,9 +358,11 @@
 .detail_warp {
   width: 100%;
   height: auto;
+  padding: 0 0 3rem;
   .detail_contents {
     width: 100%;
     height: auto;
+    margin-bottom: 2rem;
     & > h2 {
       margin-bottom: 8px;
     }
@@ -341,6 +370,7 @@
     h3 {
       height: unset !important;
       line-height: unset !important;
+      margin: 1.5rem 0 1rem;
     }
 
     .detail_introduction {
