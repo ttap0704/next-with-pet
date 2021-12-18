@@ -27,11 +27,11 @@ class Accommodation {
 
   private routes(): void {
     this.express.get("", async (req: any, res: any, next) => {
-      const list = await Model.Restaurant.findAll({
+      const list = await Model.Accommodation.findAll({
         include: [
           {
             model: Model.Images,
-            as: 'restaurant_images',
+            as: 'accommodation_images',
             require: true,
           }
         ],
@@ -40,6 +40,36 @@ class Accommodation {
 
       res.json(list)
     });
+
+    this.express.get("/:id", async (req: express.Request, res: express.Response, next) => {
+      const id = req.params.id;
+
+      const accommodation = await Model.Accommodation.findOne({
+        include: [
+          {
+            model: Model.Rooms,
+            as: 'accommodation_rooms',
+            require: true,
+            include: [
+              {
+                model: Model.Images,
+                as: 'rooms_images',
+                require: true,
+              }
+            ]
+          },
+          {
+            model: Model.Images,
+            as: 'accommodation_images',
+            require: true
+          }
+        ],
+        where: {id: id}
+      })
+
+      
+      res.json(accommodation)
+    })
 
     this.express.post("/add", async (req: any, res: any, next) => {
       this.logger.info("url:::::::" + req.url);

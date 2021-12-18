@@ -36,6 +36,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       
       Accommodation.hasMany(models.Rooms, {
         sourceKey: "id",
+        as: "accommodation_rooms",
         foreignKey: "accommodation_id",
       });
 

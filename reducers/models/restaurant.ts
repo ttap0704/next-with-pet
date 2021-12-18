@@ -5,11 +5,11 @@ import {
 } from 'typesafe-actions';
 
 interface RestaurantReducer {
-  list:object []
+  restaurant_list:object []
 }
 
 const initialState: RestaurantReducer = {
-  list: []
+  restaurant_list: []
 }
 
 export const RESET_RESTRAURANT = "restaurantReducer/RESET_RESTRAURANT";
@@ -28,7 +28,7 @@ type RestaurantReducerActions = ActionType<typeof actions>;
 
 const restaurantReducer = createReducer<RestaurantReducer, RestaurantReducerActions>(initialState, {
   [RESET_RESTRAURANT]: () => ({
-    list: []
+    restaurant_list: []
   }),
   // [ADD_RESTAURANT]: (state, action) => {
   //   return ({
@@ -40,7 +40,7 @@ const restaurantReducer = createReducer<RestaurantReducer, RestaurantReducerActi
   },
   [PUSH_RESTAURANT_LIST]: (state, action: any) => {
     return ({
-      list: [...state.list, ...action.payload]
+      restaurant_list: [...state.restaurant_list, ...action.payload]
     })
   }
 })

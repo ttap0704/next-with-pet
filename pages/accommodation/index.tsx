@@ -1,39 +1,27 @@
 import { useEffect } from "react";
-// import { useDispatch, useSelector } from "react-redux";
-// import { RootState } from "../../reducers";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "../../reducers";
 import color from "../../styles/color.module.scss";
 import styles from "../../styles/pages/accommodation.module.scss";
+import { fetchGetApi } from "../../src/tools/api"
+import { actions, RESET_ACCOMMODATION } from "../../reducers/models/accommodation"
+import { useRouter } from "next/router";
+
 
 const Accommodation = () => {
-  const data = [
-    {
-      idx: 0,
-      title: "수영장 펜션, 반려동물과 함께 즐가세요.",
-      img_path:
-        "https://uploads-ssl.webflow.com/5e5cad32512f4ebf86ae2fa1/5e942f6e5f867827a4659114_mrp_6140-hdr.jpeg",
-      rating: 3.5,
-      review_cnt: 1,
-      location: "화성시 반월동",
-    },
-    {
-      idx: 1,
-      title: "수영장 펜션, 반려동물과 함께 즐가세요.",
-      img_path:
-        "https://uploads-ssl.webflow.com/5e5cad32512f4ebf86ae2fa1/5e942f6e5f867827a4659114_mrp_6140-hdr.jpeg",
-      rating: 3.5,
-      review_cnt: 1,
-      location: "화성시 반월동",
-    },
-    {
-      idx: 2,
-      title: "수영장 펜션, 반려동물과 함께 즐가세요.",
-      img_path:
-        "https://uploads-ssl.webflow.com/5e5cad32512f4ebf86ae2fa1/5e942f6e5f867827a4659114_mrp_6140-hdr.jpeg",
-      rating: 3.5,
-      review_cnt: 1,
-      location: "화성시 반월동",
-    },
-  ];
+  const dispatch = useDispatch();
+  const { accommodation_list } = useSelector((state: RootState) => state.accommodationReducer);
+  const router = useRouter();
+
+  useEffect(() => {
+    fetchGetApi('/accommodation').then(res => {
+      console.log(res)
+      dispatch(actions.pushAccommodationList(res))
+    })
+    return () => {
+      dispatch({ type: RESET_ACCOMMODATION })
+    }
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -41,22 +29,28 @@ const Accommodation = () => {
     };
   }, []);
 
+  function moveDetail (data: any) {
+    router.push({
+      pathname: `/accommodation/[id]`,
+      query: { id: data.id },
+    });
+  }
+
   const list = () => {
-    return data.map((data) => {
+    return accommodation_list.map((data: any) => {
       return (
-        <div className={styles.list} key={data.idx}>
+        <div className={styles.list} key={data.id} onClick={() => moveDetail(data)}>
           <div
             className={styles.list_img}
-            style={{ backgroundImage: `url(${data.img_path})` }}
-          ></div>
+          >
+            <img src={data.accommodation_images.length > 0 ? `api/image/accommodation/${data.accommodation_images[0].file_name}` : null} alt="exposure_image" />
+          </div>
           <div className={styles.list_text_container}>
             <div className={styles.list_text}>
-              <h2>{data.title}</h2>
+              <h2>{data.label}</h2>
               <span className={styles.list_rating}>
-                <span className={color.text_red}>{data.rating}</span>/5 (
-                {data.review_cnt})
+                {`${data.sigungu} ${data.bname}`}
               </span>
-              <p className={styles.list_location}>{data.location}</p>
             </div>
             <div className={styles.list_deco}></div>
           </div>

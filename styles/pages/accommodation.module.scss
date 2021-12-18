@@ -13,6 +13,15 @@
     background-position: center;
     background-size: cover;
     box-shadow: 2px 2px 4px #999;
+    position: relative;
+    overflow: hidden;
+    & > img {
+      width: 100%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
   }
   .list_text_container {
     width: 100%;

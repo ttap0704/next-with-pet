@@ -9,7 +9,7 @@ import { useRouter } from "next/router";
 
 
 const Restaurant = () => {
-  const { list } = useSelector((state: RootState) => state.restaurantReducer);
+  const { restaurant_list } = useSelector((state: RootState) => state.restaurantReducer);
   const router = useRouter();
 
   const dispatch = useDispatch();
@@ -30,8 +30,8 @@ const Restaurant = () => {
     });
   }
 
-  const restaurant_list = () => {
-    return list.map((data: any, idx) => {
+  const list = () => {
+    return restaurant_list.map((data: any, idx) => {
       return (
         <div className={styles.list} key={idx} onClick={() => moveDetail(data)}>
           <div
@@ -56,7 +56,7 @@ const Restaurant = () => {
   return (
     <>
       <div className={styles.restaurant_wrap}>
-        {restaurant_list()}
+        {list()}
       </div>
     </>
   );
