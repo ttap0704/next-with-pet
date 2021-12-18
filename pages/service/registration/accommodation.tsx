@@ -16,6 +16,7 @@ import {
   HiChevronRight,
 } from "react-icons/hi";
 import PostCode from "../../../src/components/postcode";
+import {fetchPostApi,fetchFileApi} from "../../../src/tools/api"
 
 const Service = () => {
   const router = useRouter();
@@ -49,6 +50,12 @@ const Service = () => {
     detail_address: "",
     building_name: "",
   });
+
+  useEffect(() => {
+    const __next:HTMLElement = document.getElementById('__next');
+    __next.style.overflowY = 'hidden'
+    return () => {};
+  }, []);
   
   function addAccommodation() {
 
@@ -75,7 +82,48 @@ const Service = () => {
       rooms
     };
 
-    console.log(data);
+    fetchPostApi("/accommodation/add", data).then(res => {
+      const res_accommodation_id = res.accommodation_id;
+      const res_rooms: any = res.rooms;
+      
+      let rooms_images_cnt = 0;
+
+      let accommodation_images = new FormData();
+      let rooms_images = new FormData();
+      for (let i = 0, leng = detailPreview.length; i < leng; i++) {
+        const file_name_arr = detailPreview[i].file.name.split(".");
+        const file_extention = file_name_arr[file_name_arr.length - 1];
+        const new_file = new File([detailPreview[i].file], `${res_accommodation_id}_${i}.${file_extention}`, {
+          type: "image/jpeg",
+        });
+        accommodation_images.append(`files_${i}`, new_file);
+      }
+
+      for (let i = 0, leng = roomDetail.length; i < leng; i++) {
+        const room_idx = roomDetail.findIndex(room => {
+          return room.title == res_rooms[i].label;
+        })
+        const room_id = res_rooms[room_idx].id;
+        for (let y = 0, yleng = roomDetail[i].files.length; y < yleng; y++) {
+          const file_name_arr = roomDetail[i].files[y].file.name.split(".");
+          const file_extention = file_name_arr[file_name_arr.length - 1];
+          const new_file = new File(
+            [roomDetail[i].files[y].file],
+            `${res_accommodation_id}_${room_id}_${y}.${file_extention}`,
+            { type: "image/jpeg" }
+          );
+          rooms_images.append(`files_${rooms_images_cnt}`, new_file);
+          rooms_images_cnt++;
+        }
+      }
+      accommodation_images.append("length", detailPreview.length.toString());
+      accommodation_images.append("category", "2");
+      rooms_images.append("length", rooms_images_cnt.toString());
+      rooms_images.append("category", "21");
+
+      fetchFileApi("/upload/image/multi", accommodation_images).then((res) => console.log(res, "1"));
+      fetchFileApi("/upload/image/multi", rooms_images).then((res) => console.log(res, "2"));
+    });
   }
 
 
@@ -91,6 +139,7 @@ const Service = () => {
 
   function movePage(type: string) {
     const slider_btn = document.getElementById("slider_btn");
+    const __next:HTMLElement = document.getElementById('__next');
     if (type == "exposure") {
       setCurPage("detail");
       slider_btn.children[0].innerHTML = "뒤로가기";
@@ -98,6 +147,7 @@ const Service = () => {
       slider_btn.style.right = "unset";
       slider_btn.style.marginLeft = "-12rem";
       slider_btn.style.marginRight = "0";
+      __next.style.overflowY = "auto";
     } else {
       setCurPage("exposure");
       slider_btn.children[0].innerHTML = "상세페이지 등록";
@@ -105,6 +155,7 @@ const Service = () => {
       slider_btn.style.left = "unset";
       slider_btn.style.marginRight = "-12rem";
       slider_btn.style.marginLeft = "0";
+      __next.style.overflowY = "hidden";
     }
     const slider = document.getElementById("slider_wrap");
     const distance = type == "exposure" ? "-61rem" : "0px";

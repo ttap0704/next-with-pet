@@ -5,7 +5,7 @@ import {
   ACCOMMODATION,
   UPLOAD_PATH,
   IMAGES_ID_LIST
-} from "../constrant";
+} from "../constant";
 import Model from '../models'
 
 const path = require('path');

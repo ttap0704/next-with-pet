@@ -1,0 +1,13 @@
+.postcode {
+  display: block !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 40rem !important;
+  height: 28rem !important;
+  padding: 7px !important;
+  z-index: 100 !important;
+  -webkit-transform: translate(-50%, -50%) !important;
+          transform: translate(-50%, -50%) !important;
+}
+/*# sourceMappingURL=postcode.module.css.map */

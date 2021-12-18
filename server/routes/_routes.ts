@@ -2,6 +2,7 @@ import * as express from "express";
 import { Logger } from "../logger/logger";
 import User from "./RUser";
 import Restaurant from "./RRestaurant";
+import Accommodation from "./RAccommodation";
 import Upload from "./RUpload";
 import Image from "./RImage"
 
@@ -29,6 +30,7 @@ class Routes {
     private routes(): void {
         this.express.use("/user", User);
         this.express.use("/restaurant", Restaurant);
+        this.express.use("/Accommodation", Accommodation);
         this.express.use("/upload", Upload);
         this.express.use("/image", Image)
     }

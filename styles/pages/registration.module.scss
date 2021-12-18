@@ -137,8 +137,12 @@
           &:not(:first-of-type) {
             display: none;
           }
+          position: relative;
           img {
-            width: 100%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            position:absolute;
             height: 100%;
           }
         }

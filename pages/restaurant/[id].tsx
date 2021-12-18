@@ -162,7 +162,7 @@ const Detail = () => {
                             <div className={res_style.rest_menu_circle}></div>
                             <div className={res_style.rest_entire_menu_detail_box}>
                               <span>{menu.label}</span>
-                              <span>{menu.price} 원</span>
+                              <span>{menu.price.toLocaleString()} 원</span>
                             </div>
                           </li>
                         );
