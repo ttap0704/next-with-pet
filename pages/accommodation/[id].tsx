@@ -150,7 +150,7 @@ const Detail = () => {
                     <ul id={`detail_img_slider_${index}`}>
                       {data.rooms_images.map(data => {
                         return (
-                          <li>
+                          <li key={data.id}>
                             <img src={`http://localhost:3000/api/image/rooms/${data.file_name}`} alt="rooms_images" />
                           </li>
                         )

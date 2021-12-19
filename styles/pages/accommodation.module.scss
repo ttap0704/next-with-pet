@@ -179,7 +179,8 @@
       input {
         height: 100%;
         width: calc(100% - 6rem);
-        padding-left: 8px;
+        padding: 0 8px;
+        text-align: right;
       }
       span {
         &:first-of-type {
