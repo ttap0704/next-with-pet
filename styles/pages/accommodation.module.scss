@@ -50,3 +50,135 @@
     }
   }
 }
+
+.detail_img {
+  width: 100%;
+  height: 21rem;
+  box-shadow: 2px 2px 4px #999;
+  margin-bottom: 1rem;
+  position: relative;
+  background-position: center;
+  background-size: cover;
+  overflow: hidden;
+  & > img {
+    width: 100%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+}
+
+.detail_room_slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 1;
+  display: none;
+  svg {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #000;
+    border-radius: 6px;
+    color: #fff;
+    opacity: 0.5;
+    &:first-of-type {
+      left: 0;
+    }
+    &:last-of-type {
+      right: 0;
+    }
+  }
+}
+
+
+.detail_room {
+  width: 100%;
+  height: 23rem;
+  border: 1px solid #e3e3e3;
+  border-radius: 6px;
+  padding: 1rem 3rem;
+  display: flex;
+  margin-bottom: 8px;
+  .detail_room_img {
+    width: 17rem;
+    height: 100%;
+    .detail_room_slider_wrap {
+      width: 100%;
+      height: 17rem;
+      border: 1px solid #e3e3e3;
+      overflow: hidden;
+      border-radius: 6px;
+      margin-bottom: 1rem;
+      position: relative;
+      ul {
+        min-width: 100%;
+        height: 17rem;
+        position: relative;
+        li {
+          width: 17rem;
+          height: 100%;
+          &:not(:first-of-type) {
+            display: none;
+          }
+          position: relative;
+          img {
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            position:absolute;
+            height: 100%;
+          }
+        }
+      }
+      h3 {
+        color: #666;
+        position: absolute;
+        top: 50%;
+        width: 100%;
+        text-align: center;
+        transform: translateY(-50%);
+      }
+      
+    }
+    div {
+      width: 100%;
+      height: 3rem;
+      label {
+        margin: 0 auto;
+      }
+    }
+  }
+  .detail_room_intro {
+    width: calc(100% - 19rem);
+    height: 17rem;
+    border: 1px solid #e3e3e3;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    padding: 1.5rem 2rem;
+    margin-left: 1rem;
+    .detail_room_explain {
+      width: 100%;
+      height: 3rem;
+      display: flex;
+      align-items: center;
+      &:not(:last-child) {
+        margin-bottom: 12px;
+      }
+      label {
+        display: block;
+        width: 6rem
+      }
+      input {
+        height: 100%;
+        width: calc(100% - 6rem);
+        padding-left: 8px;
+      }
+    }
+  }
+}

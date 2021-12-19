@@ -16,7 +16,8 @@ import {
   HiChevronRight,
 } from "react-icons/hi";
 import PostCode from "../../../src/components/postcode";
-import {fetchPostApi,fetchFileApi} from "../../../src/tools/api"
+import { fetchPostApi, fetchFileApi } from "../../../src/tools/api"
+import { toggleButton } from "../../../src/tools/common";
 
 const Service = () => {
   const router = useRouter();
@@ -51,12 +52,6 @@ const Service = () => {
     building_name: "",
   });
 
-  useEffect(() => {
-    const __next:HTMLElement = document.getElementById('__next');
-    __next.style.overflowY = 'hidden'
-    return () => {};
-  }, []);
-  
   function addAccommodation() {
 
     let rooms = [];
@@ -85,7 +80,7 @@ const Service = () => {
     fetchPostApi("/accommodation/add", data).then(res => {
       const res_accommodation_id = res.accommodation_id;
       const res_rooms: any = res.rooms;
-      
+
       let rooms_images_cnt = 0;
 
       let accommodation_images = new FormData();
@@ -139,7 +134,7 @@ const Service = () => {
 
   function movePage(type: string) {
     const slider_btn = document.getElementById("slider_btn");
-    const __next:HTMLElement = document.getElementById('__next');
+    const __next: HTMLElement = document.getElementById('__next');
     if (type == "exposure") {
       setCurPage("detail");
       slider_btn.children[0].innerHTML = "뒤로가기";
@@ -166,8 +161,7 @@ const Service = () => {
   function uploadImage(
     event: React.ChangeEvent<HTMLInputElement>,
     type: string,
-    key?: number,
-    data?: object
+    key?: number
   ) {
     const detail_slider = document.getElementById(`detail_img_slider_${key}`);
     const detail_slider_wrap = document.getElementById(
@@ -246,31 +240,8 @@ const Service = () => {
     }
   }
 
-  function toggleDetailImageSlider(type: string) {
-    const slider = document.getElementById(`detail_slider_wrap`).children[0];
-    if (detailPreview.length > 0) {
-      if (type == "enter") {
-        slider.setAttribute("style", "display: block");
-      } else {
-        slider.setAttribute("style", "display: none");
-      }
-    }
-  }
-
-  function toggleRoomImageSlider(idx: number, type: string) {
-    const slider = document.getElementById(`room_slider_wrap_${idx}`)
-      .children[2];
-    if (slider.tagName == "DIV" && roomDetail[idx].files.length > 0) {
-      if (type == "enter") {
-        slider.setAttribute("style", "display: block");
-      } else {
-        slider.setAttribute("style", "display: none");
-      }
-    }
-  }
-
   function detailSlider(type: string) {
-    const slider = document.getElementById(`detail_slider_wrap`);
+    const slider = document.getElementById(`detail_silder_image`);
     let num = detailPreviewNum;
     if (type == "next") {
       num++;
@@ -285,8 +256,8 @@ const Service = () => {
     }
     setDetailPreviewNum(num);
     slider.setAttribute(
-      "style",
-      `background-image: url(${detailPreview[num].imageUrl})`
+      "src",
+      `${detailPreview[num].imageUrl}`
     );
   }
 
@@ -330,7 +301,7 @@ const Service = () => {
     ]);
   }
 
-  function inputRoomsDetial (e, idx: number, type: string) {
+  function inputRoomsDetial(e, idx: number, type: string) {
     let items = [...roomDetail];
     let item = items[idx];
     let value = e.target.value;
@@ -357,27 +328,32 @@ const Service = () => {
           <div
             className={accom_style.list_img}
             style={{
-              backgroundImage: `url(${previewFile.imageUrl})`,
               position: "relative",
             }}
           >
-            {previewFile.file == null ? (
-              <h3
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  color: "#666",
-                }}
-              >
-                대표이미지를 업로드해주세요.
-              </h3>
-            ) : null}
+            {previewFile.file == null ?
+              (
+                <h3
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                    color: "#666",
+                  }}
+                >
+                  대표이미지를 업로드해주세요.
+                </h3>
+              )
+              :
+              (
+                <img src={`${previewFile.imageUrl}`} alt="exposure_images" />
+              )
+            }
           </div>
           <div className={accom_style.list_text_container}>
             <div className={accom_style.list_text}>
-            <h2>{title ? title : "식당 이름을 입력해주세요."}</h2>
+              <h2>{title ? title : "식당 이름을 입력해주세요."}</h2>
               <span className={accom_style.list_rating}>
                 {address.bname ? `${address.sigungu} ${address.bname}` : "장소를 등록해주세요."}
               </span>
@@ -467,12 +443,12 @@ const Service = () => {
                 <h2>대표 이미지</h2>
                 <div
                   id="detail_slider_wrap"
-                  className={styles.detail_img}
-                  style={{ backgroundImage: `url(${previewFile.imageUrl})` }}
-                  onMouseEnter={() => toggleDetailImageSlider("enter")}
-                  onMouseLeave={() => toggleDetailImageSlider("leave")}
+                  className={accom_style.detail_img}
+                  onMouseEnter={() => toggleButton([`detail_room_slider`], "enter")}
+                  onMouseLeave={() => toggleButton([`detail_room_slider`], "leave")}
                 >
-                  {previewFile.file == null ? (
+                  {previewFile.file == null ? 
+                  (
                     <h3
                       style={{
                         position: "absolute",
@@ -484,8 +460,13 @@ const Service = () => {
                     >
                       대표이미지를 업로드해주세요.
                     </h3>
-                  ) : null}
-                  <div className={styles.detail_room_slider}>
+                  ) 
+                  : 
+                  (
+                    <img src={`${previewFile.imageUrl}`} alt="preview_images" id="detail_silder_image" />
+                  )
+                  }
+                  <div className={accom_style.detail_room_slider} id="detail_room_slider">
                     <HiChevronLeft
                       style={{ width: "3rem", height: "3rem" }}
                       onClick={() => detailSlider("next")}
@@ -539,21 +520,25 @@ const Service = () => {
                 <h2>객실 정보</h2>
                 {roomDetail.map((data, index) => {
                   return (
-                    <div className={styles.detail_room} key={index}>
-                      <div className={styles.detail_room_img}>
+                    <div className={accom_style.detail_room} key={index}>
+                      <div className={accom_style.detail_room_img}>
                         <div
-                          className={styles.detail_room_slider_wrap}
+                          className={accom_style.detail_room_slider_wrap}
                           id={`room_slider_wrap_${index}`}
                           onMouseEnter={() =>
-                            toggleRoomImageSlider(index, "enter")
+                            data.files.length > 0 ?
+                            toggleButton([`detail_room_slider_${index}`], "enter") :
+                            null
                           }
                           onMouseLeave={() =>
-                            toggleRoomImageSlider(index, "leave")
+                            data.files.length > 0 ?
+                            toggleButton([`detail_room_slider_${index}`], "leave") :
+                            null
                           }
                         >
                           <ul id={`detail_img_slider_${index}`}></ul>
                           <h3>객실 이미지를 등록해주세요.</h3>
-                          <div className={styles.detail_room_slider}>
+                          <div className={accom_style.detail_room_slider} id={`detail_room_slider_${index}`}>
                             <HiChevronLeft
                               onClick={() => roomSlider("prev", index)}
                               style={{ width: "2.5rem", height: "2.5rem" }}
@@ -575,15 +560,15 @@ const Service = () => {
                           <input
                             type="file"
                             onChange={(e) =>
-                              uploadImage(e, "room", index, data)
+                              uploadImage(e, "room", index)
                             }
                             id={`rooms_img_${index}`}
                             multiple
                           ></input>
                         </div>
                       </div>
-                      <div className={styles.detail_room_intro}>
-                        <div className={styles.detail_room_explain}>
+                      <div className={accom_style.detail_room_intro}>
+                        <div className={accom_style.detail_room_explain}>
                           <label>객실명</label>
                           <input
                             type="text"
@@ -591,7 +576,7 @@ const Service = () => {
                             onChange={(e) => inputRoomsDetial(e, index, 'title')}
                           />
                         </div>
-                        <div className={styles.detail_room_explain}>
+                        <div className={accom_style.detail_room_explain}>
                           <label>기준 인원</label>
                           <input
                             type="text"
@@ -599,7 +584,7 @@ const Service = () => {
                             onChange={(e) => inputRoomsDetial(e, index, 'people')}
                           />
                         </div>
-                        <div className={styles.detail_room_explain}>
+                        <div className={accom_style.detail_room_explain}>
                           <label>최대 인원</label>
                           <input
                             type="text"
@@ -607,7 +592,7 @@ const Service = () => {
                             onChange={(e) => inputRoomsDetial(e, index, 'max_people')}
                           />
                         </div>
-                        <div className={styles.detail_room_explain}>
+                        <div className={accom_style.detail_room_explain}>
                           <label>가격</label>
                           <input
                             type="text"
