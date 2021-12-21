@@ -1,9 +1,0 @@
-{
-    "version": 3,
-    "mappings": "AAAA,AAAA,SAAS,CAAC;EACR,OAAO,EAAE,gBAAgB;EACzB,QAAQ,EAAE,mBAAmB;EAC7B,GAAG,EAAG,cAAc;EACpB,IAAI,EAAG,cAAc;EACrB,KAAK,EAAG,gBAAiB;EACzB,MAAM,EAAG,gBAAgB;EACzB,OAAO,EAAG,cAAc;EACxB,OAAO,EAAE,cAAc;EACvB,SAAS,EAAG,qBAAqB,CAAC,UAAU;CAC7C",
-    "sources": [
-        "postcode.module.scss"
-    ],
-    "names": [],
-    "file": "postcode.module.css"
-}

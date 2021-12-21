@@ -9,7 +9,8 @@ import { TiDelete } from "react-icons/ti";
 import { HiChevronDoubleRight, HiChevronDoubleLeft, HiPlusCircle, HiOutlinePlusCircle } from "react-icons/hi";
 import { Tooltip, IconButton } from "@mui/material";
 import PostCode from "../../../src/components/postcode";
-import { actions, RESET_RESTRAURANT } from "../../../reducers/models/restaurant";
+import { RESET_RESTRAURANT } from "../../../reducers/models/restaurant";
+import { actions } from "../../../reducers/common/upload";
 import { fetchPostApi, fetchFileApi } from "../../../src/tools/api";
 import { toggleButton } from "../../../src/tools/common";
 
@@ -98,6 +99,12 @@ const Service = () => {
   }
 
   function uploadImage(event: React.ChangeEvent<HTMLInputElement>, type: string, key?: number, data?: object) {
+    dispatch(
+      actions.setUploadModalVisible({
+        visible: true
+      })
+    );
+    return false;
     let file = event.currentTarget.files;
     if (file.length > 0) {
       if (type == "exposure") {

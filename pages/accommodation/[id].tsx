@@ -131,7 +131,7 @@ const Detail = () => {
           <h2>객실 정보</h2>
           {rooms.map((data, index) => {
             return (
-              <div className={accom_style.detail_room} key={index}>
+              <div className={accom_style.detail_room} key={index} style={{height: '19rem'}}>
                 <div className={accom_style.detail_room_img}>
                   <div
                     className={accom_style.detail_room_slider_wrap}

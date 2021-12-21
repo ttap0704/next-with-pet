@@ -82,6 +82,7 @@
     display: flex;
     flex-direction: row;
     justify-content: flex-start;
+    flex-wrap: wrap;
     gap: 12px;
     h3 {
       width: 100%;
@@ -92,6 +93,8 @@
     div {
       width: 5.25rem;
       height: 5.25rem;
+      min-width: 5.25rem;
+      min-height: 5.25rem;
       cursor: pointer;
       position: relative;
       & > div {

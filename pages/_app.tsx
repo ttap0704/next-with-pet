@@ -5,11 +5,13 @@ import configureStore from "../reducers/configureStore";
 import "../styles/globals.scss";
 
 import Header from "../src/components/header";
+import UploadModal from "../src/components/UploadModal"
+
 
 // store 설정파일 로드
 const store = configureStore();
 
-const TestApp = ({ Component, pageProps }: AppProps) => {
+const _APP = ({ Component, pageProps }: AppProps) => {
   return (
     <Provider store={store}>
       <Header />
@@ -17,15 +19,19 @@ const TestApp = ({ Component, pageProps }: AppProps) => {
         <div id="__container">
           <Component {...pageProps} />
         </div>
+        
+        {/* 사진 업로드 모달 */}
+        <UploadModal />
       </div>
+      
     </Provider>
   );
 };
 
-TestApp.getInitialProps = async (appContext: AppContext) => {
+_APP.getInitialProps = async (appContext: AppContext) => {
   const appProps = await App.getInitialProps(appContext);
 
   return { ...appProps };
 };
 
-export default TestApp;
+export default _APP;

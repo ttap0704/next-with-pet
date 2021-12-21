@@ -7,6 +7,7 @@ import accommodationReducer from "./models/accommodation";
 
 // common
 import testReducer from "./common/testReducer";
+import uploadReducer from "./common/upload";
 
 
 const rootReducer = combineReducers({
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
     accommodationReducer,
 
     // common
-    testReducer
+    testReducer,
+    uploadReducer
 })
 
 export default rootReducer;
