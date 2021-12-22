@@ -1,5 +1,5 @@
 import nav_items from "../tools/nav";
-import styles from "../../styles/components/header.module.scss";
+import styles from "../../styles/components.module.scss";
 import Link from "next/link";
 import { RootState } from "../../reducers";
 import { useSelector } from "react-redux";

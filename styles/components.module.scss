@@ -1,0 +1,103 @@
+@import './colors';
+
+.header {
+  width: 100%;
+  height: 5rem;
+  background-color: $orange;
+  margin: 0 auto;
+  ul {
+    width: 60rem;;
+    margin:0 auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+    li {
+      height: 100%;
+      color: #fff;
+      a {
+        width: 100%;
+        height: 100%;
+        display: block;
+        display: flex;
+        align-items: center;
+        padding: 0 20px;
+        font-size: 1.2rem;
+      }
+    }
+  }
+}
+
+.postcode {
+  display: block !important;
+  position: absolute !important;
+  top:  50% !important;
+  left:  50% !important;
+  width:  40rem !important ;
+  height:  28rem !important;
+  padding:  7px !important;
+  z-index: 100 !important;
+  transform:  translate(-50%, -50%) !important;
+};
+
+.upload_modal_warp {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background-color: rgba(0, 0, 0, .5);
+  z-index: 0;
+  .upload_modal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50rem;
+    height: 30rem;
+    border: 1px solid #e3e3e3;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fff;
+    z-index: 1;
+  }
+}
+
+.upload_button {
+  width: 15rem;
+  height: 3rem;
+  background-color: $orange;
+  color: #fff;
+  border-radius: 6px;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: -12px;
+  }
+}
+
+.file_input {
+  width: 15rem;
+  height: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: $orange;
+  border-radius: 6px;
+  color: #fff;
+  cursor: pointer;
+  gap: 0.5rem;
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: -12px;
+  }
+}

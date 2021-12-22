@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DaumPostcode from "react-daum-postcode";
-import styles from "../../styles/components/postcode.module.scss";
+import styles from "../../styles/components.module.scss";
 
 const PostCode = (props) => {
   const onCompletePost = (data) => {

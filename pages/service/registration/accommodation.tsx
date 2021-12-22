@@ -15,7 +15,7 @@ import {
   HiChevronLeft,
   HiChevronRight,
 } from "react-icons/hi";
-import PostCode from "../../../src/components/postcode";
+import PostCode from "../../../src/components/Postcode";
 import { fetchPostApi, fetchFileApi } from "../../../src/tools/api"
 import { toggleButton } from "../../../src/tools/common";
 

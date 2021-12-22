@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import configureStore from "../reducers/configureStore";
 import "../styles/globals.scss";
 
-import Header from "../src/components/header";
+import Header from "../src/components/Header";
 import UploadModal from "../src/components/UploadModal"
 
 

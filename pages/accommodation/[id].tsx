@@ -18,7 +18,6 @@ const Detail = () => {
 
   useEffect(() => {
     fetchGetApi(`/accommodation/${id}`).then((data) => {
-      console.log(data);
       setExposureImages([...data.accommodation_images]);
       setTitle(data.label);
       setAddress(`${data.sigungu} ${data.bname}`);
