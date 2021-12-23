@@ -6,19 +6,28 @@ import {
 } from 'typesafe-actions';
 
 interface UploadReducer {
-  files:object [],
+  files: object[],
   upload_modal_visible: Boolean,
-  title: string
+  title: string,
+  target: string,
+  target_idx: undefined | number,
+  multiple: Boolean
 }
 interface Settings {
   visible: Boolean,
-  title: string
+  title: string,
+  target: string,
+  target_idx?: number,
+  multiple: Boolean
 }
 
 const initialState: UploadReducer = {
   files: [],
   upload_modal_visible: false,
-  title: ""
+  title: "",
+  target: "",
+  target_idx: undefined,
+  multiple: false
 }
 
 
@@ -39,7 +48,10 @@ const uploadReducer = createReducer<UploadReducer, UploadReducerActions>(initial
   [RESET_FILES]: () => ({
     files: [],
     upload_modal_visible: false,
-    title: ""
+    title: "",
+    target: "",
+    target_idx: undefined,
+    multiple: false
   }),
   [PUSH_FILES]: (state, action) => {
     return ({
@@ -48,10 +60,15 @@ const uploadReducer = createReducer<UploadReducer, UploadReducerActions>(initial
     })
   },
   [SET_UPLOAD_MODAL_VISIBLE]: (state, action) => {
+    console.log(action.payload)
     return ({
       ...state,
       upload_modal_visible: action.payload.visible,
-      title: action.payload.title
+      title: action.payload.title,
+      target: action.payload.target,
+      target_idx: action.payload.target_idx != null && !isNaN(action.payload.target_idx)
+        ? action.payload.target_idx : undefined,
+      multiple: action.payload.multiple
     })
   },
 })

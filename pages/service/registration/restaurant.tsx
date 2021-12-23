@@ -14,6 +14,8 @@ import {RESET_RESTRAURANT} from "../../../reducers/models/restaurant";
 import {actions} from "../../../reducers/common/upload";
 import {fetchPostApi, fetchFileApi} from "../../../src/tools/api";
 import {toggleButton} from "../../../src/tools/common";
+import UploadModal from "../../../src/components/UploadModal"
+
 
 const Service = () => {
   const dispatch = useDispatch();
@@ -395,7 +397,9 @@ const Service = () => {
                     dispatch(
                       actions.setUploadModalVisible({
                         visible: true,
-                        title: "대표이미지 업로드"
+                        title: "대표이미지 업로드",
+                        target: "exposure",
+                        multiple: true
                       })
                     )
                   }
@@ -639,6 +643,10 @@ const Service = () => {
           <PostCode complete={(data) => updateAddress(data)} />
         </div>
       ) : null}
+      {/* 사진 업로드 모달 */}
+    <UploadModal 
+      onChange={(e, target) => uploadImage(e, target)}
+    />
     </>
   );
 };

@@ -3,10 +3,11 @@ import styles from "../../styles/components.module.scss";
 
 const UploadInput = (props) => {
   const title = props.title;
+  const multiple = props.multiple;
 
   function onChangeEvent(e) {
     e.preventDefault();
-    props.onChange();
+    props.onChange(e);
   }
 
   return (
@@ -23,7 +24,7 @@ const UploadInput = (props) => {
         onChange={(e) => onChangeEvent(e)}
         id="upload_input"
         name="upload_input"
-        multiple
+        multiple={multiple}
       ></input>
     </div>
   );

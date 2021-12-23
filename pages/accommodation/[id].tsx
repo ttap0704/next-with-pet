@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useState} from "react";
 import color from "../../accom_style/color.module.scss";
-import accom_style from "../../styles/pages/accommodation.module.scss"
-import { useRouter } from "next/router";
-import { fetchGetApi } from "../../src/tools/api";
-import { HiChevronUp, HiChevronLeft, HiChevronRight } from "react-icons/hi";
-import { toggleButton } from "../../src/tools/common";
+import accom_style from "../../styles/pages/accommodation.module.scss";
+import {useRouter} from "next/router";
+import {fetchGetApi} from "../../src/tools/api";
+import {HiChevronUp, HiChevronLeft, HiChevronRight} from "react-icons/hi";
+import {toggleButton} from "../../src/tools/common";
+import AccommodationImageBox from "../../src/components/AccommodationImageBox";
+import ImageSlider from "../../src/components/ImageSlider";
 
 const Detail = () => {
   const router = useRouter();
@@ -14,7 +16,7 @@ const Detail = () => {
   const [address, setAddress] = useState("");
   const [introduction, setIntroduction] = useState("");
   const [detailPreviewNum, setDetailPreviewNum] = useState(0);
-  const [rooms, setRooms] = useState([])
+  const [rooms, setRooms] = useState([]);
 
   useEffect(() => {
     fetchGetApi(`/accommodation/${id}`).then((data) => {
@@ -22,9 +24,9 @@ const Detail = () => {
       setTitle(data.label);
       setAddress(`${data.sigungu} ${data.bname}`);
       setIntroduction(data.introduction);
-      setRooms([...data.accommodation_rooms])
+      setRooms([...data.accommodation_rooms]);
     });
-    return () => { };
+    return () => {};
   }, []);
 
   function detailSlider(type: string) {
@@ -48,12 +50,11 @@ const Detail = () => {
     );
   }
 
-
   function roomSlider(type: string, idx: number) {
     const slider = document.getElementById(`detail_img_slider_${idx}`);
     let items = [...rooms];
     let item = items[idx];
-    
+
     if (!item.cur_num) {
       item.cur_num = 0;
     }
@@ -70,9 +71,10 @@ const Detail = () => {
       item.cur_num = item.rooms_images.length - 1;
     }
 
-    slider.children[
-      item.cur_num - 1 < 0 ? item.rooms_images.length - 1 : item.cur_num - 1
-    ].setAttribute("style", "display: none");
+    slider.children[item.cur_num - 1 < 0 ? item.rooms_images.length - 1 : item.cur_num - 1].setAttribute(
+      "style",
+      "display: none"
+    );
     slider.children[item.cur_num].setAttribute("style", "display: block");
 
     items[idx] = item;
@@ -82,35 +84,29 @@ const Detail = () => {
   const preview = () => {
     return (
       <>
-        <div
-          id="detail_slider_wrap"
-          className={accom_style.detail_img}
+        <AccommodationImageBox
+          boxId="detail_slider_warp"
+          imgId="exposure_image"
           onMouseEnter={() => toggleButton([`detail_room_slider`], "enter")}
           onMouseLeave={() => toggleButton([`detail_room_slider`], "leave")}
-          style={{ marginBottom: '0' }}
+          src={
+            exposureImages.length > 0
+              ? `http://localhost:3000/api/image/accommodation/${exposureImages[0].file_name}`
+              : null
+          }
+          alt="exposure_image"
         >
-          <img
-            id="exposure_image"
-            src={exposureImages.length > 0 ? `http://localhost:3000/api/image/accommodation/${exposureImages[0].file_name}` : null}
-            alt="exposure_image"
+          <ImageSlider
+            id="detail_room_slider"
+            sliderStyle={{width: "3rem", height: "3rem"}}
+            onSlideLeft={() => detailSlider("prev")}
+            onSlideRight={() => detailSlider("next")}
           />
-          <div className={accom_style.detail_room_slider} id="detail_room_slider">
-            <HiChevronLeft
-              style={{ width: "3rem", height: "3rem" }}
-              onClick={() => detailSlider("next")}
-            />
-            <HiChevronRight
-              style={{ width: "3rem", height: "3rem" }}
-              onClick={() => detailSlider("prev")}
-            />
-          </div>
-        </div>
+        </AccommodationImageBox>
         <div className={accom_style.list_text_container}>
           <div className={accom_style.list_text}>
             <h2>{title}</h2>
-            <span className={accom_style.list_rating}>
-              {address}
-            </span>
+            <span className={accom_style.list_rating}>{address}</span>
           </div>
           <div className={accom_style.list_deco}></div>
         </div>
@@ -130,39 +126,35 @@ const Detail = () => {
           <h2>객실 정보</h2>
           {rooms.map((data, index) => {
             return (
-              <div className={accom_style.detail_room} key={index} style={{height: '19rem'}}>
+              <div className={accom_style.detail_room} key={index} style={{height: "19rem"}}>
                 <div className={accom_style.detail_room_img}>
                   <div
                     className={accom_style.detail_room_slider_wrap}
                     id={`room_slider_wrap_${index}`}
                     onMouseEnter={() =>
-                      data.rooms_images.length > 0 ?
-                        toggleButton([`detail_room_slider_${index}`], "enter") :
-                        null
+                      data.rooms_images.length > 0 ? toggleButton([`detail_room_slider_${index}`], "enter") : null
                     }
                     onMouseLeave={() =>
-                      data.rooms_images.length > 0 ?
-                        toggleButton([`detail_room_slider_${index}`], "leave") :
-                        null
+                      data.rooms_images.length > 0 ? toggleButton([`detail_room_slider_${index}`], "leave") : null
                     }
                   >
                     <ul id={`detail_img_slider_${index}`}>
-                      {data.rooms_images.map(data => {
+                      {data.rooms_images.map((data) => {
                         return (
                           <li key={data.id}>
                             <img src={`http://localhost:3000/api/image/rooms/${data.file_name}`} alt="rooms_images" />
                           </li>
-                        )
+                        );
                       })}
                     </ul>
                     <div className={accom_style.detail_room_slider} id={`detail_room_slider_${index}`}>
                       <HiChevronLeft
                         onClick={() => roomSlider("prev", index)}
-                        style={{ width: "2.5rem", height: "2.5rem" }}
+                        style={{width: "2.5rem", height: "2.5rem"}}
                       />
                       <HiChevronRight
                         onClick={() => roomSlider("next", index)}
-                        style={{ width: "2.5rem", height: "2.5rem" }}
+                        style={{width: "2.5rem", height: "2.5rem"}}
                       />
                     </div>
                   </div>

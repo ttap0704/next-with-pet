@@ -5,7 +5,6 @@ import configureStore from "../reducers/configureStore";
 import "../styles/globals.scss";
 
 import Header from "../src/components/Header";
-import UploadModal from "../src/components/UploadModal"
 
 
 // store 설정파일 로드
@@ -19,11 +18,7 @@ const _APP = ({ Component, pageProps }: AppProps) => {
         <div id="__container">
           <Component {...pageProps} />
         </div>
-        
-        {/* 사진 업로드 모달 */}
-        <UploadModal />
       </div>
-      
     </Provider>
   );
 };
