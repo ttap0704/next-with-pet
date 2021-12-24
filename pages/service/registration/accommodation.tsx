@@ -11,7 +11,8 @@ import {toggleButton} from "../../../src/tools/common";
 import UploadButton from "../../../src/components/UploadButton";
 import UploadModal from "../../../src/components/UploadModal";
 import ImageSlider from "../../../src/components/ImageSlider";
-import AccommodationImageBox from "../../../src/components/AccommodationImageBox";
+import ImageBox from "../../../src/components/ImageBox";
+import LabelBox from "../../../src/components/LabelBox";
 import {actions} from "../../../reducers/common/upload";
 import {useDispatch} from "react-redux";
 
@@ -22,11 +23,7 @@ const Service = () => {
   const [curPage, setCurPage] = useState("exposure");
   const [title, setTitle] = useState("");
   const [intro, setIntro] = useState("");
-  const [previewFile, setPreviewFile] = useState({
-    file: null,
-    imageUrl: "",
-  });
-  const [detailPreview, setDetailPreview] = useState([]);
+  const [previewFile, setPreviewFile] = useState([]);
   const [detailPreviewNum, setDetailPreviewNum] = useState(0);
   const [roomDetail, setRoomDetail] = useState([
     {
@@ -81,10 +78,10 @@ const Service = () => {
 
       let accommodation_images = new FormData();
       let rooms_images = new FormData();
-      for (let i = 0, leng = detailPreview.length; i < leng; i++) {
-        const file_name_arr = detailPreview[i].file.name.split(".");
+      for (let i = 0, leng = previewFile.length; i < leng; i++) {
+        const file_name_arr = previewFile[i].file.name.split(".");
         const file_extention = file_name_arr[file_name_arr.length - 1];
-        const new_file = new File([detailPreview[i].file], `${res_accommodation_id}_${i}.${file_extention}`, {
+        const new_file = new File([previewFile[i].file], `${res_accommodation_id}_${i}.${file_extention}`, {
           type: "image/jpeg",
         });
         accommodation_images.append(`files_${i}`, new_file);
@@ -107,7 +104,7 @@ const Service = () => {
           rooms_images_cnt++;
         }
       }
-      accommodation_images.append("length", detailPreview.length.toString());
+      accommodation_images.append("length", previewFile.length.toString());
       accommodation_images.append("category", "2");
       rooms_images.append("length", rooms_images_cnt.toString());
       rooms_images.append("category", "21");
@@ -159,23 +156,15 @@ const Service = () => {
     let file = event.currentTarget.files;
     if (file.length > 0) {
       if (type == "exposure") {
-        let reader = new FileReader();
-        reader.onload = () => {
-          setPreviewFile({file: file[0], imageUrl: reader.result.toString()});
-          setDetailPreview((state) => [...state, {file: file[0], imageUrl: reader.result.toString()}]);
-        };
-        reader.readAsDataURL(file[0]);
-      } else if (type == "detail") {
         let files = Array.from(file);
         files.forEach((file) => {
           let reader = new FileReader();
           reader.onloadend = () => {
-            setDetailPreview((state) => [...state, {file: file, imageUrl: reader.result.toString()}]);
+            setPreviewFile((state) => [...state, {file: file, imageUrl: reader.result.toString()}]);
           };
           reader.readAsDataURL(file);
         });
       } else {
-        console.log(key);
         let files = Array.from(file);
         let items = [...roomDetail];
         let item = items[key];
@@ -203,7 +192,7 @@ const Service = () => {
     } else {
       switch (type) {
         case "exposure":
-          setPreviewFile({file: null, imageUrl: ""});
+          setPreviewFile([]);
           break;
         case "room":
           let items = [...roomDetail];
@@ -218,8 +207,8 @@ const Service = () => {
     }
   }
 
-  function detailSlider(type: string) {
-    const slider = document.getElementById(`detail_silder_image`);
+  function previewSlider(type: string) {
+    const slider = document.getElementById(`exposure_slider_image`);
     let num = detailPreviewNum;
     if (type == "next") {
       num++;
@@ -227,13 +216,13 @@ const Service = () => {
       num--;
     }
 
-    if (num >= detailPreview.length) {
+    if (num >= previewFile.length) {
       num = 0;
     } else if (num < 0) {
-      num = detailPreview.length - 1;
+      num = previewFile.length - 1;
     }
     setDetailPreviewNum(num);
-    slider.setAttribute("src", `${detailPreview[num].imageUrl}`);
+    slider.setAttribute("src", `${previewFile[num].imageUrl}`);
   }
 
   function roomSlider(type: string, idx: number) {
@@ -296,42 +285,6 @@ const Service = () => {
     }));
   }
 
-  function setUploadModal() {}
-
-  const preview = () => {
-    return (
-      <>
-        <h2 style={{marginBottom: "8px"}}>미리보기</h2>
-        <div className={accom_style.list}>
-          <AccommodationImageBox src={previewFile.file ? `${previewFile.imageUrl}` : null} alt="exposure_images">
-            {previewFile.file == null ? (
-              <h3
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  color: "#666",
-                }}
-              >
-                대표이미지를 업로드해주세요.
-              </h3>
-            ) : null}
-          </AccommodationImageBox>
-          <div className={accom_style.list_text_container}>
-            <div className={accom_style.list_text}>
-              <h2>{title ? title : "식당 이름을 입력해주세요."}</h2>
-              <span className={accom_style.list_rating}>
-                {address.bname ? `${address.sigungu} ${address.bname}` : "장소를 등록해주세요."}
-              </span>
-            </div>
-            <div className={accom_style.list_deco}></div>
-          </div>
-        </div>
-      </>
-    );
-  };
-
   return (
     <>
       <div className={styles.test}>
@@ -339,7 +292,42 @@ const Service = () => {
           <div id="slider_wrap" className={styles.slider_wrap}>
             <div className={styles.page}>
               <h1>노출 페이지</h1>
-              {preview()}
+              <h2 style={{marginBottom: "8px"}}>미리보기</h2>
+              <div className={accom_style.list} style={{cursor: "unset"}}>
+                <ImageBox
+                  src={previewFile.length ? `${previewFile[0].imageUrl}` : null}
+                  alt="exposure_images"
+                  type="accommodation"
+                  imgId="exposure_slider_image"
+                  onMouseEnter={() => toggleButton([`exposure_image_slider`], "enter")}
+                  onMouseLeave={() => toggleButton([`exposure_image_slider`], "leave")}
+                >
+                  {previewFile.length == 0 ? (
+                    <h3
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        color: "#666",
+                      }}
+                    >
+                      대표이미지를 업로드해주세요.
+                    </h3>
+                  ) : null}
+                  <ImageSlider
+                    id="exposure_image_slider"
+                    sliderStyle={{width: "3rem", height: "3rem"}}
+                    onSlideLeft={() => previewSlider("prev")}
+                    onSlideRight={() => previewSlider("next")}
+                  />
+                </ImageBox>
+                <LabelBox
+                  title={title ? title : "식당 이름을 입력해주세요."}
+                  address={address.bname ? `${address.sigungu} ${address.bname}` : "장소를 등록해주세요."}
+                  type="accommodation"
+                />
+              </div>
               <form className={styles.form_box}>
                 <div style={{marginBottom: "12px"}}>
                   <UploadButton
@@ -350,7 +338,7 @@ const Service = () => {
                           visible: true,
                           title: "대표이미지 업로드",
                           target: "exposure",
-                          multiple: false,
+                          multiple: true,
                         })
                       )
                     }
@@ -406,79 +394,6 @@ const Service = () => {
             </div>
             <div className={styles.page}>
               <h1>상세 페이지</h1>
-              <div>
-                <h2>대표 이미지</h2>
-                <div
-                  id="detail_slider_wrap"
-                  className={accom_style.detail_img}
-                  onMouseEnter={() => toggleButton([`detail_room_slider`], "enter")}
-                  onMouseLeave={() => toggleButton([`detail_room_slider`], "leave")}
-                >
-                  {previewFile.file == null ? (
-                    <h3
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        color: "#666",
-                      }}
-                    >
-                      대표이미지를 업로드해주세요.
-                    </h3>
-                  ) : (
-                    <img src={`${previewFile.imageUrl}`} alt="preview_images" id="detail_silder_image" />
-                  )}
-                  <ImageSlider
-                    id="detail_room_slider"
-                    sliderStyle={{width: "3rem", height: "3rem"}}
-                    onSlideRight={() => detailSlider("next")}
-                    onSlideLeft={() => detailSlider("next")}
-                  />
-                </div>
-                <div
-                  style={{
-                    width: "100%",
-                    display: "flex",
-                    alignItems: "flex-end",
-                    flexDirection: "column",
-                  }}
-                >
-                  <UploadButton
-                    title="대표이미지 업로드"
-                    onClick={() =>
-                      dispatch(
-                        actions.setUploadModalVisible({
-                          visible: true,
-                          title: "대표이미지 업로드",
-                          target: "detail",
-                          multiple: true,
-                        })
-                      )
-                    }
-                  />
-                  {/* <label htmlFor="detail_img" className={common.file_input}>
-                    대표이미지 업로드
-                    <FaFileUpload />
-                  </label>
-                  <input
-                    type="file"
-                    onChange={(e) => uploadImage(e, "detail")}
-                    id="detail_img"
-                    multiple
-                  ></input> */}
-                  <span
-                    style={{
-                      color: "#666",
-                      marginTop: "4px",
-                      textAlign: "right",
-                    }}
-                  >
-                    * 상세페이지의 대표이미지 설정입니다. <br />
-                    추가로 이미지를 등록하실 수 있습니다. <br />
-                  </span>
-                </div>
-              </div>
               <div style={{marginBottom: "1rem"}}>
                 <h2>숙소 소개</h2>
                 <textarea
@@ -514,16 +429,6 @@ const Service = () => {
                           />
                         </div>
                         <div>
-                          {/* <label htmlFor={`rooms_img_${index}`} className={common.file_input}>
-                            객실이미지 업로드
-                            <FaFileUpload />
-                          </label>
-                          <input
-                            type="file"
-                            onChange={(e) => uploadImage(e, "room", index)}
-                            id={`rooms_img_${index}`}
-                            multiple
-                          ></input> */}
                           <UploadButton
                             title="객실이미지 업로드"
                             onClick={() =>

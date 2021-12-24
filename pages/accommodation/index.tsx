@@ -7,7 +7,8 @@ import {fetchGetApi} from "../../src/tools/api";
 import {actions, RESET_ACCOMMODATION} from "../../reducers/models/accommodation";
 import {useRouter} from "next/router";
 
-import AccommodationImageBox from "../../src/components/AccommodationImageBox";
+import ImageBox from "../../src/components/ImageBox";
+import LabelBox from "../../src/components/LabelBox";
 
 const Accommodation = () => {
   const dispatch = useDispatch();
@@ -37,33 +38,26 @@ const Accommodation = () => {
     });
   }
 
-  const list = () => {
-    return accommodation_list.map((data: any) => {
-      return (
-        <div className={styles.list} key={data.id} onClick={() => moveDetail(data)}>
-          <AccommodationImageBox
-            src={
-              data.accommodation_images.length > 0
-                ? `api/image/accommodation/${data.accommodation_images[0].file_name}`
-                : null
-            }
-            alt="exposure_image"
-          />
-          <div className={styles.list_text_container}>
-            <div className={styles.list_text}>
-              <h2>{data.label}</h2>
-              <span className={styles.list_rating}>{`${data.sigungu} ${data.bname}`}</span>
-            </div>
-            <div className={styles.list_deco}></div>
-          </div>
-        </div>
-      );
-    });
-  };
-
   return (
     <>
-      <div>{list()}</div>
+      <div>
+        {accommodation_list.map((data: any) => {
+          return (
+            <div className={styles.list} key={data.id} onClick={() => moveDetail(data)}>
+              <ImageBox
+                src={
+                  data.accommodation_images.length > 0
+                    ? `api/image/accommodation/${data.accommodation_images[0].file_name}`
+                    : null
+                }
+                alt="exposure_image"
+                type="accommodation"
+              />
+              <LabelBox title={data.label} address={`${data.sigungu} ${data.bname}`} type="accommodation" />
+            </div>
+          );
+        })}
+      </div>
     </>
   );
 };

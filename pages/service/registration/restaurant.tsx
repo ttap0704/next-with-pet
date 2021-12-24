@@ -10,12 +10,13 @@ import {HiChevronDoubleRight, HiChevronDoubleLeft, HiPlusCircle, HiOutlinePlusCi
 import {Tooltip, IconButton, Button} from "@mui/material";
 import PostCode from "../../../src/components/Postcode";
 import UploadButton from "../../../src/components/UploadButton";
+import ImageBox from "../../../src/components/ImageBox";
+import LabelBox from "../../../src/components/LabelBox";
 import {RESET_RESTRAURANT} from "../../../reducers/models/restaurant";
 import {actions} from "../../../reducers/common/upload";
 import {fetchPostApi, fetchFileApi} from "../../../src/tools/api";
 import {toggleButton} from "../../../src/tools/common";
-import UploadModal from "../../../src/components/UploadModal"
-
+import UploadModal from "../../../src/components/UploadModal";
 
 const Service = () => {
   const dispatch = useDispatch();
@@ -144,7 +145,7 @@ const Service = () => {
   }
 
   function changePreviewImg(idx: number) {
-    const el = document.getElementById("exposure_img").children[0];
+    const el = document.getElementById("exposure_img");
     el.setAttribute("src", exposureImages[idx].imageUrl);
   }
 
@@ -324,64 +325,6 @@ const Service = () => {
     console.log(data);
   }
 
-  const preview = () => {
-    return (
-      <div className={res_style.rest_preview}>
-        <div className={res_style.list} style={{cursor: "unset"}}>
-          <div id="exposure_img" className={res_style.list_img}>
-            {exposureImages.length == 0 ? (
-              <h3
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  color: "#666",
-                }}
-              >
-                대표이미지를 업로드해주세요.
-              </h3>
-            ) : (
-              <img src={exposureImages[0].imageUrl} alt="exposure_image" />
-            )}
-          </div>
-          <div className={res_style.list_text_container}>
-            <div className={res_style.list_text}>
-              <h2>{title ? title : "식당 이름을 입력해주세요."}</h2>
-              <span className={res_style.list_rating}>
-                {address.bname ? `${address.sigungu} ${address.bname}` : "장소를 등록해주세요."}
-              </span>
-            </div>
-            <div className={res_style.list_deco}></div>
-          </div>
-        </div>
-        <div className={res_style.rest_img_container}>
-          {exposureImages.length == 0
-            ? null
-            : exposureImages.map((data, index) => {
-                return (
-                  <div
-                    key={index}
-                    onClick={() => changePreviewImg(index)}
-                    onMouseEnter={() => toggleButton([`exposure_image_del_btn_${index}`], "enter")}
-                    onMouseLeave={() => toggleButton([`exposure_image_del_btn_${index}`], "leave")}
-                  >
-                    <TiDelete
-                      id={`exposure_image_del_btn_${index}`}
-                      className={styles.delete_btn}
-                      onClick={() => deleteEntireMenuCategory(index)}
-                    />
-                    <div>
-                      <img src={data.imageUrl} alt="exposure_image" />
-                    </div>
-                  </div>
-                );
-              })}
-        </div>
-      </div>
-    );
-  };
-
   return (
     <>
       <div className={styles.test}>
@@ -389,7 +332,58 @@ const Service = () => {
           <div id="slider_wrap" className={styles.slider_wrap}>
             <div className={styles.page}>
               <h1>노출 페이지</h1>
-              {preview()}
+              <div className={res_style.rest_preview}>
+                <div className={res_style.list} style={{cursor: "unset"}}>
+                  <ImageBox
+                    type="restaurant"
+                    src={exposureImages.length > 0 ? exposureImages[0].imageUrl : null}
+                    alt="exposure_image"
+                    imgId="exposure_img"
+                  >
+                    {exposureImages.length == 0 ? (
+                      <h3
+                        style={{
+                          position: "absolute",
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%, -50%)",
+                          color: "#666",
+                        }}
+                      >
+                        대표이미지를 업로드해주세요.
+                      </h3>
+                    ) : null}
+                  </ImageBox>
+                  <LabelBox
+                    title={title ? title : "식당 이름을 입력해주세요."}
+                    address={address.bname ? `${address.sigungu} ${address.bname}` : "장소를 등록해주세요."}
+                    type="restaurant"
+                  />
+                </div>
+                <div className={res_style.rest_img_container}>
+                  {exposureImages.length == 0
+                    ? null
+                    : exposureImages.map((data, index) => {
+                        return (
+                          <div
+                            key={index}
+                            onClick={() => changePreviewImg(index)}
+                            onMouseEnter={() => toggleButton([`exposure_image_del_btn_${index}`], "enter")}
+                            onMouseLeave={() => toggleButton([`exposure_image_del_btn_${index}`], "leave")}
+                          >
+                            <TiDelete
+                              id={`exposure_image_del_btn_${index}`}
+                              className={styles.delete_btn}
+                              onClick={() => deleteEntireMenuCategory(index)}
+                            />
+                            <div>
+                              <img src={data.imageUrl} alt="exposure_image" />
+                            </div>
+                          </div>
+                        );
+                      })}
+                </div>
+              </div>
               <form className={styles.form_box} id="preview_images">
                 <UploadButton
                   title="대표이미지 업로드"
@@ -399,24 +393,11 @@ const Service = () => {
                         visible: true,
                         title: "대표이미지 업로드",
                         target: "exposure",
-                        multiple: true
+                        multiple: true,
                       })
                     )
                   }
                 />
-                {/* <div style={{ marginBottom: "12px" }}>
-                  <label htmlFor="preview_img" className={common.file_input} style={{ float: "right" }}>
-                    대표이미지 업로드
-                    <FaFileUpload />
-                  </label>
-                  <input
-                    type="file"
-                    onChange={(e) => uploadImage(e, "exposure")}
-                    id="preview_img"
-                    name="preview_img"
-                    multiple
-                  ></input>
-                </div> */}
                 <h3>식당 이름</h3>
                 <input
                   type="text"
@@ -644,9 +625,7 @@ const Service = () => {
         </div>
       ) : null}
       {/* 사진 업로드 모달 */}
-    <UploadModal 
-      onChange={(e, target) => uploadImage(e, target)}
-    />
+      <UploadModal onChange={(e, target) => uploadImage(e, target)} />
     </>
   );
 };

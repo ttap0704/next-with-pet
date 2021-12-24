@@ -6,6 +6,8 @@ import res_style from "../../styles/pages/restaurant.module.scss";
 import {useRouter} from "next/router";
 import {fetchGetApi} from "../../src/tools/api";
 import {HiChevronUp} from "react-icons/hi";
+import ImageBox from "../../src/components/ImageBox";
+import LabelBox from "../../src/components/LabelBox";
 
 const Detail = () => {
   const router = useRouter();
@@ -48,68 +50,45 @@ const Detail = () => {
 
     if (list.style.display == "none") {
       list.style.display = "block";
-      icon.style.transform = "rotate(0deg)"
+      icon.style.transform = "rotate(0deg)";
     } else {
       list.style.display = "none";
-      icon.style.transform = "rotate(180deg)"
+      icon.style.transform = "rotate(180deg)";
     }
   }
-
-  const preview = () => {
-    return (
-      <div className={res_style.rest_preview}>
-        <div className={res_style.list} style={{cursor: "unset"}}>
-          <div id="exposure_img" className={res_style.list_img}>
-            {exposureImages.length == 0 ? (
-              <h3
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                  color: "#666",
-                }}
-              >
-                대표이미지를 업로드해주세요.
-              </h3>
-            ) : (
-              <img
-                id="exposure_image"
-                src={`http://localhost:3000/api/image/restaurant/${exposureImages[0].file_name}`}
-                alt="exposure_image"
-              />
-            )}
-          </div>
-          <div className={res_style.list_text_container}>
-            <div className={res_style.list_text}>
-              <h2>{title}</h2>
-              <span className={res_style.list_rating}>{address}</span>
-            </div>
-            <div className={res_style.list_deco}></div>
-          </div>
-        </div>
-        <div className={res_style.rest_img_container}>
-          {exposureImages.map((data, index) => {
-            return (
-              <div key={index} onClick={() => changePreviewImg(index)}>
-                <div>
-                  <img
-                    src={`http://localhost:3000/api/image/restaurant/${exposureImages[index].file_name}`}
-                    alt="exposure_image"
-                  />
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
-  };
 
   return (
     <>
       <div className={res_style.detail_warp}>
-        {preview()}
+        <div className={res_style.rest_preview}>
+          <div className={res_style.list} style={{cursor: "unset"}}>
+            <ImageBox
+              imgId="exposure_image"
+              src={
+                exposureImages.length > 0
+                  ? `http://localhost:3000/api/image/restaurant/${exposureImages[0].file_name}`
+                  : null
+              }
+              alt="exposure_image"
+              type="restaurant"
+            ></ImageBox>
+            <LabelBox title={title} address={address} type="restaurant" />
+          </div>
+          <div className={res_style.rest_img_container}>
+            {exposureImages.map((data, index) => {
+              return (
+                <div key={index} onClick={() => changePreviewImg(index)}>
+                  <div>
+                    <img
+                      src={`http://localhost:3000/api/image/restaurant/${exposureImages[index].file_name}`}
+                      alt="exposure_image"
+                    />
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
         <div className={res_style.detail_contents}>
           <h2>식당 소개</h2>
           <div className={res_style.detail_introduction}>{introduction}</div>
@@ -149,10 +128,7 @@ const Detail = () => {
                     <div className={res_style.res_entire_menu_category} onClick={() => showEntireMenu(idx)}>
                       {category}
                       <div className={res_style.res_entire_menu_category_icon}>
-                        <HiChevronUp 
-                        style={{transform: "rotate(180deg)"}} 
-                        id={`entire_menu_category_icon_${idx}`} 
-                        />
+                        <HiChevronUp style={{transform: "rotate(180deg)"}} id={`entire_menu_category_icon_${idx}`} />
                       </div>
                     </div>
                     <ul id={`entire_menu_list_${idx}`} style={{display: "none"}}>

@@ -5,7 +5,8 @@ import {useRouter} from "next/router";
 import {fetchGetApi} from "../../src/tools/api";
 import {HiChevronUp, HiChevronLeft, HiChevronRight} from "react-icons/hi";
 import {toggleButton} from "../../src/tools/common";
-import AccommodationImageBox from "../../src/components/AccommodationImageBox";
+import ImageBox from "../../src/components/ImageBox";
+import LabelBox from "../../src/components/LabelBox";
 import ImageSlider from "../../src/components/ImageSlider";
 
 const Detail = () => {
@@ -82,9 +83,13 @@ const Detail = () => {
   }
 
   const preview = () => {
-    return (
-      <>
-        <AccommodationImageBox
+    return <></>;
+  };
+
+  return (
+    <>
+      <div className={accom_style.detail_warp}>
+        <ImageBox
           boxId="detail_slider_warp"
           imgId="exposure_image"
           onMouseEnter={() => toggleButton([`detail_room_slider`], "enter")}
@@ -95,6 +100,7 @@ const Detail = () => {
               : null
           }
           alt="exposure_image"
+          type="accommodation"
         >
           <ImageSlider
             id="detail_room_slider"
@@ -102,22 +108,8 @@ const Detail = () => {
             onSlideLeft={() => detailSlider("prev")}
             onSlideRight={() => detailSlider("next")}
           />
-        </AccommodationImageBox>
-        <div className={accom_style.list_text_container}>
-          <div className={accom_style.list_text}>
-            <h2>{title}</h2>
-            <span className={accom_style.list_rating}>{address}</span>
-          </div>
-          <div className={accom_style.list_deco}></div>
-        </div>
-      </>
-    );
-  };
-
-  return (
-    <>
-      <div className={accom_style.detail_warp}>
-        {preview()}
+        </ImageBox>
+        <LabelBox title={title} address={address} type="accommodation" />
         <div className={accom_style.detail_contents}>
           <h2>식당 소개</h2>
           <div className={accom_style.detail_introduction}>{introduction}</div>
