@@ -66,16 +66,48 @@
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
-    background-color: #fff;
     z-index: 1;
+    background-color: $gray_5;
+    ul, h3 {
+      height: 16rem;
+      width: 100%;
+      border-top: 1px solid $gray_3;
+    }
+    h3 {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
     ul {
       width: 100%;
-      height: 10rem;
       overflow-y: auto;
       li {
         width: 100%;
-        height: 2rem;
+        height: 3rem;
         background-color: $gray_4;
+        cursor: pointer;
+        padding: 0 2rem;
+        line-height: 3rem;
+        font-weight: bold;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        &:not(:last-of-type) {
+          border-bottom: 1.5px solid $gray_3;
+        }
+
+        input {
+          font-weight: bold;
+          padding-left: 8px;
+          width: 3rem;
+          height: 80%;
+          border: none;
+          background-color: transparent;
+          border-radius: 0;
+          &:focus, &:active {
+            border-bottom: 1px solid #000;
+          }
+        }
       }
     }
   }

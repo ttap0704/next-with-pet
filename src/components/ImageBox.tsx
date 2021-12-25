@@ -6,6 +6,7 @@ const ImageBox = (props) => {
   const src = props.src;
   const art = props.art;
   const type = props.type;
+  const shadow = props.shadow === false ? false : true
 
 
   function onMouseEvent(type: string) {
@@ -17,19 +18,27 @@ const ImageBox = (props) => {
   }
 
   function setBoxStyle() {
+    let res = {
+      width: "",
+      height: "",
+      boxShadow: ""
+    };
+
     if (type == "accommodation") {
-      return {
+      res = {
         width: "60rem",
         height: "21rem",
-        boxShadow: "2px 2px 4px #999",
+        boxShadow: shadow ? "2px 2px 4px #999" : "none"        
       };
     } else if (type == "restaurant") {
-      return {
+      res =  {
         width: "28.8rem",
         height: "17.4rem",
-        boxShadow: "2px 2px 4px #999",
+        boxShadow: shadow ? "2px 2px 4px #999" : "none"        
       };
     }
+
+    return res;
   }
 
   return (

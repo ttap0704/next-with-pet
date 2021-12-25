@@ -11,7 +11,7 @@ const UploadInput = (props) => {
   }
 
   return (
-    <div style={{marginBottom: "12px"}}>
+    <div>
       <label htmlFor="upload_input" 
       className={styles.file_input} 
       style={{float: "right"}}
