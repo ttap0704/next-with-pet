@@ -16,10 +16,10 @@ const UploadModal = (props) => {
   );
 
   useEffect(() => {
+    setFiles([])
     if (upload_files.length > 0) {
       setPreviewFiles(upload_files)
     }
-    
   }, [upload_files]);
 
 
@@ -88,7 +88,8 @@ const UploadModal = (props) => {
         f_files.push(x.file)
       }
 
-      props.onChange(f_files, target, target_idx)
+      props.onChange(f_files, target, target_idx);
+      dispatch(actions.resetFiles());
     }
   }
 

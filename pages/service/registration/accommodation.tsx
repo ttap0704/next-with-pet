@@ -180,6 +180,7 @@ const Service = () => {
     if (files.length > 0) {
       if (type == "exposure") {
         setPreviewFile([]);
+        setDetailPreviewNum(0);
         files.forEach((file) => {
           let reader = new FileReader();
           reader.onloadend = () => {
