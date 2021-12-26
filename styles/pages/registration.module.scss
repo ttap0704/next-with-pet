@@ -58,7 +58,7 @@
     input {
       width: 100%;
     }
-    div {
+    button {
       width: 10rem;
       height: 3rem;
       line-height: 3rem;
@@ -66,6 +66,8 @@
       background-color: $orange;
       color: #fff;
       border-radius: 6px;
+      border: none;
+      cursor: pointer;
     }
   }
 

@@ -1,9 +1,7 @@
 import React, { useEffect, useState, useLayoutEffect, cloneElement } from "react";
 import styles from "../../../styles/pages/registration.module.scss";
-import common from "../../../styles/common.module.scss";
 import accom_style from "../../../styles/pages/accommodation.module.scss";
 import { useRouter } from "next/router";
-import { FaFileUpload } from "react-icons/fa";
 import { HiChevronDoubleRight, HiChevronDoubleLeft, HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import PostCode from "../../../src/components/PostCode";
 import { fetchPostApi, fetchFileApi } from "../../../src/tools/api";
@@ -150,13 +148,38 @@ const Service = () => {
     slider.style.transform = `translate3d(${distance}, 0px, 0px)`;
   }
 
-  function uploadImage(event: React.ChangeEvent<HTMLInputElement>, type: string, key?: number) {
+  function showUploadModal(target: string) {
+    if (target == 'exposure') {
+      let files = [];
+      if (previewFile.length > 0) {
+        for (let x of previewFile) {
+          files.push(x.file)
+        }
+      }
+      dispatch(
+        actions.pushFiles({
+          files: files
+        })
+      )
+      dispatch(
+        actions.setUploadModalVisible({
+          visible: true,
+          title: "대표이미지 업로드",
+          target: target,
+          multiple: true,
+        })
+      )
+    }
+
+  }
+
+  function uploadImage(files: File[], type: string, key?: number) {
     const detail_slider = document.getElementById(`detail_img_slider_${key}`);
     const detail_slider_wrap = document.getElementById(`room_slider_wrap_${key}`);
-    let file = event.currentTarget.files;
-    if (file.length > 0) {
+
+    if (files.length > 0) {
       if (type == "exposure") {
-        let files = Array.from(file);
+        setPreviewFile([]);
         files.forEach((file) => {
           let reader = new FileReader();
           reader.onloadend = () => {
@@ -165,7 +188,6 @@ const Service = () => {
           reader.readAsDataURL(file);
         });
       } else {
-        let files = Array.from(file);
         let items = [...roomDetail];
         let item = items[key];
         item.files = [];
@@ -314,7 +336,13 @@ const Service = () => {
                     >
                       대표이미지를 업로드해주세요.
                     </h3>
-                  ) : null}
+                  ) :
+                    (
+                      <b
+                        style={{ position: 'absolute', top: '1rem', right: '1rem', zIndex: 100 }}
+                      >{`${detailPreviewNum + 1}/${previewFile.length}`}</b>
+                    )
+                  }
                   <ImageSlider
                     id="exposure_image_slider"
                     sliderStyle={{ width: "3rem", height: "3rem" }}
@@ -332,16 +360,7 @@ const Service = () => {
                 <div style={{ marginBottom: "12px" }}>
                   <UploadButton
                     title="대표이미지 업로드"
-                    onClick={() =>
-                      dispatch(
-                        actions.setUploadModalVisible({
-                          visible: true,
-                          title: "대표이미지 업로드",
-                          target: "exposure",
-                          multiple: true,
-                        })
-                      )
-                    }
+                    onClick={() => showUploadModal('exposure')}
                   />
                 </div>
                 <h3>숙박업소 이름</h3>
@@ -362,7 +381,7 @@ const Service = () => {
                     value={address.zonecode ?? ""}
                     disabled
                   />
-                  <div onClick={() => setPopupVisible(true)}>우편번호 찾기</div>
+                  <button onClick={() => setPopupVisible(true)}>우편번호 찾기</button>
                 </div>
                 <div>
                   <input

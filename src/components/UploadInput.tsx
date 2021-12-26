@@ -11,7 +11,7 @@ const UploadInput = (props) => {
   }
 
   return (
-    <div>
+    <>
       <label htmlFor="upload_input" 
       className={styles.file_input} 
       style={{float: "right"}}
@@ -26,7 +26,7 @@ const UploadInput = (props) => {
         name="upload_input"
         multiple={multiple}
       ></input>
-    </div>
+    </>
   );
 };
 
