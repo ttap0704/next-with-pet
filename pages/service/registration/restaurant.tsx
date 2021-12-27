@@ -8,7 +8,7 @@ import { FaFileUpload } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
 import { HiChevronDoubleRight, HiChevronDoubleLeft, HiPlusCircle, HiOutlinePlusCircle } from "react-icons/hi";
 import { Tooltip, IconButton, Button } from "@mui/material";
-import PostCode from "../../../src/components/PostCode";
+import PostCode from "../../../src/components/Postcode";
 import UploadButton from "../../../src/components/UploadButton";
 import ImageBox from "../../../src/components/ImageBox";
 import LabelBox from "../../../src/components/LabelBox";
@@ -103,7 +103,6 @@ const Service = () => {
   }
 
   function uploadImage(event: React.ChangeEvent<HTMLInputElement>, type: string, key?: number, data?: object) {
-    // return false;
     let file = event.currentTarget.files;
     if (file.length > 0) {
       if (type == "exposure") {
@@ -386,14 +385,15 @@ const Service = () => {
               </div>
               <form className={styles.form_box} id="preview_images">
                 <UploadButton
-                  title="대표이미지 업로드"
+                  title={exposureImages.length == 0 ? "대표이미지 업로드" : "대표이미지 수정"}
                   onClick={() =>
                     dispatch(
                       actions.setUploadModalVisible({
                         visible: true,
-                        title: "대표이미지 업로드",
+                        title: exposureImages.length == 0 ? "대표이미지 업로드" : "대표이미지 수정",
                         target: "exposure",
                         multiple: true,
+                        image_type: "restaurant"
                       })
                     )
                   }

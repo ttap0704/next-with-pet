@@ -36,6 +36,12 @@ const ImageBox = (props) => {
         height: "17.4rem",
         boxShadow: shadow ? "2px 2px 4px #999" : "none"        
       };
+    } else if (type == "room") {
+      res =  {
+        width: "17rem",
+        height: "17rem",
+        boxShadow: "none"        
+      };
     }
 
     return res;
@@ -50,7 +56,7 @@ const ImageBox = (props) => {
         onMouseLeave={() => onMouseEvent("leave")}
         style={{...setBoxStyle()}}
       >
-        <img id={imgId} src={src ? src : null} alt={art} />
+        <img id={imgId} src={src ? src : null} alt={art} style={type != "room" ? {width: '100%'} : {height: '100%'}} />
         {props.children}
       </div>
     </>

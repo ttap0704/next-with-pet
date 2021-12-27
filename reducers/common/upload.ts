@@ -11,7 +11,8 @@ interface UploadReducer {
   title: string,
   target: string,
   target_idx: undefined | number,
-  multiple: Boolean
+  multiple: Boolean,
+  image_type: string,
 }
 
 interface Settings {
@@ -19,7 +20,8 @@ interface Settings {
   title: string,
   target: string,
   target_idx?: number,
-  multiple: Boolean
+  multiple: Boolean,
+  image_type: string,
 }
 
 interface Files {
@@ -32,7 +34,8 @@ const initialState: UploadReducer = {
   title: "",
   target: "",
   target_idx: undefined,
-  multiple: false
+  multiple: false,
+  image_type: "",
 }
 
 
@@ -56,7 +59,8 @@ const uploadReducer = createReducer<UploadReducer, UploadReducerActions>(initial
     title: "",
     target: "",
     target_idx: undefined,
-    multiple: false
+    multiple: false,
+    image_type: ""
   }),
   [PUSH_FILES]: (state, action) => {
     return ({
@@ -73,7 +77,8 @@ const uploadReducer = createReducer<UploadReducer, UploadReducerActions>(initial
       target: action.payload.target,
       target_idx: action.payload.target_idx != null && !isNaN(action.payload.target_idx)
         ? action.payload.target_idx : undefined,
-      multiple: action.payload.multiple
+      multiple: action.payload.multiple,
+      image_type: action.payload.image_type
     })
   },
 })
