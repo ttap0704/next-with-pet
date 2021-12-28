@@ -6,6 +6,9 @@ import UploadInput from "./UploadInput";
 import ImageBox from "./ImageBox";
 import React, {useState, useEffect} from "react";
 import {TiDelete} from "react-icons/ti";
+import {Tooltip, IconButton} from "@mui/material";
+import {FaInfoCircle} from "react-icons/fa";
+import ModalContainer from "./ModalContainer";
 
 const UploadModal = (props) => {
   const dispatch = useDispatch();
@@ -22,8 +25,7 @@ const UploadModal = (props) => {
     }
   }, [upload_files]);
 
-  function hideModal(e) {
-    e.preventDefault();
+  function hideModal() {
     dispatch(actions.resetFiles());
     setFiles([]);
   }
@@ -34,14 +36,20 @@ const UploadModal = (props) => {
   }
 
   function setPreviewFiles(file) {
+    console.log(file);
     if (file.length > 0) {
-      let files = Array.from(file);
-      let number = 1;
-      files.forEach((file: any) => {
+      let res_files = Array.from(file);
+      let number = files.length == 0 ? 1 : files[files.length - 1].number + 1;
+      res_files.forEach((file: any) => {
         let reader = new FileReader();
         reader.onloadend = () => {
-          setFiles((state) => [...state, {file: file, imageUrl: reader.result.toString(), number}]);
-          number++;
+          const duplicated_image_idx = files.findIndex((data) => {
+            return data.imageUrl == reader.result.toString();
+          });
+          if (duplicated_image_idx < 0) {
+            setFiles((state) => [...state, {file: file, imageUrl: reader.result.toString(), number}]);
+            number++;
+          }
         };
         reader.readAsDataURL(file);
       });
@@ -79,7 +87,7 @@ const UploadModal = (props) => {
   }
 
   function confirmData() {
-    const ok = confirm("입력하신 순서대로 이미지를 \r\n업로드 하시겠습니까?");
+    const ok = confirm("입력하신 순서대로 이미지를 업로드 하시겠습니까?");
     if (ok) {
       let f_files = [];
 
@@ -104,12 +112,7 @@ const UploadModal = (props) => {
   }
 
   return (
-    <div
-      id="upload_modal"
-      className={styles.upload_modal_warp}
-      style={upload_modal_visible ? {display: "block"} : {display: "none"}}
-    >
-      <div className={styles.back} onClick={(e) => hideModal(e)} />
+    <ModalContainer backClicked={() => hideModal()} visible={upload_modal_visible}>
       <div className={styles.upload_modal}>
         <h2 style={{padding: "2rem", backgroundColor: "#fff", width: "100%", textAlign: "center"}}>이미지 업로드</h2>
         <ImageBox
@@ -118,6 +121,17 @@ const UploadModal = (props) => {
           src={files.length > 0 ? files[0].imageUrl : null}
           type={image_type}
         />
+        <div className={styles.tooltip_box}>
+          <Tooltip
+            title="리스트 왼쪽 숫자를 변경하여, 이미지 순서를 정해주세요."
+            placement="top"
+            style={{float: "right"}}
+          >
+            <IconButton>
+              <FaInfoCircle />
+            </IconButton>
+          </Tooltip>
+        </div>
         {files.length == 0 ? (
           <h3>파일을 업로드 해주세요.</h3>
         ) : (
@@ -145,7 +159,7 @@ const UploadModal = (props) => {
           <button onClick={() => confirmData()}>등록</button>
         </div>
       </div>
-    </div>
+    </ModalContainer>
   );
 };
 

@@ -4,7 +4,6 @@ import styles from "../../../styles/pages/registration.module.scss";
 import common from "../../../styles/common.module.scss";
 import res_style from "../../../styles/pages/restaurant.module.scss";
 import { useRouter } from "next/router";
-import { FaFileUpload } from "react-icons/fa";
 import { TiDelete } from "react-icons/ti";
 import { HiChevronDoubleRight, HiChevronDoubleLeft, HiPlusCircle, HiOutlinePlusCircle } from "react-icons/hi";
 import { Tooltip, IconButton, Button } from "@mui/material";

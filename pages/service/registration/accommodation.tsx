@@ -8,6 +8,7 @@ import {fetchPostApi, fetchFileApi} from "../../../src/tools/api";
 import {toggleButton} from "../../../src/tools/common";
 import UploadButton from "../../../src/components/UploadButton";
 import UploadModal from "../../../src/components/UploadModal";
+import ModalContainer from "../../../src/components/ModalContainer";
 import ImageSlider from "../../../src/components/ImageSlider";
 import ImageBox from "../../../src/components/ImageBox";
 import LabelBox from "../../../src/components/LabelBox";
@@ -23,6 +24,7 @@ const Service = () => {
   const [intro, setIntro] = useState("");
   const [previewFile, setPreviewFile] = useState([]);
   const [detailPreviewNum, setDetailPreviewNum] = useState(0);
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [roomDetail, setRoomDetail] = useState([
     {
       title: "",
@@ -148,6 +150,11 @@ const Service = () => {
     slider.style.transform = `translate3d(${distance}, 0px, 0px)`;
   }
 
+  function setDetailModal (idx: number) {
+    console.log(idx);
+    setDetailModalVisible(true);
+  }
+
   function showUploadModal(target: string, idx?: number) {
     let files = [];
     if (target == "exposure") {
@@ -208,20 +215,30 @@ const Service = () => {
           reader.readAsDataURL(file);
         });
       } else {
-        let items = [...roomDetail];
-        let item = items[key];
+        let file_arr = [];
         files.forEach((file) => {
           let reader = new FileReader();
           reader.onloadend = () => {
-            item.files.push({
+            file_arr.push({
               file: file,
               imageUrl: reader.result.toString(),
+            });
+
+            setRoomDetail((state) => {
+              return state.map((data, index) => {
+                if (index != key) {
+                  return data;
+                } else {
+                  return {
+                    ...data,
+                    files: [...file_arr],
+                  };
+                }
+              });
             });
           };
           reader.readAsDataURL(file);
         });
-        items[key] = item;
-        setRoomDetail([...items]);
       }
     }
   }
@@ -418,7 +435,7 @@ const Service = () => {
                 {roomDetail.map((data, index) => {
                   return (
                     <div className={accom_style.detail_room} key={index}>
-                      <div className={accom_style.detail_room_img}>
+                      <div className={accom_style.detail_room_info}>
                         <ImageBox
                           className={accom_style.detail_room_slider_wrap}
                           imgId={`room_image_${index}`}
@@ -439,41 +456,49 @@ const Service = () => {
                             onSlideLeft={() => roomSlider("prev", index)}
                           />
                         </ImageBox>
+
+                        <div className={accom_style.detail_room_intro}>
+                          <div className={accom_style.detail_room_explain}>
+                            <label>객실명</label>
+                            <input
+                              type="text"
+                              placeholder="객실명을 입력해주세요."
+                              onChange={(e) => inputRoomsDetial(e, index, "title")}
+                            />
+                          </div>
+                          <div className={accom_style.detail_room_explain}>
+                            <label>기준 인원</label>
+                            <input
+                              type="text"
+                              placeholder="기준 인원을 입력해주세요."
+                              onChange={(e) => inputRoomsDetial(e, index, "people")}
+                            />
+                          </div>
+                          <div className={accom_style.detail_room_explain}>
+                            <label>최대 인원</label>
+                            <input
+                              type="text"
+                              placeholder="최대 인원을 입력해주세요."
+                              onChange={(e) => inputRoomsDetial(e, index, "max_people")}
+                            />
+                          </div>
+                          <div className={accom_style.detail_room_explain}>
+                            <label>가격</label>
+                            <input
+                              type="text"
+                              placeholder="가격을 입력해주세요."
+                              onChange={(e) => inputRoomsDetial(e, index, "price")}
+                            />
+                          </div>
+                        </div>
+                      </div>{" "}
+                      <div className={accom_style.detail_room_util_box}>
                         <UploadButton title="객실이미지 업로드" onClick={() => showUploadModal("rooms", index)} />
-                      </div>
-                      <div className={accom_style.detail_room_intro}>
-                        <div className={accom_style.detail_room_explain}>
-                          <label>객실명</label>
-                          <input
-                            type="text"
-                            placeholder="객실명을 입력해주세요."
-                            onChange={(e) => inputRoomsDetial(e, index, "title")}
-                          />
-                        </div>
-                        <div className={accom_style.detail_room_explain}>
-                          <label>기준 인원</label>
-                          <input
-                            type="text"
-                            placeholder="기준 인원을 입력해주세요."
-                            onChange={(e) => inputRoomsDetial(e, index, "people")}
-                          />
-                        </div>
-                        <div className={accom_style.detail_room_explain}>
-                          <label>최대 인원</label>
-                          <input
-                            type="text"
-                            placeholder="최대 인원을 입력해주세요."
-                            onChange={(e) => inputRoomsDetial(e, index, "max_people")}
-                          />
-                        </div>
-                        <div className={accom_style.detail_room_explain}>
-                          <label>가격</label>
-                          <input
-                            type="text"
-                            placeholder="가격을 입력해주세요."
-                            onChange={(e) => inputRoomsDetial(e, index, "price")}
-                          />
-                        </div>
+                        <button
+                          onClick={() => setDetailModal(index)}
+                        >
+                          추가 정보 입력
+                        </button>
                       </div>
                     </div>
                   );
@@ -504,6 +529,14 @@ const Service = () => {
         </div>
       ) : null}
       <UploadModal onChange={(e, target, target_idx) => uploadImage(e, target, target_idx)} />
+      <ModalContainer
+        visible={detailModalVisible}
+        backClicked={() => setDetailModalVisible(false)}
+      >
+        <div>
+          hi
+        </div>
+      </ModalContainer>
     </>
   );
 };
