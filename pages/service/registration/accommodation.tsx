@@ -3,13 +3,15 @@ import styles from "../../../styles/pages/registration.module.scss";
 import accom_style from "../../../styles/pages/accommodation.module.scss";
 import {useRouter} from "next/router";
 import {HiChevronDoubleRight, HiChevronDoubleLeft, HiChevronLeft, HiChevronRight} from "react-icons/hi";
-import PostCode from "../../../src/components/Postcode";
+import PostCode from "../../../src/components/PostCode";
 import {fetchPostApi, fetchFileApi} from "../../../src/tools/api";
 import {toggleButton} from "../../../src/tools/common";
 import UploadButton from "../../../src/components/UploadButton";
 import UploadModal from "../../../src/components/UploadModal";
-import ModalContainer from "../../../src/components/ModalContainer";
+import InfoModal from "../../../src/components/InfoModal";
 import ImageSlider from "../../../src/components/ImageSlider";
+import CustomTextarea from "../../../src/components/CustomTextarea";
+import CustomInput from "../../../src/components/CustomInput";
 import ImageBox from "../../../src/components/ImageBox";
 import LabelBox from "../../../src/components/LabelBox";
 import {actions} from "../../../reducers/common/upload";
@@ -372,45 +374,41 @@ const Service = () => {
                   />
                 </div>
                 <h3>숙박업소 이름</h3>
-                <input
-                  type="text"
+                <CustomInput
                   placeholder="제목을 입력해주세요."
                   style={{marginBottom: "16px"}}
-                  className={styles.custom_input}
                   onChange={(e) => setTitle(e.target.value)}
                   value={title}
-                ></input>
+                  />
                 <h3>주소</h3>
                 <div className={styles.with_btn} style={{marginBottom: "4px"}}>
-                  <input
-                    type="text"
+                  <CustomInput
                     placeholder="우편번호"
                     className={styles.custom_input}
                     value={address.zonecode ?? ""}
-                    disabled
+                    disabled={true}
                   />
                   <button onClick={() => setPopupVisible(true)}>우편번호 찾기</button>
                 </div>
                 <div>
-                  <input
+                  <CustomInput
                     type="text"
                     placeholder="도로명 주소"
                     className={styles.custom_input}
                     style={{marginBottom: "4px"}}
                     value={address.road_address ?? ""}
-                    disabled
+                    disabled={true}
                   />
-                  <input
+                  <CustomInput
                     type="text"
                     placeholder="참고항목"
                     className={styles.custom_input}
                     style={{marginBottom: "4px"}}
                     value={address.building_name ? `(${address.building_name})` : ""}
-                    disabled
+                    disabled={true}
                   />
                 </div>
-                <input
-                  type="text"
+                <CustomInput
                   placeholder="상세주소"
                   className={styles.custom_input}
                   style={{marginBottom: "4px"}}
@@ -423,11 +421,11 @@ const Service = () => {
               <h1>상세 페이지</h1>
               <div style={{marginBottom: "1rem"}}>
                 <h2>숙소 소개</h2>
-                <textarea
-                  className={styles.detail_intro}
+                <CustomTextarea
                   placeholder="숙소에 대해 자유롭게 작성해주시길 바랍니다."
                   value={intro}
                   onChange={(e) => setIntro(e.target.value)}
+                  height="15rem"
                 />
               </div>
               <div>
@@ -460,34 +458,42 @@ const Service = () => {
                         <div className={accom_style.detail_room_intro}>
                           <div className={accom_style.detail_room_explain}>
                             <label>객실명</label>
-                            <input
-                              type="text"
+                            <CustomInput
                               placeholder="객실명을 입력해주세요."
                               onChange={(e) => inputRoomsDetial(e, index, "title")}
+                              align="right"
+                              bottom={true}
+                              width="calc(100% - 6rem)"
                             />
                           </div>
                           <div className={accom_style.detail_room_explain}>
                             <label>기준 인원</label>
-                            <input
-                              type="text"
+                            <CustomInput
                               placeholder="기준 인원을 입력해주세요."
                               onChange={(e) => inputRoomsDetial(e, index, "people")}
+                              align="right"
+                              bottom={true}
+                              width="calc(100% - 6rem)"
                             />
                           </div>
                           <div className={accom_style.detail_room_explain}>
                             <label>최대 인원</label>
-                            <input
-                              type="text"
+                            <CustomInput
                               placeholder="최대 인원을 입력해주세요."
                               onChange={(e) => inputRoomsDetial(e, index, "max_people")}
+                              align="right"
+                              bottom={true}
+                              width="calc(100% - 6rem)"
                             />
                           </div>
                           <div className={accom_style.detail_room_explain}>
                             <label>가격</label>
-                            <input
-                              type="text"
+                            <CustomInput
                               placeholder="가격을 입력해주세요."
                               onChange={(e) => inputRoomsDetial(e, index, "price")}
+                              align="right"
+                              bottom={true}
+                              width="calc(100% - 6rem)"
                             />
                           </div>
                         </div>
@@ -529,14 +535,10 @@ const Service = () => {
         </div>
       ) : null}
       <UploadModal onChange={(e, target, target_idx) => uploadImage(e, target, target_idx)} />
-      <ModalContainer
+      <InfoModal 
         visible={detailModalVisible}
-        backClicked={() => setDetailModalVisible(false)}
-      >
-        <div>
-          hi
-        </div>
-      </ModalContainer>
+        hideModal={() => setDetailModalVisible(false)}
+      />
     </>
   );
 };

@@ -7,15 +7,17 @@ import { useRouter } from "next/router";
 import { TiDelete } from "react-icons/ti";
 import { HiChevronDoubleRight, HiChevronDoubleLeft, HiPlusCircle, HiOutlinePlusCircle } from "react-icons/hi";
 import { Tooltip, IconButton, Button } from "@mui/material";
-import PostCode from "../../../src/components/Postcode";
+import PostCode from "../../../src/components/PostCode";
 import UploadButton from "../../../src/components/UploadButton";
 import ImageBox from "../../../src/components/ImageBox";
 import LabelBox from "../../../src/components/LabelBox";
+import UploadModal from "../../../src/components/UploadModal";
+import CustomTextarea from "../../../src/components/CustomTextarea";
 import { RESET_RESTRAURANT } from "../../../reducers/models/restaurant";
 import { actions } from "../../../reducers/common/upload";
 import { fetchPostApi, fetchFileApi } from "../../../src/tools/api";
 import { toggleButton } from "../../../src/tools/common";
-import UploadModal from "../../../src/components/UploadModal";
+
 
 const Service = () => {
   const dispatch = useDispatch();
@@ -450,10 +452,10 @@ const Service = () => {
               <h1>상세 페이지</h1>
               <div style={{ marginBottom: "3rem" }}>
                 <h2>소개</h2>
-                <textarea
-                  className={styles.detail_intro}
+                <CustomTextarea
                   placeholder="식당에 대해 자유롭게 작성해주시길 바랍니다."
                   onChange={(e) => setIntro(e.target.value)}
+                  height="15rem"
                 />
               </div>
               <div>

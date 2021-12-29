@@ -51,18 +51,17 @@ input, textarea {
   }
 }
 
-input, button, textarea {
+input, button {
   border-color: #e3e3e3;
   box-shadow: none !important;
   border-radius: 6px;
   border-width: 1px;
   background-color: #fff;
   outline: unset;
-}
-
-textarea {
-  padding: 8px;
-  resize: none;
+  outline-offset: unset;
+  outline-style: unset;
+  -webkit-appearance: none; 
+  -moz-appearance: none; 
 }
 
 h1,h2,h3,h4,h5,h6,p {

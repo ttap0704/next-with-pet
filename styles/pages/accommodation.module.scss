@@ -127,15 +127,6 @@
           display: block;
           width: 6rem
         }
-        input {
-          height: 100%;
-          width: calc(100% - 6rem);
-          padding: 0 8px;
-          text-align: right;
-          border: none;
-          border-bottom: 1px solid $gray_4;
-          border-radius: 0;
-        }
         span {
           &:first-of-type {
             text-align: left;
