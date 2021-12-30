@@ -27,6 +27,7 @@ const Service = () => {
   const [previewFile, setPreviewFile] = useState([]);
   const [detailPreviewNum, setDetailPreviewNum] = useState(0);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [detailModalIndex, setDetailModalIndex] = useState(undefined)
   const [roomDetail, setRoomDetail] = useState([
     {
       title: "",
@@ -35,6 +36,10 @@ const Service = () => {
       price: "",
       files: [],
       cur_num: 0,
+      other_info: {
+        amenities: "",
+        additional_info: "",
+      },
     },
   ]);
 
@@ -48,6 +53,30 @@ const Service = () => {
     building_name: "",
   });
 
+  function showPostCode(e:React.MouseEvent<HTMLButtonElement>) {
+    e.preventDefault();
+    setPopupVisible(true)
+  }
+
+  function setDetailModal(idx: number) {
+    setDetailModalIndex(idx);
+    setDetailModalVisible(true);
+  }
+
+  function setAdditionalInfo(info: {amenities: string[], additional_info: string[]}) {
+    let items = [...roomDetail];
+    let item = items[detailModalIndex];
+
+    item.other_info.amenities = info.amenities.length > 0 ? info.amenities.toString() : "";
+    item.other_info.additional_info = info.additional_info.length > 0 ? info.additional_info.toString() : "";
+
+    items[detailModalIndex] = item;
+
+    setRoomDetail([...items]);
+    setDetailModalVisible(false)
+    setDetailModalIndex(undefined)
+  }
+
   function addAccommodation() {
     let rooms = [];
     for (let i = 0, leng = roomDetail.length; i < leng; i++) {
@@ -56,6 +85,8 @@ const Service = () => {
         maximum_num: roomDetail[i].max_people,
         standard_num: roomDetail[i].people,
         price: roomDetail[i].price,
+        amenities: roomDetail[i].other_info.amenities,
+        additional_info: roomDetail[i].other_info.additional_info,
       });
     }
 
@@ -150,11 +181,6 @@ const Service = () => {
     const distance = type == "exposure" ? "-61rem" : "0px";
     slider.style.transition = "500ms";
     slider.style.transform = `translate3d(${distance}, 0px, 0px)`;
-  }
-
-  function setDetailModal (idx: number) {
-    console.log(idx);
-    setDetailModalVisible(true);
   }
 
   function showUploadModal(target: string, idx?: number) {
@@ -296,6 +322,10 @@ const Service = () => {
         price: "",
         files: [],
         cur_num: 0,
+        other_info: {
+          amenities: "",
+          additional_info: "",
+        },
       },
     ]);
   }
@@ -379,7 +409,7 @@ const Service = () => {
                   style={{marginBottom: "16px"}}
                   onChange={(e) => setTitle(e.target.value)}
                   value={title}
-                  />
+                />
                 <h3>주소</h3>
                 <div className={styles.with_btn} style={{marginBottom: "4px"}}>
                   <CustomInput
@@ -388,7 +418,7 @@ const Service = () => {
                     value={address.zonecode ?? ""}
                     disabled={true}
                   />
-                  <button onClick={() => setPopupVisible(true)}>우편번호 찾기</button>
+                  <button onClick={(e) => showPostCode(e)}>우편번호 찾기</button>
                 </div>
                 <div>
                   <CustomInput
@@ -497,14 +527,10 @@ const Service = () => {
                             />
                           </div>
                         </div>
-                      </div>{" "}
+                      </div>
                       <div className={accom_style.detail_room_util_box}>
                         <UploadButton title="객실이미지 업로드" onClick={() => showUploadModal("rooms", index)} />
-                        <button
-                          onClick={() => setDetailModal(index)}
-                        >
-                          추가 정보 입력
-                        </button>
+                        <button onClick={() => setDetailModal(index)}>추가 정보 입력</button>
                       </div>
                     </div>
                   );
@@ -535,9 +561,11 @@ const Service = () => {
         </div>
       ) : null}
       <UploadModal onChange={(e, target, target_idx) => uploadImage(e, target, target_idx)} />
-      <InfoModal 
+      <InfoModal
         visible={detailModalVisible}
+        parent_info={detailModalIndex == undefined ? null : roomDetail[detailModalIndex].other_info}
         hideModal={() => setDetailModalVisible(false)}
+        onRegistered={(info) => setAdditionalInfo(info)}
       />
     </>
   );

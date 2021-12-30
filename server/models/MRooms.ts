@@ -8,6 +8,8 @@ interface RoomsAttributes {
   price: number;
   standard_num: number;
   maximum_num: number;
+  amenities: string;
+  additional_info: string;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -18,6 +20,8 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public price!: number;
     public standard_num!: number;
     public maximum_num!: number;
+    public amenities: string;
+    public additional_info: string;
 
     public static associate(models: any) {
       Rooms.belongsTo(models.Restaurant, {
@@ -55,6 +59,14 @@ module.exports = (sequelize: any, DataTypes: any) => {
       maximum_num: {
         type: DataTypes.INTEGER,
         allowNull: false
+      },
+      amenities: {
+        type: DataTypes.STRING(1000),
+        allowNull: true
+      },
+      additional_info: {
+        type: DataTypes.STRING(1000),
+        allowNull: true
       },
     },
     {

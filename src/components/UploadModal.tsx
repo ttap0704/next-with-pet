@@ -156,7 +156,7 @@ const UploadModal = (props) => {
         )}
         <div className={styles.util_box}>
           <UploadInput onChange={(e) => onChangeEvent(e)} title={title} multiple={multiple} />
-          <button onClick={() => confirmData()}>등록</button>
+          <button className={styles.regi_button} onClick={() => confirmData()}>등록</button>
         </div>
       </div>
     </ModalContainer>

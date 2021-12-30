@@ -3,10 +3,13 @@ import {useDispatch, useSelector} from "react-redux";
 import React, {useState, useEffect} from "react";
 import ModalContainer from "./ModalContainer";
 import CustomInput from "./CustomInput";
+import {TiDelete} from "react-icons/ti";
 
 const UploadModal = (props) => {
   const dispatch = useDispatch();
   const visible = props.visible;
+  const parent_info = props.parent_info;
+
   const [info, setInfo] = useState({
     amenities: [],
     additional_info: [],
@@ -15,8 +18,34 @@ const UploadModal = (props) => {
     amenities: "",
     additional_info: "",
   });
+  const info_contents = [
+    {
+      title: "편의시설",
+      placeholder: "편의 시설을 입력해주세요. ex) 바베큐장, 강아지 수영장...",
+      type: "amenities",
+    },
+    {
+      title: "추가정보",
+      placeholder: "추가정보를 입력해주세요. ex) 흡연금지, 숯불...",
+      type: "additional_info",
+    },
+  ];
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    if (parent_info == null) {
+      setInfo({
+        amenities: [],
+        additional_info: []
+      })
+    } else {
+      setInfo({
+        amenities: parent_info.amenities.length == 0 ? [] : [...parent_info.amenities.split(",")],
+        additional_info: parent_info.additional_info.length == 0 ? [] : [...parent_info.additional_info.split(",")]
+      })
+    }
+    console.log(parent_info)
+
+  }, [parent_info]);
 
   function setInfoValue(e: React.ChangeEvent<HTMLTextAreaElement>, type: string) {
     let value = e.target.value;
@@ -32,22 +61,37 @@ const UploadModal = (props) => {
     const code = e.keyCode;
     if (code == 13) {
       console.log(tmpInfo[type]);
-      setInfo(state => {
+      setInfo((state) => {
         return {
           ...state,
-          [type]: [
-            ...state[type],
-            tmpInfo[type]
-          ]
-        }
-      })
-      setTmpInfo(state => {
+          [type]: [...state[type], tmpInfo[type]],
+        };
+      });
+      setTmpInfo((state) => {
         return {
           ...state,
-          [type]: ""
-        }
-      })
+          [type]: "",
+        };
+      });
     }
+  }
+
+  function removeContents(idx: number, type: string) {
+    setInfo((state) => {
+      return {
+        ...state,
+        [type]: state[type]
+          .map((data, index) => {
+            if (index != idx) {
+              console.log(data);
+              return data;
+            }
+          })
+          .filter((data) => {
+            return data != undefined;
+          }),
+      };
+    });
   }
 
   return (
@@ -55,39 +99,33 @@ const UploadModal = (props) => {
       <div className={styles.info_modal}>
         <h2 style={{padding: "2rem", backgroundColor: "#fff", width: "100%", textAlign: "center"}}>추가 정보 입력</h2>
         <div className={styles.info_container}>
-          <div className={styles.info_contents}>
-            <h3>편의시설</h3>
-            <div>
-              {info.amenities.map((data, index) => {
-                return (
-                  <span key={`amenities${index}`}>{data}</span>
-                )
-              })}
-            </div>
-            <CustomInput 
-              placeholder="편의 시설을 입력해주세요. ex) 바베큐장, 강아지 수영장..."
-              onChange={(e) => setInfoValue(e, 'amenities')}
-              onKeyDown={(e) => keyDownHandler(e, 'amenities')}
-              value={tmpInfo.amenities}
-            />
-          </div>
-          <div className={styles.info_contents}>
-            <h3>추가정보</h3>
-            <div>
-            {info.additional_info.map((data, index) => {
-                return (
-                  <span key={`additional_info${index}`}>{data}</span>
-                )
-              })}
-            </div>
-            <CustomInput 
-              placeholder="추가정보를 입력해주세요. ex) 흡연금지, 숯불..."
-              onChange={(e) => setInfoValue(e, 'additional_info')}
-              onKeyDown={(e) => keyDownHandler(e, 'additional_info')}
-              value={tmpInfo.additional_info}
-            />
-          </div>
+          {info_contents.map((data, index) => {
+            return (
+              <div className={styles.info_contents} key={`${data.type}_${index}`}>
+                <h3>{data.title}</h3>
+                <div>
+                  {info[data.type].map((item, index) => {
+                    return (
+                      <span key={`${data.type}_contents_${index}`}>
+                        {item}
+                        <TiDelete onClick={() => removeContents(index, data.type)} />
+                      </span>
+                    );
+                  })}
+                </div>
+                <CustomInput
+                  placeholder={data.placeholder}
+                  onChange={(e) => setInfoValue(e, data.type)}
+                  onKeyDown={(e) => keyDownHandler(e, data.type)}
+                  value={tmpInfo[data.type]}
+                />
+              </div>
+            );
+          })}
         </div>
+        <button onClick={() => props.onRegistered(info)} className={styles.regi_button}>
+          등록
+        </button>
       </div>
     </ModalContainer>
   );

@@ -53,7 +53,7 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-end;
   z-index: 1;
   background-color: #fff;
   .info_container {
@@ -78,14 +78,26 @@
         border-radius: 6px;
         padding: 8px;
         & > span {
-          padding: 4px 8px;
+          padding: 4px 20px 4px 8px;
           margin: 0 2px;
           background-color: $gray_2;
           color: #fff;
           border-radius: 4px;
+          position: relative;
+          & > svg {
+            position: absolute;
+            top:50%;
+            right: 12px;
+            transform: translate(50%, -50%);
+            cursor: pointer;
+          }
         }
       }
     }
+  }
+  button {
+    margin-right: 1rem;
+    margin-bottom: 1rem;
   }
 }
 
@@ -173,14 +185,7 @@
     justify-content: space-between;
     align-items: center;
     padding: 0 2rem;
-    button {
-      width: 5rem;
-      height: 3rem;
-      background-color: $orange;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
+    
   }
 }
 
@@ -334,4 +339,13 @@
   height: 3rem;
   border-bottom: 1px solid $gray_4;
   border-radius: 0;
+}
+
+.regi_button {
+  width: 5rem;
+  height: 3rem;
+  background-color: $orange;
+  color: #fff;
+  border: none;
+  cursor: pointer;
 }

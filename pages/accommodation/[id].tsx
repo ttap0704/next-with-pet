@@ -25,7 +25,12 @@ const Detail = () => {
       setTitle(data.label);
       setAddress(`${data.sigungu} ${data.bname}`);
       setIntroduction(data.introduction);
-      setRooms([...data.accommodation_rooms]);
+
+      let rooms = [...data.accommodation_rooms];
+      for (let i = 0, leng = rooms.length; i < leng; i++) {
+        rooms[i].cur_num = 0;
+      }
+      setRooms([...rooms]);
     });
     return () => {};
   }, []);
@@ -52,7 +57,7 @@ const Detail = () => {
   }
 
   function roomSlider(type: string, idx: number) {
-    const slider = document.getElementById(`detail_img_slider_${idx}`);
+    const slider = document.getElementById(`room_image_${idx}`);
     let items = [...rooms];
     let item = items[idx];
 
@@ -72,19 +77,10 @@ const Detail = () => {
       item.cur_num = item.rooms_images.length - 1;
     }
 
-    slider.children[item.cur_num - 1 < 0 ? item.rooms_images.length - 1 : item.cur_num - 1].setAttribute(
-      "style",
-      "display: none"
-    );
-    slider.children[item.cur_num].setAttribute("style", "display: block");
+    slider.setAttribute("src", `http://localhost:3000/api/image/rooms/${item.rooms_images[item.cur_num].file_name}`);
 
-    items[idx] = item;
     setRooms([...items]);
   }
-
-  const preview = () => {
-    return <></>;
-  };
 
   return (
     <>
@@ -119,56 +115,42 @@ const Detail = () => {
           {rooms.map((data, index) => {
             return (
               <div className={accom_style.detail_room} key={index} style={{height: "19rem"}}>
-                <div className={accom_style.detail_room_img}>
-                  <div
+                <div className={accom_style.detail_room_info}>
+                  <ImageBox
                     className={accom_style.detail_room_slider_wrap}
-                    id={`room_slider_wrap_${index}`}
-                    onMouseEnter={() =>
-                      data.rooms_images.length > 0 ? toggleButton([`detail_room_slider_${index}`], "enter") : null
-                    }
-                    onMouseLeave={() =>
-                      data.rooms_images.length > 0 ? toggleButton([`detail_room_slider_${index}`], "leave") : null
-                    }
+                    imgId={`room_image_${index}`}
+                    type="room"
+                    src={`http://localhost:3000/api/image/rooms/${data.rooms_images[0].file_name}`}
+                    onMouseEnter={() => toggleButton([`detail_room_slider_${index}`], "enter")}
+                    onMouseLeave={() => toggleButton([`detail_room_slider_${index}`], "leave")}
                   >
-                    <ul id={`detail_img_slider_${index}`}>
-                      {data.rooms_images.map((data) => {
-                        return (
-                          <li key={data.id}>
-                            <img src={`http://localhost:3000/api/image/rooms/${data.file_name}`} alt="rooms_images" />
-                          </li>
-                        );
-                      })}
-                    </ul>
-                    <div className={accom_style.detail_room_slider} id={`detail_room_slider_${index}`}>
-                      <HiChevronLeft
-                        onClick={() => roomSlider("prev", index)}
-                        style={{width: "2.5rem", height: "2.5rem"}}
-                      />
-                      <HiChevronRight
-                        onClick={() => roomSlider("next", index)}
-                        style={{width: "2.5rem", height: "2.5rem"}}
-                      />
+                    <ImageSlider
+                      id={`detail_room_slider_${index}`}
+                      sliderStyle={{width: "2.5rem", height: "2.5rem"}}
+                      onSlideRight={() => roomSlider("next", index)}
+                      onSlideLeft={() => roomSlider("prev", index)}
+                    />
+                  </ImageBox>
+                  <div className={accom_style.detail_room_intro}>
+                    <div className={accom_style.detail_room_explain}>
+                      <span>객실명</span>
+                      <span>{data.label}</span>
+                    </div>
+                    <div className={accom_style.detail_room_explain}>
+                      <span>기준 인원</span>
+                      <span>{data.standard_num} 명</span>
+                    </div>
+                    <div className={accom_style.detail_room_explain}>
+                      <span>최대 인원</span>
+                      <span>{data.maximum_num} 명</span>
+                    </div>
+                    <div className={accom_style.detail_room_explain}>
+                      <span>가격</span>
+                      <span>{data.price.toLocaleString()} 원</span>
                     </div>
                   </div>
                 </div>
-                <div className={accom_style.detail_room_intro}>
-                  <div className={accom_style.detail_room_explain}>
-                    <span>객실명</span>
-                    <span>{data.label}</span>
-                  </div>
-                  <div className={accom_style.detail_room_explain}>
-                    <span>기준 인원</span>
-                    <span>{data.standard_num} 명</span>
-                  </div>
-                  <div className={accom_style.detail_room_explain}>
-                    <span>최대 인원</span>
-                    <span>{data.maximum_num} 명</span>
-                  </div>
-                  <div className={accom_style.detail_room_explain}>
-                    <span>가격</span>
-                    <span>{data.price.toLocaleString()} 원</span>
-                  </div>
-                </div>
+                <span className={accom_style.detail_room_other_info}>추가정보 확인</span>
               </div>
             );
           })}
