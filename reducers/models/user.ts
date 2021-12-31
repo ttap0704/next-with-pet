@@ -13,7 +13,7 @@ interface UserReducer {
 
 // 상태 초기화
 const initialState: UserReducer = {
-  uid: 0,
+  uid: 1,
   unick: "",
   profile_path: ""
 }
@@ -33,7 +33,7 @@ type UserReducerActions = ActionType<typeof actions>;
 // 리듀서 추가
 const userReducer = createReducer<UserReducer, UserReducerActions>(initialState, {
   [RESET_USER]: () => ({
-    uid: 0,
+    uid: 1,
     unick: "",
     profile_path: ""
   }),

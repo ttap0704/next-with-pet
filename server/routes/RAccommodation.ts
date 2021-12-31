@@ -26,17 +26,38 @@ class Accommodation {
   }
 
   private routes(): void {
-    this.express.get("", async (req: any, res: any, next) => {
-      const list = await Model.Accommodation.findAll({
-        include: [
-          {
-            model: Model.Images,
-            as: 'accommodation_images',
-            require: true,
-          }
-        ],
-        attributes: ['sigungu', 'bname', 'label', 'id']
-      });
+    this.express.get("", async (req: express.Request, res: express.Response, next) => {
+      let uid = undefined
+      if (Number(req.query.uid) > 0) {
+        uid = req.query.uid;
+      }
+
+      let list = undefined;
+      if (!uid) {
+        list = await Model.Accommodation.findAll({
+          include: [
+            {
+              model: Model.Images,
+              as: 'accommodation_images',
+              require: true,
+            }
+          ],
+          attributes: ['sigungu', 'bname', 'label', 'id']
+        });
+      } else {
+        list = await Model.Accommodation.findAll({
+          where: {
+            manager: uid
+          },
+          include: [
+            {
+              model: Model.Rooms,
+              as: 'accommodation_rooms',
+              require: true
+            }
+          ]
+        });
+      }
 
       res.json(list)
     });
@@ -71,7 +92,7 @@ class Accommodation {
       res.json(accommodation)
     })
 
-    this.express.post("/add", async (req: any, res: any, next) => {
+    this.express.post("/add", async (req: any, res: express.Response, next) => {
       this.logger.info("url:::::::" + req.url);
       const data = req.body;
       const manager = req.session.uid;

@@ -8,6 +8,7 @@ import React, {useState, useEffect} from "react";
 import {TiDelete} from "react-icons/ti";
 import {Tooltip, IconButton} from "@mui/material";
 import {FaInfoCircle} from "react-icons/fa";
+import {HiX} from "react-icons/hi";
 import ModalContainer from "./ModalContainer";
 
 const UploadModal = (props) => {
@@ -114,7 +115,10 @@ const UploadModal = (props) => {
   return (
     <ModalContainer backClicked={() => hideModal()} visible={upload_modal_visible}>
       <div className={styles.upload_modal}>
-        <h2 style={{padding: "2rem", backgroundColor: "#fff", width: "100%", textAlign: "center"}}>이미지 업로드</h2>
+        <h2 className={styles.modal_title}>
+          이미지 업로드
+          <HiX onClick={() => props.hideModal()} />
+        </h2>
         <ImageBox
           shadow={false}
           imgId="upload_modal_preview"
@@ -156,7 +160,9 @@ const UploadModal = (props) => {
         )}
         <div className={styles.util_box}>
           <UploadInput onChange={(e) => onChangeEvent(e)} title={title} multiple={multiple} />
-          <button className={styles.regi_button} onClick={() => confirmData()}>등록</button>
+          <button className={styles.regi_button} onClick={() => confirmData()}>
+            등록
+          </button>
         </div>
       </div>
     </ModalContainer>

@@ -4,11 +4,16 @@ import React, {useState, useEffect} from "react";
 import ModalContainer from "./ModalContainer";
 import CustomInput from "./CustomInput";
 import {TiDelete} from "react-icons/ti";
+import {HiX} from "react-icons/hi";
 
 const UploadModal = (props) => {
   const dispatch = useDispatch();
-  const visible = props.visible;
-  const parent_info = props.parent_info;
+  const visible: Boolean = props.visible;
+  const parent_info: {
+    amenities: string;
+    additional_info: string;
+  } = props.parent_info;
+  const type: string = props.type;
 
   const [info, setInfo] = useState({
     amenities: [],
@@ -35,16 +40,15 @@ const UploadModal = (props) => {
     if (parent_info == null) {
       setInfo({
         amenities: [],
-        additional_info: []
-      })
+        additional_info: [],
+      });
     } else {
       setInfo({
         amenities: parent_info.amenities.length == 0 ? [] : [...parent_info.amenities.split(",")],
-        additional_info: parent_info.additional_info.length == 0 ? [] : [...parent_info.additional_info.split(",")]
-      })
+        additional_info: parent_info.additional_info.length == 0 ? [] : [...parent_info.additional_info.split(",")],
+      });
     }
-    console.log(parent_info)
-
+    console.log(parent_info);
   }, [parent_info]);
 
   function setInfoValue(e: React.ChangeEvent<HTMLTextAreaElement>, type: string) {
@@ -97,35 +101,48 @@ const UploadModal = (props) => {
   return (
     <ModalContainer backClicked={() => props.hideModal()} visible={visible}>
       <div className={styles.info_modal}>
-        <h2 style={{padding: "2rem", backgroundColor: "#fff", width: "100%", textAlign: "center"}}>추가 정보 입력</h2>
+        <h2 className={styles.modal_title}>
+          추가 정보 입력
+          <HiX 
+            onClick={() => props.hideModal()}
+          />
+          </h2>
         <div className={styles.info_container}>
           {info_contents.map((data, index) => {
             return (
               <div className={styles.info_contents} key={`${data.type}_${index}`}>
                 <h3>{data.title}</h3>
-                <div>
-                  {info[data.type].map((item, index) => {
-                    return (
-                      <span key={`${data.type}_contents_${index}`}>
-                        {item}
-                        <TiDelete onClick={() => removeContents(index, data.type)} />
-                      </span>
-                    );
-                  })}
+                <div className={styles[`info_${type}`]}>
+                  {type == "registration" ? (
+                    info[data.type].map((item, index) => {
+                      return (
+                        <span key={`${data.type}_contents_${index}`}>
+                          {item}
+                          <TiDelete onClick={() => removeContents(index, data.type)} />
+                        </span>
+                      );
+                    })
+                  ) : (
+                    <span>{info[data.type].toString().replace(",", ", ")}</span>
+                  )}
                 </div>
-                <CustomInput
-                  placeholder={data.placeholder}
-                  onChange={(e) => setInfoValue(e, data.type)}
-                  onKeyDown={(e) => keyDownHandler(e, data.type)}
-                  value={tmpInfo[data.type]}
-                />
+                {type == "registration" ? (
+                  <CustomInput
+                    placeholder={data.placeholder}
+                    onChange={(e) => setInfoValue(e, data.type)}
+                    onKeyDown={(e) => keyDownHandler(e, data.type)}
+                    value={tmpInfo[data.type]}
+                  />
+                ) : null}
               </div>
             );
           })}
         </div>
-        <button onClick={() => props.onRegistered(info)} className={styles.regi_button}>
-          등록
-        </button>
+        {type == "registration" ? (
+          <button onClick={() => props.onRegistered(info)} className={styles.regi_button}>
+            등록
+          </button>
+        ) : null}
       </div>
     </ModalContainer>
   );

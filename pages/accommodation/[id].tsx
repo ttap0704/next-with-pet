@@ -3,11 +3,12 @@ import color from "../../accom_style/color.module.scss";
 import accom_style from "../../styles/pages/accommodation.module.scss";
 import {useRouter} from "next/router";
 import {fetchGetApi} from "../../src/tools/api";
-import {HiChevronUp, HiChevronLeft, HiChevronRight} from "react-icons/hi";
+import {HiChevronRight} from "react-icons/hi";
 import {toggleButton} from "../../src/tools/common";
 import ImageBox from "../../src/components/ImageBox";
 import LabelBox from "../../src/components/LabelBox";
 import ImageSlider from "../../src/components/ImageSlider";
+import InfoModal from "../../src/components/InfoModal";
 
 const Detail = () => {
   const router = useRouter();
@@ -18,6 +19,8 @@ const Detail = () => {
   const [introduction, setIntroduction] = useState("");
   const [detailPreviewNum, setDetailPreviewNum] = useState(0);
   const [rooms, setRooms] = useState([]);
+  const [infoModalVisible, setInfoModalVisible] = useState(false);
+  const [infoModalIndex, setInfoModalIndex] = useState(undefined);
 
   useEffect(() => {
     fetchGetApi(`/accommodation/${id}`).then((data) => {
@@ -82,6 +85,11 @@ const Detail = () => {
     setRooms([...items]);
   }
 
+  function setInfoModal(idx: number) {
+    setInfoModalIndex(idx);
+    setInfoModalVisible(true);
+  }
+
   return (
     <>
       <div className={accom_style.detail_warp}>
@@ -114,7 +122,7 @@ const Detail = () => {
           <h2>객실 정보</h2>
           {rooms.map((data, index) => {
             return (
-              <div className={accom_style.detail_room} key={index} style={{height: "19rem"}}>
+              <div className={accom_style.detail_room} key={index}>
                 <div className={accom_style.detail_room_info}>
                   <ImageBox
                     className={accom_style.detail_room_slider_wrap}
@@ -150,12 +158,30 @@ const Detail = () => {
                     </div>
                   </div>
                 </div>
-                <span className={accom_style.detail_room_other_info}>추가정보 확인</span>
+                <div className={accom_style.detail_room_util_box} style={{justifyContent: "flex-end"}}>
+                  <span className={accom_style.detail_room_other_info} onClick={() => setInfoModal(index)}>
+                    추가정보 확인
+                    <HiChevronRight />
+                  </span>
+                </div>
               </div>
             );
           })}
         </div>
       </div>
+      <InfoModal
+        visible={infoModalVisible}
+        parent_info={
+          infoModalIndex == undefined
+            ? null
+            : {
+                amenities: rooms[infoModalIndex].amenities,
+                additional_info: rooms[infoModalIndex].additional_info,
+              }
+        }
+        hideModal={() => setInfoModalVisible(false)}
+        type="view"
+      />
     </>
   );
 };

@@ -7,7 +7,7 @@
   border-radius: 6px;
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: space-between;
   padding: 3rem;
   .service_profile_img {
@@ -19,20 +19,20 @@
   }
   .service_service {
     width: calc(100% - 16rem);
-    height: 12rem;
+    height: auto;
     h2 {
       height: 3rem;
     }
     .service_btn_container {
       width: 100%;
-      height: calc(100% - 3rem);
+      height: auto;
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       align-items: center;
-      justify-content: space-between;
+      gap: 4px;
       .service_btn {
-        width: 33%;
-        height: 100%;
+        width: 100%;
+        height: 3rem;
         background-color: $light_orange;
         border-radius: 6px;
         color: #f8f8f8;

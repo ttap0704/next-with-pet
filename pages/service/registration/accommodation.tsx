@@ -26,8 +26,8 @@ const Service = () => {
   const [intro, setIntro] = useState("");
   const [previewFile, setPreviewFile] = useState([]);
   const [detailPreviewNum, setDetailPreviewNum] = useState(0);
-  const [detailModalVisible, setDetailModalVisible] = useState(false);
-  const [detailModalIndex, setDetailModalIndex] = useState(undefined)
+  const [detailModalVisible, setInfoModalVisible] = useState(false);
+  const [detailModalIndex, setInfoModalIndex] = useState(undefined)
   const [roomDetail, setRoomDetail] = useState([
     {
       title: "",
@@ -58,9 +58,9 @@ const Service = () => {
     setPopupVisible(true)
   }
 
-  function setDetailModal(idx: number) {
-    setDetailModalIndex(idx);
-    setDetailModalVisible(true);
+  function setInfoModal(idx: number) {
+    setInfoModalIndex(idx);
+    setInfoModalVisible(true);
   }
 
   function setAdditionalInfo(info: {amenities: string[], additional_info: string[]}) {
@@ -73,8 +73,8 @@ const Service = () => {
     items[detailModalIndex] = item;
 
     setRoomDetail([...items]);
-    setDetailModalVisible(false)
-    setDetailModalIndex(undefined)
+    setInfoModalVisible(false)
+    setInfoModalIndex(undefined)
   }
 
   function addAccommodation() {
@@ -530,7 +530,7 @@ const Service = () => {
                       </div>
                       <div className={accom_style.detail_room_util_box}>
                         <UploadButton title="객실이미지 업로드" onClick={() => showUploadModal("rooms", index)} />
-                        <button onClick={() => setDetailModal(index)}>추가 정보 입력</button>
+                        <button onClick={() => setInfoModal(index)}>추가 정보 입력</button>
                       </div>
                     </div>
                   );
@@ -564,8 +564,9 @@ const Service = () => {
       <InfoModal
         visible={detailModalVisible}
         parent_info={detailModalIndex == undefined ? null : roomDetail[detailModalIndex].other_info}
-        hideModal={() => setDetailModalVisible(false)}
+        hideModal={() => setInfoModalVisible(false)}
         onRegistered={(info) => setAdditionalInfo(info)}
+        type="registration"
       />
     </>
   );

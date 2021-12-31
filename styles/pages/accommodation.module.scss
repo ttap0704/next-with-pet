@@ -63,22 +63,7 @@
   flex-direction: column;
   margin-bottom: 8px;
   position: relative;
-  .detail_room_other_info {
-    position: absolute;
-    top: 50%;
-    right: 0;
-    transform: translate(70%, -50%);
-    width: 10rem;
-    height: 2.5rem;
-    padding: 0 4px;
-    background-color: $light_orange;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #f8f8f8;
-    border-top-right-radius: 1.25rem;
-    border-bottom-right-radius: 1.25rem;
-  }
+  
 
   .detail_room_info {
     width: 100%;
@@ -174,6 +159,19 @@
           background-color: $red;
           color: #fff;
           border: none;
+        }
+      }
+
+      .detail_room_other_info {
+        cursor: pointer;
+        font-weight: bold;
+        position: relative;
+        padding-right: 1.2rem;
+        svg {
+          position: absolute;
+          top: 50%;
+          right: 5%;
+          transform: translate(50%, -50%);
         }
       }
     }

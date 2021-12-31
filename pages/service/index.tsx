@@ -17,19 +17,31 @@ const Service = () => {
       label: "회원정보 수정",
       type: "modify",
       path: "info",
-      icon_path: "들어갈 예정",
+      icon_path: "",
     },
     {
       label: "숙박업소 등록",
       type: "accommodation",
       path: "registration",
-      icon_path: "들어갈 예정",
+      icon_path: "",
     },
     {
       label: "식당 등록",
       type: "restaurant",
       path: "registration",
-      icon_path: "들어갈 예정",
+      icon_path: "",
+    },
+    {
+      label: "숙박업소 관리",
+      type: "accommodation",
+      path: "manage",
+      icon_path: "",
+    },
+    {
+      label: "식당 관리",
+      type: "restaurant",
+      path: "manage",
+      icon_path: "",
     },
   ];
 
@@ -48,7 +60,7 @@ const Service = () => {
     <div className={styles.service_container}>
       <div
         className={styles.service_profile_img}
-        style={{ backgroundImage: `url(${profile_path})` }}
+        style={{ backgroundImage: `url(http://localhost:3000/api/image/profile/super_profile.jpeg)` }}
       ></div>
       <div className={styles.service_service}>
         <h2>{unick}님</h2>
@@ -57,7 +69,7 @@ const Service = () => {
             return (
               <div
                 className={styles.service_btn}
-                key={data.type}
+                key={`${data.path}_${data.type}`}
                 onClick={() => movePage(data)}
               >
                 <a>
