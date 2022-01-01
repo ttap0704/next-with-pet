@@ -6,14 +6,14 @@ import {
 
 // 상태의 타입 선언
 interface UserReducer {
-  uid: number,
+  uid: number | undefined,
   unick: string,
   profile_path: string
 }
 
 // 상태 초기화
 const initialState: UserReducer = {
-  uid: 1,
+  uid: undefined,
   unick: "",
   profile_path: ""
 }
@@ -33,7 +33,7 @@ type UserReducerActions = ActionType<typeof actions>;
 // 리듀서 추가
 const userReducer = createReducer<UserReducer, UserReducerActions>(initialState, {
   [RESET_USER]: () => ({
-    uid: 1,
+    uid: undefined,
     unick: "",
     profile_path: ""
   }),
