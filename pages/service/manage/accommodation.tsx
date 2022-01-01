@@ -2,12 +2,11 @@ import styles from "../../../styles/pages/service.module.scss";
 import { RootState } from "../../../reducers";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { ReactElement, ReactEventHandler, useEffect, useState } from "react";
 import { fetchGetApi } from "../../../src/tools/api";
-import CustonTable from "../../../src/components/CustomTable"
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
-
-
+import CustomTable from "../../../src/components/CustomTable"
+import { Checkbox, TableCell, TableRow } from "@mui/material";
+import CustomDropdown from "../../../src/components/CustomDrodown"
 
 const EditAccommodation = () => {
   const router = useRouter();
@@ -18,37 +17,8 @@ const EditAccommodation = () => {
   const [accommodations, setAccommodations] = useState([]);
   const [rooms, setRooms] = useState([]);
 
-  const accommodation_header = ['이름', '버튼']
-  const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID', width: 70 },
-    { field: 'firstName', headerName: 'First name', width: 130 },
-    { field: 'lastName', headerName: 'Last name', width: 130 },
-    {
-      field: 'age',
-      headerName: 'Age',
-      type: 'number',
-      width: 90,
-    },
-    {
-      field: 'fullName',
-      headerName: 'Full name',
-      description: 'This column has a value getter and is not sortable.',
-      sortable: false,
-      width: 160,
-    },
-  ];
+  const accommodation_header = ['', '이름', '주소', '방 개수', '소개']
 
-  const rows = [
-    { id: 1, lastName: 'Snow', firstName: 'Jon', age: 35 },
-    { id: 2, lastName: 'Lannister', firstName: 'Cersei', age: 42 },
-    { id: 3, lastName: 'Lannister', firstName: 'Jaime', age: 45 },
-    { id: 4, lastName: 'Stark', firstName: 'Arya', age: 16 },
-    { id: 5, lastName: 'Targaryen', firstName: 'Daenerys', age: null },
-    { id: 6, lastName: 'Melisandre', firstName: null, age: 150 },
-    { id: 7, lastName: 'Clifford', firstName: 'Ferrara', age: 44 },
-    { id: 8, lastName: 'Frances', firstName: 'Rossini', age: 36 },
-    { id: 9, lastName: 'Roxie', firstName: 'Harvey', age: 65 },
-  ];
 
   useEffect(() => {
     fetchGetApi(`/accommodation?uid=1`).then((res) => {
@@ -60,11 +30,27 @@ const EditAccommodation = () => {
               id: x.id,
               bname: x.bname,
               building_name: x.building_name,
-              deatil_address: x.detail_address,
+              detail_address: x.detail_address,
               introduction: x.introduction,
               label: x.label,
               sido: x.sido,
-              zonecode: x.zonecode
+              sigungu: x.sigungu,
+              zonecode: x.zonecode,
+              rooms_num: x.accommodation_rooms.length,
+              checked: false
+            },
+            {
+              id: x.id,
+              bname: x.bname,
+              building_name: x.building_name,
+              detail_address: x.detail_address,
+              introduction: x.introduction,
+              label: x.label,
+              sido: x.sido,
+              sigungu: x.sigungu,
+              zonecode: x.zonecode,
+              rooms_num: x.accommodation_rooms.length,
+              checked: false
             }
           ]
         })
@@ -84,18 +70,85 @@ const EditAccommodation = () => {
     })
   }, [])
 
+  function setChecked(e: React.ChangeEvent<HTMLInputElement>, idx: number, type: string) {
+    const checked = e.target.checked;
+    if (type == 'accommodation') {
+      setAccommodations(state => {
+        return [
+          ...state.map((data, index) => {
+            if (checked) {
+              if (index != idx) {
+                data.checked = false;
+                return data;
+              } else {
+                data.checked = true;
+                return data;
+              }
+            } else {
+              if (index == idx) {
+                data.checked = false;
+                return data;
+              } else {
+                return data;
+              }
+            }
+          })
+        ]
+      })
+    }
+  }
+
+  function setAccommodationCell(cell: string, idx: number) {
+    let tag: ReactElement | string;
+    switch (cell) {
+      case '':
+        tag = <Checkbox
+          checked={accommodations[idx].checked}
+          onChange={(e) => setChecked(e, idx, 'accommodation')}
+        ></Checkbox>
+        break;
+      case '이름':
+        tag = accommodations[idx].label;
+        break;
+      case '주소':
+        tag = `${accommodations[idx].sido} ${accommodations[idx].sigungu} ${accommodations[idx].bname}`
+        break;
+      case '방 개수':
+        tag = accommodations[idx].rooms_num;
+        break;
+      case '소개':
+        tag = '확인';
+        break;
+    }
+
+    return tag;
+  }
+
   return (
     <div>
-      <h2>숙박업소 관리</h2>
+      <div className={styles.manage_title}>
+        <h2>숙박업소 관리</h2>
+        < CustomDropdown />
+      </div>
       <div style={{ height: 400, width: '100%' }}>
-      <DataGrid
-        rows={rows}
-        columns={columns}
-        pageSize={5}
-        rowsPerPageOptions={[5]}
-        checkboxSelection
-      />
-    </div>
+        <CustomTable
+          header={accommodation_header}
+        >
+          {accommodations.map((data, index) => {
+            return (
+              <TableRow key={`accommodations_row_${index}`}>
+                {accommodation_header.map((cell, index2) => {
+                  return (
+                    <TableCell key={`accommodations_cell_${index2}`}>
+                      {setAccommodationCell(cell, index)}
+                    </TableCell>
+                  )
+                })}
+              </TableRow>
+            )
+          })}
+        </CustomTable>
+      </div>
       <h2>객실 관리 관리</h2>
     </div>
   );
