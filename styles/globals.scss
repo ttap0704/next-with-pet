@@ -1,3 +1,5 @@
+@import "./mui.scss";
+
 @font-face {
   font-family: "NanumGothic"; 
   src: url("../src/fonts/NanumGothicCoding-Regular.ttf"); 
@@ -81,13 +83,3 @@ input[type="file"] {
 
 
 
-
-
-// etc
-.MuiTooltip-popper[data-popper-placement="top"] {
-  margin-bottom: -12px !important;
-}
-
-.MuiTooltip-popper[data-popper-placement="bottom"] {
-  margin-top: -12px !important;
-}

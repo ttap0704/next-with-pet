@@ -10,3 +10,10 @@ export function toggleButton(ids: string[], type: string) {
     }
   }
 }
+
+export function getDate(req: string) {
+  const year = new Date(req).getFullYear();
+  const month = new Date(req).getMonth() + 1 < 10 ? `0${new Date(req).getMonth() + 1}` : new Date(req).getMonth() + 1
+  const date = new Date(req).getDate() < 10 ? `0${new Date(req).getDate()}` : new Date(req).getDate();
+  return `${year}-${month}-${date}`;
+}

@@ -1,0 +1,18 @@
+// tooltip
+.MuiTooltip-popper[data-popper-placement="top"] {
+  margin-bottom: -12px !important;
+}
+
+.MuiTooltip-popper[data-popper-placement="bottom"] {
+  margin-top: -12px !important;
+}
+
+
+// table
+.MuiTableCell-root {
+  padding: 0;
+}
+
+.MuiTableRow-root {
+  height: 4rem;
+}

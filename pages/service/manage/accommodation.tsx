@@ -2,11 +2,12 @@ import styles from "../../../styles/pages/service.module.scss";
 import { RootState } from "../../../reducers";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
-import { ReactElement, ReactEventHandler, useEffect, useState } from "react";
+import { ReactElement, useEffect, useState } from "react";
 import { fetchGetApi } from "../../../src/tools/api";
 import CustomTable from "../../../src/components/CustomTable"
 import { Checkbox, TableCell, TableRow } from "@mui/material";
 import CustomDropdown from "../../../src/components/CustomDrodown"
+import {getDate} from "../../../src/tools/common"
 
 const EditAccommodation = () => {
   const router = useRouter();
@@ -17,7 +18,7 @@ const EditAccommodation = () => {
   const [accommodations, setAccommodations] = useState([]);
   const [rooms, setRooms] = useState([]);
 
-  const accommodation_header = ['', '이름', '주소', '방 개수', '소개']
+  const accommodation_header = ['', '이름', '주소', '방 개수', '소개', '등록일']
 
 
   useEffect(() => {
@@ -37,19 +38,7 @@ const EditAccommodation = () => {
               sigungu: x.sigungu,
               zonecode: x.zonecode,
               rooms_num: x.accommodation_rooms.length,
-              checked: false
-            },
-            {
-              id: x.id,
-              bname: x.bname,
-              building_name: x.building_name,
-              detail_address: x.detail_address,
-              introduction: x.introduction,
-              label: x.label,
-              sido: x.sido,
-              sigungu: x.sigungu,
-              zonecode: x.zonecode,
-              rooms_num: x.accommodation_rooms.length,
+              created_at: x.createdAt,
               checked: false
             }
           ]
@@ -70,8 +59,14 @@ const EditAccommodation = () => {
     })
   }, [])
 
-  function setChecked(e: React.ChangeEvent<HTMLInputElement>, idx: number, type: string) {
-    const checked = e.target.checked;
+  function setChecked(idx: number, type: string, event_type:string, e?: React.ChangeEvent<HTMLInputElement>) {
+    let checked = undefined;
+    if (event_type == 'change') {
+      checked = e.target.checked;
+    } else {
+      checked = !accommodations[idx].checked;
+    }
+    
     if (type == 'accommodation') {
       setAccommodations(state => {
         return [
@@ -104,7 +99,7 @@ const EditAccommodation = () => {
       case '':
         tag = <Checkbox
           checked={accommodations[idx].checked}
-          onChange={(e) => setChecked(e, idx, 'accommodation')}
+          onChange={(e) => setChecked(idx, 'accommodation', 'change', e)}
         ></Checkbox>
         break;
       case '이름':
@@ -119,9 +114,16 @@ const EditAccommodation = () => {
       case '소개':
         tag = '확인';
         break;
+      case '등록일':
+        tag = getDate(accommodations[idx].created_at);
+        break;
     }
 
     return tag;
+  }
+
+  function test(page) {
+      console.log(page)
   }
 
   return (
@@ -133,10 +135,15 @@ const EditAccommodation = () => {
       <div style={{ height: 400, width: '100%' }}>
         <CustomTable
           header={accommodation_header}
+          footerColspan={6}
+          rowsLength={10}
+          changePerPage={(page) => {test(page)}}
         >
           {accommodations.map((data, index) => {
             return (
-              <TableRow key={`accommodations_row_${index}`}>
+              <TableRow key={`accommodations_row_${index}`}
+                onClick={() => setChecked(index, 'accommodation', 'click')}
+              >
                 {accommodation_header.map((cell, index2) => {
                   return (
                     <TableCell key={`accommodations_cell_${index2}`}>
@@ -149,7 +156,7 @@ const EditAccommodation = () => {
           })}
         </CustomTable>
       </div>
-      <h2>객실 관리 관리</h2>
+      <h2>객실 관리</h2>
     </div>
   );
 };
