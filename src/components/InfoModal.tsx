@@ -63,8 +63,7 @@ const UploadModal = (props) => {
 
   function keyDownHandler(e: React.KeyboardEvent<HTMLTextAreaElement>, type: string) {
     const code = e.keyCode;
-    if (code == 13) {
-      console.log(tmpInfo[type]);
+    if (code == 13 && tmpInfo[type].length > 0) {
       setInfo((state) => {
         return {
           ...state,

@@ -3,6 +3,7 @@ import { Logger } from "../logger/logger";
 import User from "./RUser";
 import Restaurant from "./RRestaurant";
 import Accommodation from "./RAccommodation";
+import Rooms from "./RRooms";
 import Upload from "./RUpload";
 import Image from "./RImage"
 
@@ -30,7 +31,8 @@ class Routes {
     private routes(): void {
         this.express.use("/user", User);
         this.express.use("/restaurant", Restaurant);
-        this.express.use("/Accommodation", Accommodation);
+        this.express.use("/accommodation", Accommodation);
+        this.express.use("/rooms", Rooms);
         this.express.use("/upload", Upload);
         this.express.use("/image", Image)
     }
