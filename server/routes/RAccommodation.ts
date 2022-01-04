@@ -44,7 +44,24 @@ class Accommodation {
           ],
           attributes: ['sigungu', 'bname', 'label', 'id']
         });
+        res.json(list)
       } else {
+        const count = await Model.Accommodation.count({
+          where: {
+            manager: uid
+          }
+        })
+
+        let page = undefined;
+        if (Number(req.query.page) > 0) {
+          page = Number(req.query.page);
+        }
+
+        let offset = 0;
+        if (page > 1) {
+          offset = 5 * (page - 1);
+        }
+
         list = await Model.Accommodation.findAll({
           where: {
             manager: uid
@@ -55,11 +72,13 @@ class Accommodation {
               as: 'accommodation_rooms',
               require: true
             }
-          ]
+          ],
+          offset: offset,
+          limit: 5
         });
+        res.json({count: count, rows: list})
       }
 
-      res.json(list)
     });
 
     this.express.get("/:id", async (req: express.Request, res: express.Response, next) => {

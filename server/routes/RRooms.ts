@@ -47,18 +47,33 @@ class Rooms {
       })
         .slice(0, -1);
 
+      const count = await Model.Rooms.count({
+        where: {
+          accommodation_id: {
+            [Model.Sequelize.Op.in]: Model.sequelize.literal(`(${tempSQL})`)
+          }
+        }
+      })
+
       const list = await Model.Rooms.findAll({
         where: {
           accommodation_id: {
             [Model.Sequelize.Op.in]: Model.sequelize.literal(`(${tempSQL})`)
           }
         },
-        attributes: ['label', 'price', 'standard_num', 'maximum_num', 'amenities', 'additional_info', ],
+        attributes: ['label', 'price', 'standard_num', 'maximum_num', 'amenities', 'additional_info', [
+          Model.sequelize.literal(`(
+            SELECT label
+            FROM accommodation
+            WHERE
+            id = rooms.accommodation_id
+          )`), 'accommodation_label'
+        ]],
         offset: offset,
         limit: 5
       });
 
-      res.json(list)
+      res.json({count: count, rows: list})
     });
   }
 }

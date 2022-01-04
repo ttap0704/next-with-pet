@@ -50,9 +50,13 @@
   }
 }
 
-.manage_title {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.75rem;
+.manage_contents {
+  margin-bottom: 2rem;
+  .manage_title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
 }
+

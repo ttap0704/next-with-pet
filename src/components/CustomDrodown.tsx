@@ -46,7 +46,10 @@ const StyledMenu = styled((props: MenuProps) => (
   },
 }));
 
-const CustomDropdown = () => {
+const CustomDropdown = (props) => {
+  const items = props.items;
+  const disabled = props.buttonDisabled;
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
@@ -66,8 +69,9 @@ const CustomDropdown = () => {
         variant="contained"
         disableElevation
         onClick={handleClick}
+        disabled={disabled}
       >
-        Options
+        편집
       </Button>
       <StyledMenu
         id="demo-customized-menu"
@@ -78,18 +82,15 @@ const CustomDropdown = () => {
         open={open}
         onClose={handleClose}
       >
-        <MenuItem onClick={handleClose} disableRipple>
-          Edit
-        </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
-          Duplicate
-        </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
-          Archive
-        </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
-          More
-        </MenuItem>
+        {
+          items.map((data, index) => {
+            return (
+            <MenuItem onClick={handleClose} disableRipple key={`dropdown_item_${data}_${index}`}>
+              {data}
+            </MenuItem>
+            )    
+          })
+        }
       </StyledMenu>
     </div>
   );
