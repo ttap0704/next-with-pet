@@ -1,16 +1,23 @@
 import styles from "../../../styles/pages/service.module.scss";
 import {RootState} from "../../../reducers";
-import {useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 import {useRouter} from "next/router";
 import {ReactElement, useEffect, useState} from "react";
 import {fetchGetApi} from "../../../src/tools/api";
-import CustomTable from "../../../src/components/CustomTable";
 import {Checkbox, TableCell, TableRow} from "@mui/material";
-import CustomDropdown from "../../../src/components/CustomDrodown";
 import {getDate} from "../../../src/tools/common";
-import {Button} from "@mui/material"
+import {Button} from "@mui/material";
+
+import CustomDropdown from "../../../src/components/CustomDrodown";
+import CustomTable from "../../../src/components/CustomTable";
+import EditModal from "../../../src/components/EditModal";
+import PostCode from "../../../src/components/PostCode";
+import UploadModal from "../../../src/components/UploadModal";
+
+import {actions} from "../../../reducers/common/upload";
 
 const EditAccommodation = () => {
+  const dispatch = useDispatch();
   useEffect(() => {
     getTableItems("accommodation");
     getTableItems("rooms");
@@ -18,67 +25,73 @@ const EditAccommodation = () => {
 
   const router = useRouter();
   const {uid} = useSelector((state: RootState) => state.userReducer);
+  const [editModal, setEditModal] = useState({title: "", visible: false, value: "", type: ""});
+  const [postCodeVisible, setPostCodeVisible] = useState(false);
 
   const [contents, setContents] = useState({
     accommodation: {
-      header: [{
-        label: "",
-        center: true
-      },
-      {
-        label: "이름",
-        center: false
-      },
-      {
-        label: "주소",
-        center: false
-      },
-      {
-        label: "방 개수",
-        center: false
-      },
-      {
-        label: "소개",
-        center: true
-      },
-      {
-        label: "등록일",
-        center: false
-      }],
+      header: [
+        {
+          label: "",
+          center: true,
+        },
+        {
+          label: "이름",
+          center: false,
+        },
+        {
+          label: "주소",
+          center: false,
+        },
+        {
+          label: "방 개수",
+          center: false,
+        },
+        {
+          label: "소개",
+          center: true,
+        },
+        {
+          label: "등록일",
+          center: false,
+        },
+      ],
       table_items: [],
-      edit_items: ["객실 추가", "소개 수정", "주소 수정", "업소명 수정", "대표이미지 수정", "업소 삭제"],
+      edit_items: ["객실 추가", "업소명 수정", "주소 수정", "소개 수정", "대표이미지 수정", "업소 삭제"],
       type: "accommodation",
       count: 0,
       title: "숙박업소 관리",
-      button_disabled: true
+      button_disabled: true,
     },
     rooms: {
-      header: [{
-        label: "",
-        center: true
-      },
-      {
-        label: "숙박 업소명",
-        center: false
-      },
-      {
-        label: "객실명",
-        center: false
-      },
-      {
-        label: "기준 인원",
-        center: false
-      },
-      {
-        label: "추가 정보",
-        center: true
-      }],
+      header: [
+        {
+          label: "",
+          center: true,
+        },
+        {
+          label: "숙박 업소명",
+          center: false,
+        },
+        {
+          label: "객실명",
+          center: false,
+        },
+        {
+          label: "기준 인원",
+          center: false,
+        },
+        {
+          label: "추가 정보",
+          center: true,
+        },
+      ],
       table_items: [],
       edit_items: ["객실명 수정", "추가 정보 수정", "인원 수정", "대표이미지 수정", "객실 삭제"],
       type: "rooms",
       count: 0,
       title: "객실 관리",
-      button_disabled: true
+      button_disabled: true,
     },
   });
 
@@ -115,7 +128,7 @@ const EditAccommodation = () => {
               }
             }),
           ],
-          button_disabled: !checked
+          button_disabled: !checked,
         },
       };
     });
@@ -157,6 +170,7 @@ const EditAccommodation = () => {
                     zonecode: x.zonecode,
                     rooms_num: x.accommodation_rooms.length,
                     created_at: x.createdAt,
+                    images: x.accommodation_images,
                     checked: false,
                   },
                 ],
@@ -244,6 +258,57 @@ const EditAccommodation = () => {
     return tag;
   }
 
+  function handleDropdown(type: string, idx: number) {
+    const target = contents[type].table_items.find((data) => {
+      return data.checked == true;
+    });
+
+    if (type == "accommodation") {
+      switch (idx) {
+        case 0:
+          break;
+        case 1:
+          setEditModal({title: "업소명 수정", visible: true, value: target.label, type: "input"});
+          break;
+        case 2:
+          setPostCodeVisible(true);
+          break;
+        case 3:
+          setEditModal({title: "소개 수정", visible: true, value: target.introduction, type: "textarea"});
+          break;
+        case 4:
+          let files = [];
+          for (let i = 0, leng = target.images.length; i < leng; i++) {
+            const file = new File(
+              [target.images[i].file_name],
+              `http://localhost:3000/api/image/accommodation/${target.images[i].file_name}`,
+              {type: "image/jpg"}
+            );
+            files.push(file);
+          }
+          dispatch(
+            actions.pushFiles({
+              files: files,
+            })
+          );
+          dispatch(
+            actions.setUploadModalVisible({
+              visible: true,
+              title: "대표이미지 수정",
+              target: target,
+              multiple: true,
+              image_type: "accommodation",
+            })
+          );
+          break;
+      }
+    }
+  }
+
+  function updateAddress(data) {
+    console.log(data);
+  }
+
   return (
     <div>
       {Object.keys(contents).map((key, idx) => {
@@ -251,9 +316,11 @@ const EditAccommodation = () => {
           <div className={styles.manage_contents} key={`${contents[key].type}_content`}>
             <div className={styles.manage_title}>
               <h2>{contents[key].title}</h2>
-              <CustomDropdown 
+              <CustomDropdown
                 items={contents[key].edit_items}
                 buttonDisabled={contents[key].button_disabled}
+                type={key}
+                onClick={(type, idx) => handleDropdown(type, idx)}
               />
             </div>
             <div style={{height: "28rem", width: "100%"}}>
@@ -271,7 +338,10 @@ const EditAccommodation = () => {
                     >
                       {contents[key].header.map((cell, index2) => {
                         return (
-                          <TableCell align={cell.center ? 'center' : 'left'} key={`${contents[key].type}_cell_${index2}`}>
+                          <TableCell
+                            align={cell.center ? "center" : "left"}
+                            key={`${contents[key].type}_cell_${index2}`}
+                          >
                             {setTableCell(cell.label, index, contents[key].type)}
                           </TableCell>
                         );
@@ -284,6 +354,19 @@ const EditAccommodation = () => {
           </div>
         );
       })}
+      <PostCode
+        hideModal={() => setPostCodeVisible(false)}
+        visible={postCodeVisible}
+        complete={(data) => updateAddress(data)}
+      />
+      <EditModal
+        visible={editModal.visible}
+        title={editModal.title}
+        value={editModal.value}
+        type={editModal.type}
+        hideModal={() => setEditModal({title: "", visible: false, value: "", type: ""})}
+      />
+      <UploadModal />
     </div>
   );
 };

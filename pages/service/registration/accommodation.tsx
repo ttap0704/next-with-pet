@@ -27,7 +27,7 @@ const Service = () => {
   const [previewFile, setPreviewFile] = useState([]);
   const [detailPreviewNum, setDetailPreviewNum] = useState(0);
   const [detailModalVisible, setInfoModalVisible] = useState(false);
-  const [detailModalIndex, setInfoModalIndex] = useState(undefined)
+  const [detailModalIndex, setInfoModalIndex] = useState(undefined);
   const [roomDetail, setRoomDetail] = useState([
     {
       title: "",
@@ -53,9 +53,9 @@ const Service = () => {
     building_name: "",
   });
 
-  function showPostCode(e:React.MouseEvent<HTMLButtonElement>) {
+  function showPostCode(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
-    setPopupVisible(true)
+    setPopupVisible(true);
   }
 
   function setInfoModal(idx: number) {
@@ -63,7 +63,7 @@ const Service = () => {
     setInfoModalVisible(true);
   }
 
-  function setAdditionalInfo(info: {amenities: string[], additional_info: string[]}) {
+  function setAdditionalInfo(info: {amenities: string[]; additional_info: string[]}) {
     let items = [...roomDetail];
     let item = items[detailModalIndex];
 
@@ -73,8 +73,8 @@ const Service = () => {
     items[detailModalIndex] = item;
 
     setRoomDetail([...items]);
-    setInfoModalVisible(false)
-    setInfoModalIndex(undefined)
+    setInfoModalVisible(false);
+    setInfoModalIndex(undefined);
   }
 
   function addAccommodation() {
@@ -555,11 +555,11 @@ const Service = () => {
           <p style={{margin: "0 12px", display: "block"}}>{curPage == "detail" ? "뒤로가기" : "상세페이지 등록"}</p>
         </div>
       </div>
-      {popupVisible ? (
-        <div className={styles.postcode_back} onClick={() => setPopupVisible(false)}>
-          <PostCode complete={(data) => updateAddress(data)} />
-        </div>
-      ) : null}
+      <PostCode
+        hideModal={() => setPopupVisible(false)}
+        visible={popupVisible}
+        complete={(data) => updateAddress(data)}
+      />
       <UploadModal onChange={(e, target, target_idx) => uploadImage(e, target, target_idx)} />
       <InfoModal
         visible={detailModalVisible}

@@ -620,12 +620,11 @@ const Service = () => {
           <p style={{ margin: "0 12px", display: "block" }}>{curPage == "detail" ? "뒤로가기" : "상세페이지 등록"}</p>
         </div>
       </div>
-      {popupVisible ? (
-        <div className={styles.postcode_back} onClick={() => setPopupVisible(false)}>
-          <PostCode complete={(data) => updateAddress(data)} />
-        </div>
-      ) : null}
-      {/* 사진 업로드 모달 */}
+      <PostCode
+        hideModal={() => setPopupVisible(false)}
+        visible={popupVisible}
+        complete={(data) => updateAddress(data)}
+      />
       <UploadModal onChange={(e, target) => uploadImage(e, target)} />
     </>
   );

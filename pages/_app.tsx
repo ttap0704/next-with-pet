@@ -16,7 +16,9 @@ const _APP = ({ Component, pageProps }: AppProps) => {
       <Header />
       <div id="__wrap">
         <div id="__container">
-          <Component {...pageProps} />
+          <Component 
+            style={{width: '100%', height: '100%'}}
+          {...pageProps} />
         </div>
       </div>
     </Provider>

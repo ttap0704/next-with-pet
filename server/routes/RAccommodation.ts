@@ -71,12 +71,17 @@ class Accommodation {
               model: Model.Rooms,
               as: 'accommodation_rooms',
               require: true
+            },
+            {
+              model: Model.Images,
+              as: 'accommodation_images',
+              require: true,
             }
           ],
           offset: offset,
           limit: 5
         });
-        res.json({count: count, rows: list})
+        res.json({ count: count, rows: list })
       }
 
     });
