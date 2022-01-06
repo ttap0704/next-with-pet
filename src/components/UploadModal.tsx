@@ -37,19 +37,26 @@ const UploadModal = (props) => {
   }
 
   function setPreviewFiles(file) {
-    console.log(file);
+    console.log(file.length);
     if (file.length > 0) {
       let res_files = Array.from(file);
+      console.log(res_files);
       let number = files.length == 0 ? 1 : files[files.length - 1].number + 1;
       res_files.forEach((file: any) => {
         let reader = new FileReader();
         reader.onloadend = () => {
+          console.log();
           const duplicated_image_idx = files.findIndex((data) => {
             return data.imageUrl == reader.result.toString();
           });
           if (duplicated_image_idx < 0) {
-            setFiles((state) => [...state, {file: file, imageUrl: reader.result.toString(), number}]);
+            setFiles((state) => {
+              console.log(files);
+              return [...state, {file: file, imageUrl: reader.result.toString(), number}];
+            });
             number++;
+          } else {
+            alert("이미 같은 이미지가 추가되어 있습니다.");
           }
         };
         reader.readAsDataURL(file);
@@ -75,7 +82,12 @@ const UploadModal = (props) => {
 
   function setImageOrder() {
     let items = files;
-    let sorted_items = items.sort((a, b) => a.number - b.number);
+    let sorted_items = items
+      .sort((a, b) => a.number - b.number)
+      .map((data, index) => {
+        return {...data, number: index + 1};
+      });
+    console.log(sorted_items)
     setFiles([...sorted_items]);
   }
 
@@ -117,7 +129,7 @@ const UploadModal = (props) => {
       <div className={styles.upload_modal}>
         <h2 className={styles.modal_title}>
           이미지 업로드
-          <HiX onClick={() => props.hideModal()} />
+          <HiX onClick={() => hideModal()} />
         </h2>
         <ImageBox
           shadow={false}
@@ -151,7 +163,7 @@ const UploadModal = (props) => {
                     onBlur={() => setImageOrder()}
                     onKeyDown={(e) => blurInput(e, idx)}
                   />
-                  <span>{data.file.name}</span>
+                  <span>{data.file.name ? data.file.name : `이미지 ${data.number}번`}</span>
                   <TiDelete onClick={() => deleteImage(idx)} />
                 </li>
               );

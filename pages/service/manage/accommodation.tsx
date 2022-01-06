@@ -1,18 +1,24 @@
 import styles from "../../../styles/pages/service.module.scss";
+import accom_style from "../../../styles/pages/accommodation.module.scss";
 import {RootState} from "../../../reducers";
 import {useSelector, useDispatch} from "react-redux";
 import {useRouter} from "next/router";
 import {ReactElement, useEffect, useState} from "react";
 import {fetchGetApi} from "../../../src/tools/api";
-import {Checkbox, TableCell, TableRow} from "@mui/material";
+import {Checkbox, Modal, TableCell, TableRow} from "@mui/material";
 import {getDate} from "../../../src/tools/common";
 import {Button} from "@mui/material";
+import {HiX} from "react-icons/hi";
 
 import CustomDropdown from "../../../src/components/CustomDrodown";
 import CustomTable from "../../../src/components/CustomTable";
 import EditModal from "../../../src/components/EditModal";
 import PostCode from "../../../src/components/PostCode";
 import UploadModal from "../../../src/components/UploadModal";
+import ModalContainer from "../../../src/components/ModalContainer";
+import ImageBox from "../../../src/components/ImageBox";
+import CustomInput from "../../../src/components/CustomInput";
+import ImageSlider from "../../../src/components/ImageSlider";
 
 import {actions} from "../../../reducers/common/upload";
 
@@ -27,6 +33,18 @@ const EditAccommodation = () => {
   const {uid} = useSelector((state: RootState) => state.userReducer);
   const [editModal, setEditModal] = useState({title: "", visible: false, value: "", type: ""});
   const [postCodeVisible, setPostCodeVisible] = useState(false);
+  const [roomModalVisible, setRoomModalVisible] = useState(false);
+  const [addRoomContents, setAddRoomContents] = useState({
+    files: [],
+    info: {
+      lable: "",
+      standard_num: "",
+      maximum_num: "",
+      price: "",
+      amenities: "",
+      additional_info: "",
+    },
+  })
 
   const [contents, setContents] = useState({
     accommodation: {
@@ -266,6 +284,7 @@ const EditAccommodation = () => {
     if (type == "accommodation") {
       switch (idx) {
         case 0:
+          setRoomModalVisible(true);
           break;
         case 1:
           setEditModal({title: "업소명 수정", visible: true, value: target.label, type: "input"});
@@ -279,27 +298,32 @@ const EditAccommodation = () => {
         case 4:
           let files = [];
           for (let i = 0, leng = target.images.length; i < leng; i++) {
-            const file = new File(
-              [target.images[i].file_name],
-              `http://localhost:3000/api/image/accommodation/${target.images[i].file_name}`,
-              {type: "image/jpg"}
-            );
-            files.push(file);
+            fetch(`http://localhost:3000/api/image/accommodation/${target.images[i].file_name}`).then((res) => {
+              res
+                .blob()
+                .then((blob) => {
+                  files.push(blob);
+                })
+                .then(() => {
+                  if (files.length == target.images.length) {
+                    dispatch(
+                      actions.pushFiles({
+                        files: files,
+                      })
+                    );
+                    dispatch(
+                      actions.setUploadModalVisible({
+                        visible: true,
+                        title: "대표이미지 수정",
+                        target: type,
+                        multiple: true,
+                        image_type: type,
+                      })
+                    );
+                  }
+                });
+            });
           }
-          dispatch(
-            actions.pushFiles({
-              files: files,
-            })
-          );
-          dispatch(
-            actions.setUploadModalVisible({
-              visible: true,
-              title: "대표이미지 수정",
-              target: target,
-              multiple: true,
-              image_type: "accommodation",
-            })
-          );
           break;
       }
     }
@@ -307,6 +331,24 @@ const EditAccommodation = () => {
 
   function updateAddress(data) {
     console.log(data);
+  }
+
+  function updateImages(files: Blob[], target: string) {
+    console.log(files, target);
+  }
+  
+  function changeRoomInfo(e:React.ChangeEvent<HTMLInputElement>, type: string) {
+    const value = e.target.value;
+    setAddRoomContents(state => {
+      console.log(state.info[type])
+      return {
+        ...state,
+        info: {
+          ...state.info,
+          [type]: value
+        }
+      }
+    })
   }
 
   return (
@@ -366,7 +408,95 @@ const EditAccommodation = () => {
         type={editModal.type}
         hideModal={() => setEditModal({title: "", visible: false, value: "", type: ""})}
       />
-      <UploadModal />
+      <UploadModal onChange={(files, target) => updateImages(files, target)} />
+      <ModalContainer backClicked={() => setRoomModalVisible(false)} visible={roomModalVisible}>
+        <div
+          className={accom_style.detail_room}
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "60rem",
+            backgroundColor: "#fff",
+            height: 'auto'
+          }}
+        >
+          <h2 className={styles.modal_title} style={{marginBottom: '1rem'}}>
+            객실 추가
+            <HiX onClick={() => setRoomModalVisible(false)} />
+          </h2>
+          <div className={accom_style.detail_room_info}>
+            <ImageBox
+              className={accom_style.detail_room_slider_wrap}
+              imgId={`room_image`}
+              type="room"
+              // src={data.files.length > 0 ? data.files[data.cur_num].imageUrl : null}
+              // onMouseEnter={() =>
+              //   data.files.length > 0 ? toggleButton([`detail_room_slider_${index}`], "enter") : null
+              // }
+              // onMouseLeave={() =>
+              //   data.files.length > 0 ? toggleButton([`detail_room_slider_${index}`], "leave") : null
+              // }
+            >
+              {/* {data.files.length == 0 ? <h3>{data.files.length}</h3> : null} */}
+              <ImageSlider
+                id={`detail_room_slider`}
+                sliderStyle={{width: "2.5rem", height: "2.5rem"}}
+                // onSlideRight={() => roomSlider("next"}
+                // onSlideLeft={() => roomSlider("prev"}
+              />
+            </ImageBox>
+
+            <div className={accom_style.detail_room_intro}>
+              <div className={accom_style.detail_room_explain}>
+                <label>객실명</label>
+                <CustomInput
+                  placeholder="객실명을 입력해주세요."
+                  onChange={(e) => changeRoomInfo(e, "label")}
+                  align="right"
+                  bottom={true}
+                  width="calc(100% - 6rem)"
+                />
+              </div>
+              <div className={accom_style.detail_room_explain}>
+                <label>기준 인원</label>
+                <CustomInput
+                  placeholder="기준 인원을 입력해주세요."
+                  onChange={(e) => changeRoomInfo(e, "standard_num")}
+                  align="right"
+                  bottom={true}
+                  width="calc(100% - 6rem)"
+                />
+              </div>
+              <div className={accom_style.detail_room_explain}>
+                <label>최대 인원</label>
+                <CustomInput
+                  placeholder="최대 인원을 입력해주세요."
+                  onChange={(e) => changeRoomInfo(e, "maximum_num")}
+                  align="right"
+                  bottom={true}
+                  width="calc(100% - 6rem)"
+                />
+              </div>
+              <div className={accom_style.detail_room_explain}>
+                <label>가격</label>
+                <CustomInput
+                  placeholder="가격을 입력해주세요."
+                  onChange={(e) => changeRoomInfo(e, "price")}
+                  align="right"
+                  bottom={true}
+                  width="calc(100% - 6rem)"
+                />
+              </div>
+            </div>
+          </div>
+          <div className={accom_style.detail_room_util_box}>
+            {/* <UploadButton title="객실이미지 업로드" onClick={() => showUploadModal("rooms", index)} />
+                        <button onClick={() => setInfoModal(index)}>추가 정보 입력</button> */}
+          </div>
+        </div>
+      </ModalContainer>
     </div>
   );
 };
