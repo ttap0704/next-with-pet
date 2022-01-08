@@ -450,7 +450,7 @@ const EditAccommodation = () => {
 
             <div className={accom_style.detail_room_intro}>
               <div className={accom_style.detail_room_explain}>
-                <label>객실명</label>
+                {/* <label>객실명</label> */}
                 <CustomInput
                   placeholder="객실명을 입력해주세요."
                   onChange={(e) => changeRoomInfo(e, "label")}
@@ -460,7 +460,7 @@ const EditAccommodation = () => {
                 />
               </div>
               <div className={accom_style.detail_room_explain}>
-                <label>기준 인원</label>
+                {/* <label>기준 인원</label> */}
                 <CustomInput
                   placeholder="기준 인원을 입력해주세요."
                   onChange={(e) => changeRoomInfo(e, "standard_num")}
@@ -470,7 +470,7 @@ const EditAccommodation = () => {
                 />
               </div>
               <div className={accom_style.detail_room_explain}>
-                <label>최대 인원</label>
+                {/* <label>최대 인원</label> */}
                 <CustomInput
                   placeholder="최대 인원을 입력해주세요."
                   onChange={(e) => changeRoomInfo(e, "maximum_num")}
@@ -480,7 +480,7 @@ const EditAccommodation = () => {
                 />
               </div>
               <div className={accom_style.detail_room_explain}>
-                <label>가격</label>
+                {/* <label>가격</label> */}
                 <CustomInput
                   placeholder="가격을 입력해주세요."
                   onChange={(e) => changeRoomInfo(e, "price")}
