@@ -127,7 +127,7 @@ const Detail = () => {
                   <ImageBox
                     className={accom_style.detail_room_slider_wrap}
                     imgId={`room_image_${index}`}
-                    type="room"
+                    type="rooms"
                     src={`http://localhost:3000/api/image/rooms/${data.rooms_images[0].file_name}`}
                     onMouseEnter={() => toggleButton([`detail_room_slider_${index}`], "enter")}
                     onMouseLeave={() => toggleButton([`detail_room_slider_${index}`], "leave")}

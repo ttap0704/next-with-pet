@@ -48,7 +48,6 @@ const UploadModal = (props) => {
         additional_info: parent_info.additional_info.length == 0 ? [] : [...parent_info.additional_info.split(",")],
       });
     }
-    console.log(parent_info);
   }, [parent_info]);
 
   function setInfoValue(e: React.ChangeEvent<HTMLTextAreaElement>, type: string) {
@@ -98,7 +97,7 @@ const UploadModal = (props) => {
   }
 
   return (
-    <ModalContainer backClicked={() => props.hideModal()} visible={visible}>
+    <ModalContainer backClicked={() => props.hideModal()} visible={visible} zIndex={1}>
       <div className={styles.info_modal}>
         <h2 className={styles.modal_title}>
           추가 정보 입력

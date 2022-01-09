@@ -221,10 +221,10 @@ const Service = () => {
         actions.setUploadModalVisible({
           visible: true,
           title: "객실이미지 업로드",
-          target: "room",
+          target: "rooms",
           target_idx: idx,
           multiple: true,
-          image_type: "room",
+          image_type: "rooms",
         })
       );
     }
@@ -467,7 +467,7 @@ const Service = () => {
                         <ImageBox
                           className={accom_style.detail_room_slider_wrap}
                           imgId={`room_image_${index}`}
-                          type="room"
+                          type="rooms"
                           src={data.files.length > 0 ? data.files[data.cur_num].imageUrl : null}
                           onMouseEnter={() =>
                             data.files.length > 0 ? toggleButton([`detail_room_slider_${index}`], "enter") : null

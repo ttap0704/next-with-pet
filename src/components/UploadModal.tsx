@@ -37,10 +37,8 @@ const UploadModal = (props) => {
   }
 
   function setPreviewFiles(file) {
-    console.log(file.length);
     if (file.length > 0) {
       let res_files = Array.from(file);
-      console.log(res_files);
       let number = files.length == 0 ? 1 : files[files.length - 1].number + 1;
       res_files.forEach((file: any) => {
         let reader = new FileReader();
@@ -121,11 +119,10 @@ const UploadModal = (props) => {
 
       setFiles([...items]);
     }
-    console.log(idx);
   }
 
   return (
-    <ModalContainer backClicked={() => hideModal()} visible={upload_modal_visible}>
+    <ModalContainer backClicked={() => hideModal()} visible={upload_modal_visible} zIndex={1}>
       <div className={styles.upload_modal}>
         <h2 className={styles.modal_title}>
           이미지 업로드

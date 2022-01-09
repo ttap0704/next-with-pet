@@ -61,6 +61,13 @@ class Rooms {
             [Model.Sequelize.Op.in]: Model.sequelize.literal(`(${tempSQL})`)
           }
         },
+        include: [
+          {
+            model: Model.Images,
+            as: 'rooms_images',
+            require: true,
+          }
+        ],
         attributes: ['label', 'price', 'standard_num', 'maximum_num', 'amenities', 'additional_info', [
           Model.sequelize.literal(`(
             SELECT label
