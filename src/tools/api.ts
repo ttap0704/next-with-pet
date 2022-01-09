@@ -14,16 +14,6 @@ export const fetchPostApi = async function (uri: string, args: object) {
   return responseJson;
 };
 
-// Fetch POST FILES
-export const fetchFileApi = async function (uri: string, args: FormData) {
-  let response = await fetch(servername + uri, {
-    method: 'POST',
-    body: args
-  });
-  let responseJson = await response.json();
-  return responseJson;
-};
-
 // Fetch GET
 export const fetchGetApi = async function (uri: string) {
   let response = await fetch(servername + uri, {
@@ -36,3 +26,23 @@ export const fetchGetApi = async function (uri: string) {
   let responseJson = await response.json();
   return responseJson;
 };
+
+// Fetch DELETE
+export const fetchDeleteApi = async function (uri: string) {
+  let response = await fetch(servername + uri, {
+    method: 'DELETE'
+  });
+  let responseJson = await response.json();
+  return responseJson;
+};
+
+// Fetch POST FILES
+export const fetchFileApi = async function (uri: string, args: FormData) {
+  let response = await fetch(servername + uri, {
+    method: 'POST',
+    body: args
+  });
+  let responseJson = await response.json();
+  return responseJson;
+};
+

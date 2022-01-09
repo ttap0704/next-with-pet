@@ -44,8 +44,12 @@ const UploadModal = (props) => {
       });
     } else {
       setInfo({
-        amenities: parent_info.amenities.length == 0 ? [] : [...parent_info.amenities.split(",")],
-        additional_info: parent_info.additional_info.length == 0 ? [] : [...parent_info.additional_info.split(",")],
+        amenities:
+          !parent_info.amenities || parent_info.amenities.length == 0 ? [] : [...parent_info.amenities.split(",")],
+        additional_info:
+          !parent_info.additional_info || parent_info.additional_info.length == 0
+            ? []
+            : [...parent_info.additional_info.split(",")],
       });
     }
   }, [parent_info]);
@@ -101,10 +105,8 @@ const UploadModal = (props) => {
       <div className={styles.info_modal}>
         <h2 className={styles.modal_title}>
           추가 정보 입력
-          <HiX 
-            onClick={() => props.hideModal()}
-          />
-          </h2>
+          <HiX onClick={() => props.hideModal()} />
+        </h2>
         <div className={styles.info_container}>
           {info_contents.map((data, index) => {
             return (

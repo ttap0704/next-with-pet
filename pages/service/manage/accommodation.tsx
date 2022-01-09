@@ -4,7 +4,7 @@ import { RootState } from "../../../reducers";
 import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import { ReactElement, useEffect, useState } from "react";
-import { fetchGetApi } from "../../../src/tools/api";
+import { fetchGetApi, fetchDeleteApi } from "../../../src/tools/api";
 import { Checkbox, Modal, TableCell, TableRow } from "@mui/material";
 import { getDate } from "../../../src/tools/common";
 import { Button } from "@mui/material";
@@ -38,6 +38,11 @@ const EditAccommodation = () => {
   const [postCodeVisible, setPostCodeVisible] = useState(false);
   const [roomModalVisible, setRoomModalVisible] = useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
+  const [infoModalType, setInfoModalType] = useState("")
+  const [infoModalData, setInfoModalData] = useState({
+    amenities: "",
+    additional_info: "",
+  })
   const [addRoomContents, setAddRoomContents] = useState({
     files: [],
     info: {
@@ -286,7 +291,11 @@ const EditAccommodation = () => {
           tag = contents.rooms.table_items[idx].maximum_num + '명';
           break;
         case "추가 정보":
-          tag = <Button>확인</Button>;
+          const data = {
+            amenities: contents.rooms.table_items[idx].amenities,
+            additional_info: contents.rooms.table_items[idx].additional_info,
+          }
+          tag = <Button onClick={() => showInfoModal('check', data)}>확인</Button>;
           break;
       }
     }
@@ -316,6 +325,12 @@ const EditAccommodation = () => {
         case 4:
           imageToBlob(target, type)
           break;
+        case 5:
+          const ok = confirm(`${target.label} 업소를 삭제하시겠습니까?`)
+          if (ok) {
+            deleteData('accommodation', target.id)
+          }
+          break;
       }
     } else {
       switch (idx) {
@@ -323,7 +338,11 @@ const EditAccommodation = () => {
           setEditModal({ title: "객실명 수정", visible: true, value: target.label, type: "input" });
           break;
         case 1:
-          setEditModal({ title: "소개 수정", visible: true, value: target.introduction, type: "textarea" });
+          const data = {
+            amenities: target.amenities,
+            additional_info: target.additional_info          
+          }
+          showInfoModal('edit', data)
           break;
         case 2:
           setEditModal({ title: "기준 인원 수정", visible: true, value: target.standard_num, type: "input" });
@@ -333,6 +352,13 @@ const EditAccommodation = () => {
           break;
         case 4:
           imageToBlob(target, type)
+          break;
+        case 5:
+          const ok = confirm(`${target.label} 객실을 삭제하시겠습니까?`)
+          if (ok) {
+            console.log(target)
+            deleteData('rooms', target.id)
+          }
           break;
       }
     }
@@ -367,6 +393,10 @@ const EditAccommodation = () => {
           });
       });
     }
+  }
+
+  function deleteData(type: string, id: number) {
+    fetchDeleteApi(`/${type}/${id}`)
   }
 
   function updateAddress(data) {
@@ -430,8 +460,25 @@ const EditAccommodation = () => {
     );
   }
 
+  function showInfoModal (type: string, data?: {amenities: string, additional_info: string}) {
+    if (type == 'add') {
+      setInfoModalData({
+        amenities: addRoomContents.info.amenities.toString(),
+        additional_info: addRoomContents.info.additional_info.toString()
+      })
+      setInfoModalType('registration')
+    } else if (type == 'edit') {
+      setInfoModalData(data)
+      setInfoModalType('registration')
+    } else if (type == 'check') {
+      setInfoModalData(data)
+      setInfoModalType('view')
+    }
+
+    setInfoModalVisible(true);
+  }
+
   function setAdditionalInfo(data: { amenities: string[], additional_info: string[] }) {
-    console.log(data)
     setAddRoomContents(state => {
       return {
         ...state,
@@ -505,13 +552,10 @@ const EditAccommodation = () => {
       <UploadModal onChange={(files, target) => updateImages(files, target)} />
       <InfoModal
         visible={infoModalVisible}
-        parent_info={{
-          amenities: addRoomContents.info.amenities,
-          additional_info: addRoomContents.info.additional_info,
-        }}
+        parent_info={infoModalData}
         hideModal={() => setInfoModalVisible(false)}
         onRegistered={(info) => setAdditionalInfo(info)}
-        type="registration"
+        type={infoModalType}
       />
       <ModalContainer backClicked={() => setRoomModalVisible(false)} visible={roomModalVisible}>
         <div
@@ -597,7 +641,7 @@ const EditAccommodation = () => {
           </div>
           <div className={accom_style.detail_room_util_box}>
             <UploadButton title="객실이미지 업로드" onClick={() => showRoomUploadModal()} />
-            <button onClick={() => setInfoModalVisible(true)}>추가 정보 입력</button>
+            <button onClick={() => showInfoModal('add')}>추가 정보 입력</button>
           </div>
         </div>
       </ModalContainer>
