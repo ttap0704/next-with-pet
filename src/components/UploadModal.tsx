@@ -1,21 +1,22 @@
-import {RootState} from "../../reducers";
+import { RootState } from "../../reducers";
 import styles from "../../styles/components.module.scss";
-import {useDispatch, useSelector} from "react-redux";
-import {actions} from "../../reducers/common/upload";
+import { useDispatch, useSelector } from "react-redux";
+import { actions } from "../../reducers/common/upload";
 import UploadInput from "./UploadInput";
 import ImageBox from "./ImageBox";
-import React, {useState, useEffect} from "react";
-import {TiDelete} from "react-icons/ti";
-import {Tooltip, IconButton} from "@mui/material";
-import {FaInfoCircle} from "react-icons/fa";
-import {HiX} from "react-icons/hi";
+import React, { useState, useEffect } from "react";
+import { TiDelete } from "react-icons/ti";
+import { Tooltip, IconButton } from "@mui/material";
+import { FaInfoCircle } from "react-icons/fa";
+import { HiX } from "react-icons/hi";
 import ModalContainer from "./ModalContainer";
+import { readFile } from "../tools/common";
 
 const UploadModal = (props) => {
   const dispatch = useDispatch();
   const [files, setFiles] = useState([]);
 
-  const {upload_modal_visible, title, target, target_idx, multiple, upload_files, image_type} = useSelector(
+  const { upload_modal_visible, title, target, target_idx, multiple, upload_files, image_type } = useSelector(
     (state: RootState) => state.uploadReducer
   );
 
@@ -40,24 +41,20 @@ const UploadModal = (props) => {
     if (file.length > 0) {
       let res_files = Array.from(file);
       let number = files.length == 0 ? 1 : files[files.length - 1].number + 1;
-      res_files.forEach((file: any) => {
-        let reader = new FileReader();
-        reader.onloadend = () => {
-          console.log();
-          const duplicated_image_idx = files.findIndex((data) => {
-            return data.imageUrl == reader.result.toString();
+      res_files.forEach(async (file: any) => {
+        const new_file_name = await readFile(file);
+        const duplicated_image_idx = files.findIndex((data) => {
+          return data.imageUrl == new_file_name;
+        });
+        if (duplicated_image_idx < 0) {
+          setFiles((state) => {
+            console.log(files);
+            return [...state, { file: file, imageUrl: new_file_name, number }];
           });
-          if (duplicated_image_idx < 0) {
-            setFiles((state) => {
-              console.log(files);
-              return [...state, {file: file, imageUrl: reader.result.toString(), number}];
-            });
-            number++;
-          } else {
-            alert("이미 같은 이미지가 추가되어 있습니다.");
-          }
-        };
-        reader.readAsDataURL(file);
+          number++;
+        } else {
+          alert("이미 같은 이미지가 추가되어 있습니다.");
+        }
       });
     }
   }
@@ -83,7 +80,7 @@ const UploadModal = (props) => {
     let sorted_items = items
       .sort((a, b) => a.number - b.number)
       .map((data, index) => {
-        return {...data, number: index + 1};
+        return { ...data, number: index + 1 };
       });
     console.log(sorted_items)
     setFiles([...sorted_items]);
@@ -138,7 +135,7 @@ const UploadModal = (props) => {
           <Tooltip
             title="리스트 왼쪽 숫자를 변경하여, 이미지 순서를 정해주세요."
             placement="top"
-            style={{float: "right"}}
+            style={{ float: "right" }}
           >
             <IconButton>
               <FaInfoCircle />

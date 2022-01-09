@@ -23,7 +23,7 @@ import UploadButton from "../../../src/components/UploadButton"
 import InfoModal from "../../../src/components/InfoModal"
 
 import { actions } from "../../../reducers/common/upload";
-import { toggleButton } from "../../../src/tools/common"
+import { toggleButton, readFile, setSlideNumber } from "../../../src/tools/common"
 
 const EditAccommodation = () => {
   const dispatch = useDispatch();
@@ -230,7 +230,7 @@ const EditAccommodation = () => {
             };
           });
         }
-        
+
       }
     });
   }
@@ -339,7 +339,6 @@ const EditAccommodation = () => {
   }
 
   function imageToBlob(target, type: string) {
-    console.log(target.images)
     let files = [];
     for (let i = 0, leng = target.images.length; i < leng; i++) {
       fetch(`http://localhost:3000/api/image/${type}/${target.images[i].file_name}`).then((res) => {
@@ -376,39 +375,26 @@ const EditAccommodation = () => {
 
   function updateImages(files: Blob[], target: string) {
     if (target == 'rooms') {
-      files.forEach((file: any) => {
-        let reader = new FileReader();
-        reader.onloadend = () => {
-          setAddRoomContents((state) => {
-            return {
-              ...state,
-              files: [...state.files, { file: file, imageUrl: reader.result.toString() }]
-            }
-          });
-        };
-        reader.readAsDataURL(file);
+      files.forEach(async (file: any) => {
+        const new_file_name = await readFile(file)
+        setAddRoomContents((state) => {
+          return {
+            ...state,
+            files: [...state.files, { file: file, imageUrl: new_file_name }]
+          }
+        });
       });
     }
   }
 
-  function roomSlider(dir: string) {
-    let num = addRoomContents.cur_num
-    if (dir == "next") {
-      num++;
-    } else {
-      num--;
-    }
-
-    if (num >= addRoomContents.files.length) {
-      num = 0;
-    } else if (num < 0) {
-      num = addRoomContents.files.length - 1;
-    }
+  async function roomSlider(dir: string) {
+    const num = addRoomContents.cur_num
+    const res_num = await setSlideNumber(num, dir, addRoomContents.files.length)
 
     setAddRoomContents(state => {
       return {
         ...state,
-        cur_num: num
+        cur_num: res_num
       }
     })
   }

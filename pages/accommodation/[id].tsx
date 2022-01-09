@@ -1,14 +1,15 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import color from "../../accom_style/color.module.scss";
 import accom_style from "../../styles/pages/accommodation.module.scss";
-import {useRouter} from "next/router";
-import {fetchGetApi} from "../../src/tools/api";
-import {HiChevronRight} from "react-icons/hi";
-import {toggleButton} from "../../src/tools/common";
+import { useRouter } from "next/router";
+import { fetchGetApi } from "../../src/tools/api";
+import { HiChevronRight } from "react-icons/hi";
+import { toggleButton } from "../../src/tools/common";
 import ImageBox from "../../src/components/ImageBox";
 import LabelBox from "../../src/components/LabelBox";
 import ImageSlider from "../../src/components/ImageSlider";
 import InfoModal from "../../src/components/InfoModal";
+import { setSlideNumber } from "../../src/tools/common";
 
 const Detail = () => {
   const router = useRouter();
@@ -35,52 +36,20 @@ const Detail = () => {
       }
       setRooms([...rooms]);
     });
-    return () => {};
+    return () => { };
   }, []);
 
-  function detailSlider(type: string) {
-    const exposure_image = document.getElementById(`exposure_image`);
-    let num = detailPreviewNum;
-    if (type == "next") {
-      num++;
-    } else {
-      num--;
-    }
-
-    if (num >= exposureImages.length) {
-      num = 0;
-    } else if (num < 0) {
-      num = exposureImages.length - 1;
-    }
+  async function detailSlider(type: string) {
+    const num = await setSlideNumber(detailPreviewNum, type, exposureImages.length)
     setDetailPreviewNum(num);
-    exposure_image.setAttribute(
-      "src",
-      `http://localhost:3000/api/image/accommodation/${exposureImages[num].file_name}`
-    );
   }
 
-  function roomSlider(type: string, idx: number) {
-    const slider = document.getElementById(`room_image_${idx}`);
+  async function roomSlider(type: string, idx: number) {
     let items = [...rooms];
     let item = items[idx];
-
-    if (!item.cur_num) {
-      item.cur_num = 0;
-    }
-
-    if (type == "next") {
-      item.cur_num++;
-    } else {
-      item.cur_num--;
-    }
-
-    if (item.cur_num >= item.rooms_images.length) {
-      item.cur_num = 0;
-    } else if (item.cur_num < 0) {
-      item.cur_num = item.rooms_images.length - 1;
-    }
-
-    slider.setAttribute("src", `http://localhost:3000/api/image/rooms/${item.rooms_images[item.cur_num].file_name}`);
+    
+    item.cur_num = await setSlideNumber(item.cur_num, type, item.rooms_images.length)
+    items[idx] = item;
 
     setRooms([...items]);
   }
@@ -100,7 +69,7 @@ const Detail = () => {
           onMouseLeave={() => toggleButton([`detail_room_slider`], "leave")}
           src={
             exposureImages.length > 0
-              ? `http://localhost:3000/api/image/accommodation/${exposureImages[0].file_name}`
+              ? `http://localhost:3000/api/image/accommodation/${exposureImages[detailPreviewNum].file_name}`
               : null
           }
           alt="exposure_image"
@@ -108,7 +77,7 @@ const Detail = () => {
         >
           <ImageSlider
             id="detail_room_slider"
-            sliderStyle={{width: "3rem", height: "3rem"}}
+            sliderStyle={{ width: "3rem", height: "3rem" }}
             onSlideLeft={() => detailSlider("prev")}
             onSlideRight={() => detailSlider("next")}
           />
@@ -128,13 +97,13 @@ const Detail = () => {
                     className={accom_style.detail_room_slider_wrap}
                     imgId={`room_image_${index}`}
                     type="rooms"
-                    src={`http://localhost:3000/api/image/rooms/${data.rooms_images[0].file_name}`}
+                    src={`http://localhost:3000/api/image/rooms/${data.rooms_images[data.cur_num].file_name}`}
                     onMouseEnter={() => toggleButton([`detail_room_slider_${index}`], "enter")}
                     onMouseLeave={() => toggleButton([`detail_room_slider_${index}`], "leave")}
                   >
                     <ImageSlider
                       id={`detail_room_slider_${index}`}
-                      sliderStyle={{width: "2.5rem", height: "2.5rem"}}
+                      sliderStyle={{ width: "2.5rem", height: "2.5rem" }}
                       onSlideRight={() => roomSlider("next", index)}
                       onSlideLeft={() => roomSlider("prev", index)}
                     />
@@ -158,7 +127,7 @@ const Detail = () => {
                     </div>
                   </div>
                 </div>
-                <div className={accom_style.detail_room_util_box} style={{justifyContent: "flex-end"}}>
+                <div className={accom_style.detail_room_util_box} style={{ justifyContent: "flex-end" }}>
                   <span className={accom_style.detail_room_other_info} onClick={() => setInfoModal(index)}>
                     추가정보 확인
                     <HiChevronRight />
@@ -175,9 +144,9 @@ const Detail = () => {
           infoModalIndex == undefined
             ? null
             : {
-                amenities: rooms[infoModalIndex].amenities,
-                additional_info: rooms[infoModalIndex].additional_info,
-              }
+              amenities: rooms[infoModalIndex].amenities,
+              additional_info: rooms[infoModalIndex].additional_info,
+            }
         }
         hideModal={() => setInfoModalVisible(false)}
         type="view"

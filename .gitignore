@@ -42,5 +42,5 @@ yarn-error.log*
 .vercel
 
 
-# etc
+## etc
 /server/config

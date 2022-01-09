@@ -1,11 +1,11 @@
-import React, {useEffect, useState, useLayoutEffect, cloneElement} from "react";
+import React, { useEffect, useState, useLayoutEffect, cloneElement } from "react";
 import styles from "../../../styles/pages/registration.module.scss";
 import accom_style from "../../../styles/pages/accommodation.module.scss";
-import {useRouter} from "next/router";
-import {HiChevronDoubleRight, HiChevronDoubleLeft, HiChevronLeft, HiChevronRight} from "react-icons/hi";
+import { useRouter } from "next/router";
+import { HiChevronDoubleRight, HiChevronDoubleLeft, HiChevronLeft, HiChevronRight } from "react-icons/hi";
 import PostCode from "../../../src/components/PostCode";
-import {fetchPostApi, fetchFileApi} from "../../../src/tools/api";
-import {toggleButton} from "../../../src/tools/common";
+import { fetchPostApi, fetchFileApi } from "../../../src/tools/api";
+import { toggleButton, readFile, setSlideNumber } from "../../../src/tools/common";
 import UploadButton from "../../../src/components/UploadButton";
 import UploadModal from "../../../src/components/UploadModal";
 import InfoModal from "../../../src/components/InfoModal";
@@ -14,8 +14,8 @@ import CustomTextarea from "../../../src/components/CustomTextarea";
 import CustomInput from "../../../src/components/CustomInput";
 import ImageBox from "../../../src/components/ImageBox";
 import LabelBox from "../../../src/components/LabelBox";
-import {actions} from "../../../reducers/common/upload";
-import {useDispatch} from "react-redux";
+import { actions } from "../../../reducers/common/upload";
+import { useDispatch } from "react-redux";
 
 const Service = () => {
   const dispatch = useDispatch();
@@ -63,7 +63,7 @@ const Service = () => {
     setInfoModalVisible(true);
   }
 
-  function setAdditionalInfo(info: {amenities: string[]; additional_info: string[]}) {
+  function setAdditionalInfo(info: { amenities: string[]; additional_info: string[] }) {
     let items = [...roomDetail];
     let item = items[detailModalIndex];
 
@@ -131,7 +131,7 @@ const Service = () => {
           const new_file = new File(
             [roomDetail[i].files[y].file],
             `${res_accommodation_id}_${room_id}_${y}.${file_extention}`,
-            {type: "image/jpeg"}
+            { type: "image/jpeg" }
           );
           rooms_images.append(`files_${rooms_images_cnt}`, new_file);
           rooms_images_cnt++;
@@ -235,80 +235,50 @@ const Service = () => {
       if (type == "exposure") {
         setPreviewFile([]);
         setDetailPreviewNum(0);
-        files.forEach((file) => {
-          let reader = new FileReader();
-          reader.onloadend = () => {
-            setPreviewFile((state) => [...state, {file: file, imageUrl: reader.result.toString()}]);
-          };
-          reader.readAsDataURL(file);
+        files.forEach(async (file) => {
+          const new_file_name = await readFile(file);
+          setPreviewFile((state) => [...state, { file: file, imageUrl: new_file_name }]);
         });
       } else {
         let file_arr = [];
-        files.forEach((file) => {
-          let reader = new FileReader();
-          reader.onloadend = () => {
-            file_arr.push({
-              file: file,
-              imageUrl: reader.result.toString(),
-            });
+        files.forEach(async (file) => {
+          const new_file_name = await readFile(file);
+          file_arr.push({
+            file: file,
+            imageUrl: new_file_name,
+          });
 
-            setRoomDetail((state) => {
-              return state.map((data, index) => {
-                if (index != key) {
-                  return data;
-                } else {
-                  return {
-                    ...data,
-                    files: [...file_arr],
-                  };
-                }
-              });
+          setRoomDetail((state) => {
+            return state.map((data, index) => {
+              if (index != key) {
+                return data;
+              } else {
+                return {
+                  ...data,
+                  files: [...file_arr],
+                };
+              }
             });
-          };
-          reader.readAsDataURL(file);
+          });
         });
       }
     }
   }
 
-  function previewSlider(type: string) {
-    const slider = document.getElementById(`exposure_slider_image`);
-    let num = detailPreviewNum;
-    if (type == "next") {
-      num++;
-    } else {
-      num--;
-    }
-
-    if (num >= previewFile.length) {
-      num = 0;
-    } else if (num < 0) {
-      num = previewFile.length - 1;
-    }
-    setDetailPreviewNum(num);
-    slider.setAttribute("src", `${previewFile[num].imageUrl}`);
+  async function previewSlider(type: string) {
+    const num = detailPreviewNum;
+    const res_num = await setSlideNumber(num, type, previewFile.length)
+    setDetailPreviewNum(res_num);
   }
 
-  function roomSlider(type: string, idx: number) {
-    const img_tag: HTMLElement = document.getElementById(`room_image_${idx}`);
+  async function roomSlider(type: string, idx: number) {
     let items = [...roomDetail];
     let item = items[idx];
-
-    if (type == "next") {
-      item.cur_num++;
-    } else {
-      item.cur_num--;
-    }
-
-    if (item.cur_num >= item.files.length) {
-      item.cur_num = 0;
-    } else if (item.cur_num < 0) {
-      item.cur_num = item.files.length - 1;
-    }
-
-    img_tag.setAttribute("src", item.files[item.cur_num].imageUrl);
-
+    
+    const num = item.cur_num
+    item.cur_num = await setSlideNumber(num, type, item.files.length)
     items[idx] = item;
+    
     setRoomDetail([...items]);
   }
 
@@ -356,10 +326,10 @@ const Service = () => {
           <div id="slider_wrap" className={styles.slider_wrap}>
             <div className={styles.page}>
               <h1>노출 페이지</h1>
-              <h2 style={{marginBottom: "8px"}}>미리보기</h2>
-              <div className={accom_style.list} style={{cursor: "unset"}}>
+              <h2 style={{ marginBottom: "8px" }}>미리보기</h2>
+              <div className={accom_style.list} style={{ cursor: "unset" }}>
                 <ImageBox
-                  src={previewFile.length ? `${previewFile[0].imageUrl}` : null}
+                  src={previewFile.length ? `${previewFile[detailPreviewNum].imageUrl}` : null}
                   alt="exposure_images"
                   type="accommodation"
                   imgId="exposure_slider_image"
@@ -379,13 +349,12 @@ const Service = () => {
                       대표이미지를 업로드해주세요.
                     </h3>
                   ) : (
-                    <b style={{position: "absolute", top: "1rem", right: "1rem", zIndex: 100}}>{`${
-                      detailPreviewNum + 1
-                    }/${previewFile.length}`}</b>
+                    <b style={{ position: "absolute", top: "1rem", right: "1rem", zIndex: 100 }}>{`${detailPreviewNum + 1
+                      }/${previewFile.length}`}</b>
                   )}
                   <ImageSlider
                     id="exposure_image_slider"
-                    sliderStyle={{width: "3rem", height: "3rem"}}
+                    sliderStyle={{ width: "3rem", height: "3rem" }}
                     onSlideLeft={() => previewSlider("prev")}
                     onSlideRight={() => previewSlider("next")}
                   />
@@ -397,7 +366,7 @@ const Service = () => {
                 />
               </div>
               <form className={styles.form_box}>
-                <div style={{marginBottom: "12px"}}>
+                <div style={{ marginBottom: "12px" }}>
                   <UploadButton
                     title={previewFile.length == 0 ? "대표이미지 업로드" : "대표이미지 수정"}
                     onClick={() => showUploadModal("exposure")}
@@ -406,12 +375,12 @@ const Service = () => {
                 <h3>숙박업소 이름</h3>
                 <CustomInput
                   placeholder="제목을 입력해주세요."
-                  style={{marginBottom: "16px"}}
+                  style={{ marginBottom: "16px" }}
                   onChange={(e) => setTitle(e.target.value)}
                   value={title}
                 />
                 <h3>주소</h3>
-                <div className={styles.with_btn} style={{marginBottom: "4px"}}>
+                <div className={styles.with_btn} style={{ marginBottom: "4px" }}>
                   <CustomInput
                     placeholder="우편번호"
                     className={styles.custom_input}
@@ -425,7 +394,7 @@ const Service = () => {
                     type="text"
                     placeholder="도로명 주소"
                     className={styles.custom_input}
-                    style={{marginBottom: "4px"}}
+                    style={{ marginBottom: "4px" }}
                     value={address.road_address ?? ""}
                     disabled={true}
                   />
@@ -433,7 +402,7 @@ const Service = () => {
                     type="text"
                     placeholder="참고항목"
                     className={styles.custom_input}
-                    style={{marginBottom: "4px"}}
+                    style={{ marginBottom: "4px" }}
                     value={address.building_name ? `(${address.building_name})` : ""}
                     disabled={true}
                   />
@@ -441,7 +410,7 @@ const Service = () => {
                 <CustomInput
                   placeholder="상세주소"
                   className={styles.custom_input}
-                  style={{marginBottom: "4px"}}
+                  style={{ marginBottom: "4px" }}
                   value={address.detail_address}
                   onChange={(e) => updateDetailAddress(e)}
                 />
@@ -449,7 +418,7 @@ const Service = () => {
             </div>
             <div className={styles.page}>
               <h1>상세 페이지</h1>
-              <div style={{marginBottom: "1rem"}}>
+              <div style={{ marginBottom: "1rem" }}>
                 <h2>숙소 소개</h2>
                 <CustomTextarea
                   placeholder="숙소에 대해 자유롭게 작성해주시길 바랍니다."
@@ -476,10 +445,10 @@ const Service = () => {
                             data.files.length > 0 ? toggleButton([`detail_room_slider_${index}`], "leave") : null
                           }
                         >
-                          {data.files.length == 0 ? <h3>{data.files.length}</h3> : null}
+                          {data.files.length == 0 ? <h3>이미지를 등록해주세요.</h3> : null}
                           <ImageSlider
                             id={`detail_room_slider_${index}`}
-                            sliderStyle={{width: "2.5rem", height: "2.5rem"}}
+                            sliderStyle={{ width: "2.5rem", height: "2.5rem" }}
                             onSlideRight={() => roomSlider("next", index)}
                             onSlideLeft={() => roomSlider("prev", index)}
                           />
@@ -549,10 +518,10 @@ const Service = () => {
           id="slider_btn"
           className={styles.slider_btn}
           onClick={() => movePage(curPage)}
-          style={{marginRight: "-10rem", right: 0}}
+          style={{ marginRight: "-10rem", right: 0 }}
         >
           {curPage == "detail" ? <HiChevronDoubleLeft /> : <HiChevronDoubleRight />}
-          <p style={{margin: "0 12px", display: "block"}}>{curPage == "detail" ? "뒤로가기" : "상세페이지 등록"}</p>
+          <p style={{ margin: "0 12px", display: "block" }}>{curPage == "detail" ? "뒤로가기" : "상세페이지 등록"}</p>
         </div>
       </div>
       <PostCode

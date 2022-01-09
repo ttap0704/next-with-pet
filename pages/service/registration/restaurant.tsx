@@ -16,7 +16,7 @@ import CustomTextarea from "../../../src/components/CustomTextarea";
 import { RESET_RESTRAURANT } from "../../../reducers/models/restaurant";
 import { actions } from "../../../reducers/common/upload";
 import { fetchPostApi, fetchFileApi } from "../../../src/tools/api";
-import { toggleButton } from "../../../src/tools/common";
+import { toggleButton, readFile } from "../../../src/tools/common";
 
 
 const Service = () => {
@@ -103,33 +103,27 @@ const Service = () => {
     slider.style.transform = `translate3d(${distance}, 0px, 0px)`;
   }
 
-  function uploadImage(event: React.ChangeEvent<HTMLInputElement>, type: string, key?: number, data?: object) {
+  async function uploadImage(event: React.ChangeEvent<HTMLInputElement>, type: string, key?: number, data?: object) {
     let file = event.currentTarget.files;
     if (file.length > 0) {
       if (type == "exposure") {
         let files = Array.from(file);
-        files.forEach((file) => {
-          let reader = new FileReader();
-          reader.onloadend = () => {
-            setExposureImages((state) => [...state, { file: file, imageUrl: reader.result.toString() }]);
-          };
-          reader.readAsDataURL(file);
+        files.forEach(async (file) => {
+          const new_file_name = await readFile(file);
+          setExposureImages((state) => [...state, { file: file, new_file_name }]);
         });
       } else if (type == "exposure_menu") {
         let items = [...exposureMenu];
         let item = items[key];
 
         let files = Array.from(file);
-        let reader = new FileReader();
-        reader.onloadend = () => {
-          item.file.file = files[0];
-          item.file.imageUrl = reader.result.toString();
+        const new_file_name = await readFile(file[0]);
+        item.file.file = files[0];
+        item.file.imageUrl = new_file_name;
 
-          items[key] = item;
+        items[key] = item;
 
-          setExposureMenu([...items]);
-        };
-        reader.readAsDataURL(files[0]);
+        setExposureMenu([...items]);
       }
     } else {
       if (type == "exposure_menu") {

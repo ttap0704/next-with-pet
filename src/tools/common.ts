@@ -17,3 +17,31 @@ export function getDate(req: string) {
   const date = new Date(req).getDate() < 10 ? `0${new Date(req).getDate()}` : new Date(req).getDate();
   return `${year}-${month}-${date}`;
 }
+
+export function readFile(file: File):Promise<string> {
+  return new Promise((resolve) => {
+    const reader = new FileReader()
+    reader.onloadend = () => resolve(reader.result.toString())
+    reader.readAsDataURL(file)
+  })
+}
+
+export function setSlideNumber(num: number, type:string, length:number):Promise<number> {
+  return new Promise((resolve) => {
+    const max = length - 1;
+
+    if (type == "next") {
+      num++;
+    } else {
+      num--;
+    }
+  
+    if (num > max) {
+      num = 0;
+    } else if (num < 0) {
+      num = max;
+    }
+  
+    resolve(num)
+  })
+}
