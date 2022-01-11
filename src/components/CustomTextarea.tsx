@@ -5,6 +5,7 @@ const CustomTextarea = (props) => {
   const placeholder = props.placeholder;
   const value = props.value;
   const height = props.height;
+  const readOnly = props.readOnly ? props.readOnly : false;
 
   const custom_style = {
     height: height,
@@ -19,6 +20,7 @@ const CustomTextarea = (props) => {
       placeholder={placeholder}
       value={value}
       style={{...custom_style}}
+      readOnly={readOnly}
     />
   );
 };

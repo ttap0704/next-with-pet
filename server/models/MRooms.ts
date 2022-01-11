@@ -75,8 +75,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
       sequelize,
       freezeTableName: true,
       timestamps: true,
-      createdAt: false,
-      updatedAt: false,
+      paranoid: true
     }
   )
 

@@ -94,7 +94,8 @@ module.exports = (sequelize: any, DataTypes: any) => {
       tableName: 'accommodation',
       sequelize,
       freezeTableName: true,
-      timestamps: true
+      timestamps: true,
+      paranoid: true
     }
   )
 

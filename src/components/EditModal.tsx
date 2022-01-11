@@ -13,11 +13,20 @@ const UploadModal = (props) => {
   const title = props.title;
   const props_value = props.value;
   const type = props.type;
+  const readOnly = props.readOnly ? props.readOnly : false;
   const [value, setValue] = useState("");
 
   useEffect(() => {
     setValue(props.value);
   }, [props_value]);
+
+  function changeValue() {
+    const ok = confirm(`${title}을 하시겠습니까?`)
+    
+    if (ok) {
+      props.onSubmit(value);
+    }
+  }
 
   return (
     <ModalContainer backClicked={() => props.hideModal()} visible={visible}>
@@ -28,8 +37,13 @@ const UploadModal = (props) => {
         </h2>
         {type == "input" ? (
           <div className={styles.input_contents}>
-            <CustomInput value={value} disabled={false} onChange={(e) => setValue(e.target.value)} />
-            <button className={styles.regi_button}>수정</button>
+            <CustomInput
+              value={value}
+              disabled={false}
+              onChange={(e) => setValue(e.target.value)}
+              readOnly={readOnly}
+            />
+            {readOnly ? null : <button className={styles.regi_button} onClick={() => changeValue()}>수정</button>}
           </div>
         ) : (
           <div className={styles.textarea_contents}>
@@ -37,8 +51,9 @@ const UploadModal = (props) => {
               value={value}
               onChange={(e) => setValue(e.target.value)}
               height="15rem"
+              readOnly={readOnly}
             />
-            <button className={styles.regi_button}>수정</button>
+            {readOnly ? null : <button className={styles.regi_button} onClick={() => changeValue()}>수정</button>}
           </div>
         )}
       </div>

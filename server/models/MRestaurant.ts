@@ -92,7 +92,8 @@ module.exports = (sequelize: any, DataTypes: any) => {
       tableName: 'restaurant',
       sequelize,
       freezeTableName: true,
-      timestamps: true
+      timestamps: true,
+      paranoid: true
     }
   )
 

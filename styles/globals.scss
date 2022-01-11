@@ -16,7 +16,7 @@ body {
 }
 
 #__next {
-  height: auto;
+  height: 100vh;
   margin: 0 auto;
   border: 1px solid #e3e3e3;
   overflow-x: hidden;
@@ -24,7 +24,7 @@ body {
     width: 100%;
     #__container {
       width: 60rem;
-      height: auto;
+      height: 100vh;
       margin: 0 auto;
       padding-top: 2rem;
     }

@@ -10,6 +10,7 @@ const CustomInput = (props) => {
   const custom_class = props.bottom == true ? styles.custom_bottom_input : styles.custom_all_input;
   const width = props.width ? props.width : '100% !important';
   const align = props.align ? props.align : 'left';
+  const readOnly = props.readOnly ? props.readOnly : false;
 
   return (
     <input
@@ -22,6 +23,7 @@ const CustomInput = (props) => {
       disabled={disabled}
       onChange={(e) => props.onChange ? props.onChange(e) : false}
       onKeyDown={(e) => props.onKeyDown ? props.onKeyDown(e) : false}
+      readOnly={readOnly}
     />
   );
 };

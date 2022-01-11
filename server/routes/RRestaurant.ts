@@ -161,6 +161,12 @@ class Restraunt {
 
       res.json(menus);
     });
+
+    this.express.delete("/:id", async (req: express.Request, res: express.Response, next) => {
+      const id = req.params.id;
+
+      res.status(200).send('Good Connection')
+    })
   }
 }
 

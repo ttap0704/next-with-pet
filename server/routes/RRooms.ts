@@ -68,7 +68,7 @@ class Rooms {
             require: true,
           }
         ],
-        attributes: ['label', 'price', 'standard_num', 'maximum_num', 'amenities', 'additional_info', [
+        attributes: ['id', 'label', 'price', 'standard_num', 'maximum_num', 'amenities', 'additional_info', [
           Model.sequelize.literal(`(
             SELECT label
             FROM accommodation
@@ -82,6 +82,21 @@ class Rooms {
 
       res.json({count: count, rows: list})
     });
+
+    this.express.delete("/:id", async (req: express.Request, res: express.Response, next) => {
+      const id = req.params.id;
+
+      const code = await Model.Rooms.destroy({
+        where: {
+          id: id
+        }
+      })
+      if (code >= 0) {
+        res.status(200).send()
+      } else {
+        res.status(500).send()
+      }
+    })
   }
 }
 
