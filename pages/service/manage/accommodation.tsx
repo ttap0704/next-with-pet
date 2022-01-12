@@ -4,7 +4,7 @@ import {RootState} from "../../../reducers";
 import {useSelector, useDispatch} from "react-redux";
 import {useRouter} from "next/router";
 import {ReactElement, useEffect, useState} from "react";
-import {fetchGetApi, fetchDeleteApi, fetchPatchApi} from "../../../src/tools/api";
+import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi} from "../../../src/tools/api";
 import {Checkbox, Modal, TableCell, TableRow} from "@mui/material";
 import {getDate} from "../../../src/tools/common";
 import {Button} from "@mui/material";
@@ -34,7 +34,15 @@ const EditAccommodation = () => {
 
   const router = useRouter();
   const {uid} = useSelector((state: RootState) => state.userReducer);
-  const [editModal, setEditModal] = useState({title: "", visible: false, value: "", type: "", read_only: false});
+  const [editModal, setEditModal] = useState({
+    title: "",
+    visible: false,
+    value: "",
+    type: "",
+    read_only: false,
+    target: "",
+    edit_target: "",
+  });
   const [postCodeVisible, setPostCodeVisible] = useState(false);
   const [roomModalVisible, setRoomModalVisible] = useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
@@ -269,6 +277,8 @@ const EditAccommodation = () => {
                   value: contents.accommodation.table_items[idx].introduction,
                   type: "input",
                   read_only: true,
+                  target: "accommodation",
+                  edit_target: "",
                 });
               }}
             >
@@ -326,7 +336,15 @@ const EditAccommodation = () => {
           setRoomModalVisible(true);
           break;
         case 1:
-          setEditModal({title: "업소명 수정", visible: true, value: target.label, type: "input", read_only: false});
+          setEditModal({
+            title: "업소명 수정",
+            visible: true,
+            value: target.label,
+            type: "input",
+            read_only: false,
+            target: "accommodation",
+            edit_target: "label",
+          });
           break;
         case 2:
           setPostCodeVisible(true);
@@ -338,6 +356,8 @@ const EditAccommodation = () => {
             value: target.introduction,
             type: "textarea",
             read_only: false,
+            target: "accommodation",
+            edit_target: "introduction",
           });
           break;
         case 4:
@@ -356,7 +376,15 @@ const EditAccommodation = () => {
     } else {
       switch (idx) {
         case 0:
-          setEditModal({title: "객실명 수정", visible: true, value: target.label, type: "input", read_only: false});
+          setEditModal({
+            title: "객실명 수정",
+            visible: true,
+            value: target.label,
+            type: "input",
+            read_only: false,
+            target: "rooms",
+            edit_target: "label",
+          });
           break;
         case 1:
           const data = {
@@ -372,6 +400,8 @@ const EditAccommodation = () => {
             value: target.standard_num,
             type: "input",
             read_only: false,
+            target: "rooms",
+            edit_target: "standard_num",
           });
           break;
         case 3:
@@ -381,6 +411,8 @@ const EditAccommodation = () => {
             value: target.maximum_num,
             type: "input",
             read_only: false,
+            target: "rooms",
+            edit_target: "maximum_num",
           });
           break;
         case 4:
@@ -403,10 +435,12 @@ const EditAccommodation = () => {
     let files = [];
     for (let i = 0, leng = target.images.length; i < leng; i++) {
       fetch(`http://localhost:3000/api/image/${type}/${target.images[i].file_name}`).then((res) => {
+        console.log(res);
         res
           .blob()
           .then((blob) => {
-            files.push(blob);
+            const file = new File([blob], target.images[i].file_name, {lastModified: new Date().getTime(), type: blob.type})
+            files.push(file);
           })
           .then(() => {
             if (files.length == target.images.length) {
@@ -441,11 +475,43 @@ const EditAccommodation = () => {
   }
 
   function updateValues(val: string) {
-    console.log(val)
+    const path = editModal.target;
+    const target = editModal.edit_target;
+    const value = val;
+    const item = contents[path].table_items.find(data => {
+      return data.checked == true
+    })
+
+    fetchPatchApi(`/${path}/${item.id}`, {target, value}).then((status) => {
+      if (status == 200) {
+        alert('수정이 완료되었습니다.')
+      } else {
+        alert('수정이 실패되었습니다.')
+      }
+      setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""})
+      getTableItems(path)
+    })
   }
 
-  function updateImages(files: Blob[], target: string) {
-    if (target == "rooms") {
+  function updateImages(files: File[], target: string) {
+    const item = contents[target].table_items.find(data => {
+      return data.checked == true
+    })
+    const target_id = item.id;
+
+    let accommodation_images = new FormData();
+    if (target == "accommodation") {
+      for (let i = 0, leng = files.length; i < leng; i++) {
+        const file_name_arr = files[i].name.split(".");
+        const file_extention = file_name_arr[file_name_arr.length - 1];
+        const new_file = new File([files[i]], `${target_id}_${i}.${file_extention}`, {
+          type: "image/jpeg",
+        });
+        accommodation_images.append(`files_${i}`, new_file);
+      }
+      accommodation_images.append("length", files.length.toString());
+      accommodation_images.append("category", "2");
+    } else if (target == "rooms") {
       files.forEach(async (file: any) => {
         const new_file_name = await readFile(file);
         setAddRoomContents((state) => {
@@ -456,6 +522,9 @@ const EditAccommodation = () => {
         });
       });
     }
+
+    fetchDeleteApi(`/image/${target}/${target_id}`)
+    // fetchFileApi("/upload/image/multi", accommodation_images).then((res) => console.log(res, "1"));
   }
 
   async function roomSlider(dir: string) {
@@ -589,7 +658,9 @@ const EditAccommodation = () => {
         value={editModal.value}
         type={editModal.type}
         readOnly={editModal.read_only}
-        hideModal={() => setEditModal({title: "", visible: false, value: "", type: "", read_only: false})}
+        hideModal={() =>
+          setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""})
+        }
         onSubmit={(value) => updateValues(value)}
       />
       <UploadModal onChange={(files, target) => updateImages(files, target)} />

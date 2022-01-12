@@ -69,7 +69,6 @@ class Upload {
               if (image_bulk.length == length) {
                 const upload_images = await Model.Images.bulkCreate(image_bulk, {
                   individualHooks: true,
-                  fields: ['file_name', 'category', 'target']
                 });
 
                 res.json(upload_images)

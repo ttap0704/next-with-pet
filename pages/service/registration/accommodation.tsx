@@ -231,6 +231,7 @@ const Service = () => {
   }
 
   function uploadImage(files: File[], type: string, key?: number) {
+    console.log(files)
     if (files.length > 0) {
       if (type == "exposure") {
         setPreviewFile([]);

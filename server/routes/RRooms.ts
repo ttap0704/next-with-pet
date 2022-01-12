@@ -97,6 +97,23 @@ class Rooms {
         res.status(500).send()
       }
     })
+
+    this.express.patch("/:id", async (req: express.Request, res: express.Response, next) => {
+      const id = req.params.id;
+      const target = req.body.target;
+      const value = req.body.value;
+
+      const code = await Model.Rooms.update({[target]: value},{
+        where: {
+          id: id
+        }
+      })
+      if (code >= 0) {
+        res.status(200).send()
+      } else {
+        res.status(500).send()
+      }
+    })
   }
 }
 

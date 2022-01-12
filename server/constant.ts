@@ -5,6 +5,26 @@ export const EXPOSURE_MENU = 11;
 export const ENTIRE_MENU = 12;
 export const ROOMS = 21;
 
+export const CONTENTS_CODE: {
+  [prop: string]: any;
+} = {
+  'restarunt': RESTAURANT,
+  'exposure_menu': EXPOSURE_MENU,
+  'entire_menu': ENTIRE_MENU,
+  'accommodation': ACCOMMODATION,
+  'rooms': ROOMS
+}
+
+export const MODEL_STRING: {
+  [props: string]: any;
+} = {
+  'restaurant': "Restaurant",
+  'exposure_menu': "ExposureMenu",
+  'entire_menu': "EntireMenu",
+  'accommodation': "Accommodation",
+  'rooms': "Rooms"
+}
+
 export const UPLOAD_PATH:{
   [prop: number]: any;
 } = {

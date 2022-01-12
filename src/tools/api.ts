@@ -36,7 +36,7 @@ export const fetchDeleteApi = async function (uri: string) {
 };
 
 // Fetch PATCH
-export const fetchPatchApi = async function (uri: string, args: object) {
+export const fetchPatchApi = async function (uri: string, args: {target: string, value: string | number}) {
   let response = await fetch(servername + uri, {
     method: 'PATCH',
     headers: {
@@ -45,7 +45,8 @@ export const fetchPatchApi = async function (uri: string, args: object) {
     },
     body: JSON.stringify(args)
   });
-  return response;
+
+  return response.status;
 };
 
 // Fetch POST FILES

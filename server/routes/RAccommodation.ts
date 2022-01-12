@@ -169,20 +169,21 @@ class Accommodation {
       }
     })
 
-    this.express.patch("/:id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    this.express.patch("/:id", async (req: express.Request, res: express.Response, next) => {
       const id = req.params.id;
       const target = req.body.target;
-      const value = req.body.value
+      const value = req.body.value;
 
-      const code = await Model.Rooms.update(
-        {[target]: value}, {
+      const code = await Model.Accommodation.update({[target]: value},{
         where: {
           id: id
         }
       })
-
-      console.log(code);
-      res.status(200).send()
+      if (code >= 0) {
+        res.status(200).send()
+      } else {
+        res.status(500).send()
+      }
     })
   }
 }
