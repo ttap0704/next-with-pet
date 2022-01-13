@@ -4,7 +4,7 @@ import {RootState} from "../../../reducers";
 import {useSelector, useDispatch} from "react-redux";
 import {useRouter} from "next/router";
 import {ReactElement, useEffect, useState} from "react";
-import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi} from "../../../src/tools/api";
+import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi} from "../../../src/tools/api";
 import {Checkbox, Modal, TableCell, TableRow} from "@mui/material";
 import {getDate} from "../../../src/tools/common";
 import {Button} from "@mui/material";
@@ -54,7 +54,7 @@ const EditAccommodation = () => {
   const [addRoomContents, setAddRoomContents] = useState({
     files: [],
     info: {
-      lable: "",
+      label: "",
       standard_num: "",
       maximum_num: "",
       price: "",
@@ -226,6 +226,7 @@ const EditAccommodation = () => {
             standard_num: x.standard_num,
             label: x.label,
             accommodation_label: x.accommodation_label,
+            accommodation_id: x.accommodation_id,
             price: x.price,
             images: x.rooms_images,
             additional_info: x.additional_info,
@@ -439,7 +440,10 @@ const EditAccommodation = () => {
         res
           .blob()
           .then((blob) => {
-            const file = new File([blob], target.images[i].file_name, {lastModified: new Date().getTime(), type: blob.type})
+            const file = new File([blob], target.images[i].file_name, {
+              lastModified: new Date().getTime(),
+              type: blob.type,
+            });
             files.push(file);
           })
           .then(() => {
@@ -478,53 +482,74 @@ const EditAccommodation = () => {
     const path = editModal.target;
     const target = editModal.edit_target;
     const value = val;
-    const item = contents[path].table_items.find(data => {
-      return data.checked == true
-    })
+    const item = contents[path].table_items.find((data) => {
+      return data.checked == true;
+    });
 
     fetchPatchApi(`/${path}/${item.id}`, {target, value}).then((status) => {
       if (status == 200) {
-        alert('수정이 완료되었습니다.')
+        alert("수정이 완료되었습니다.");
       } else {
-        alert('수정이 실패되었습니다.')
+        alert("수정이 실패되었습니다.");
       }
-      setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""})
-      getTableItems(path)
-    })
+      setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""});
+      getTableItems(path);
+    });
   }
 
-  function updateImages(files: File[], target: string) {
-    const item = contents[target].table_items.find(data => {
-      return data.checked == true
-    })
-    const target_id = item.id;
-
-    let accommodation_images = new FormData();
-    if (target == "accommodation") {
-      for (let i = 0, leng = files.length; i < leng; i++) {
-        const file_name_arr = files[i].name.split(".");
-        const file_extention = file_name_arr[file_name_arr.length - 1];
-        const new_file = new File([files[i]], `${target_id}_${i}.${file_extention}`, {
-          type: "image/jpeg",
-        });
-        accommodation_images.append(`files_${i}`, new_file);
-      }
-      accommodation_images.append("length", files.length.toString());
-      accommodation_images.append("category", "2");
-    } else if (target == "rooms") {
-      files.forEach(async (file: any) => {
-        const new_file_name = await readFile(file);
-        setAddRoomContents((state) => {
-          return {
-            ...state,
-            files: [...state.files, {file: file, imageUrl: new_file_name}],
-          };
-        });
+  function updateImages(files: File[], target: string, add_room?: Boolean) {
+    if (!roomModalVisible) {
+      const item = contents[target].table_items.find((data) => {
+        return data.checked == true;
       });
+      const target_id = item.id;
+  
+      let upload_images = new FormData();
+        for (let i = 0, leng = files.length; i < leng; i++) {
+          const file_name_arr = files[i].name.split(".");
+          const file_extention = file_name_arr[file_name_arr.length - 1];
+          let file_name = "";
+          if (target == 'accommodation') {
+            file_name = `${target_id}_${i}.${file_extention}`;
+          } else if (target == 'rooms') {
+            file_name = `${item.accommodation_id}_${target_id}_${i}.${file_extention}`;
+          }
+  
+          const new_file = new File([files[i]], file_name, {
+            type: "image/jpeg",
+          });
+  
+          upload_images.append(`files_${i}`, new_file);
+        }
+        let category = "";
+        if (target == 'accommodation') {
+          category = "2";
+        } else if (target == 'rooms') {
+          category = "21";
+        }
+        upload_images.append("length", files.length.toString());
+        upload_images.append("category", category);
+  
+      fetchDeleteApi(`/image/${target}/${target_id}`)
+      fetchFileApi("/upload/image/multi", upload_images).then((res) => console.log(res, "1")).then(() => {
+        getTableItems(target)
+      })
+    } else {
+      setAddRoomImages(files, target)
     }
+  }
 
-    fetchDeleteApi(`/image/${target}/${target_id}`)
-    // fetchFileApi("/upload/image/multi", accommodation_images).then((res) => console.log(res, "1"));
+  function setAddRoomImages(files: File[], target: string) {
+    console.log(target)
+    files.forEach(async (file: any) => {
+      const new_file_name = await readFile(file);
+      setAddRoomContents((state) => {
+        return {
+          ...state,
+          files: [...state.files, {file: file, imageUrl: new_file_name}],
+        };
+      });
+    });
   }
 
   async function roomSlider(dir: string) {
@@ -600,6 +625,26 @@ const EditAccommodation = () => {
       };
     });
     setInfoModalVisible(false);
+  }
+
+  function addRoom () {
+    const item = contents.accommodation.table_items.find(data => {
+      return data.checked == true;
+    })
+    console.log(item)
+    const accommodation_id = item.id;
+
+    const ok = confirm('객실을 추가하시겠습니까?')
+    if (ok) {
+      const data = {
+        ...addRoomContents.info,
+        accommodation_id 
+      }
+
+      fetchPostApi('/rooms/add', data).then((res) => {
+        console.log(res)
+      });
+    }
   }
 
   return (
@@ -756,6 +801,9 @@ const EditAccommodation = () => {
           <div className={accom_style.detail_room_util_box}>
             <UploadButton title="객실이미지 업로드" onClick={() => showRoomUploadModal()} />
             <button onClick={() => showInfoModal("add")}>추가 정보 입력</button>
+          </div>
+          <div className={accom_style.detail_room_util_box} style={{justifyContent: 'center'}}>
+            <button onClick={() => addRoom()}>객실 등록</button>
           </div>
         </div>
       </ModalContainer>

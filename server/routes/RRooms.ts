@@ -68,7 +68,7 @@ class Rooms {
             require: true,
           }
         ],
-        attributes: ['id', 'label', 'price', 'standard_num', 'maximum_num', 'amenities', 'additional_info', [
+        attributes: ['id', 'label', 'price', 'standard_num', 'maximum_num', 'amenities', 'additional_info', 'accommodation_id', [
           Model.sequelize.literal(`(
             SELECT label
             FROM accommodation
@@ -80,8 +80,24 @@ class Rooms {
         limit: 5
       });
 
-      res.json({count: count, rows: list})
+      res.json({ count: count, rows: list })
     });
+
+    this.express.post("/add", async (req: express.Request, res: express.Response, next) => {
+      const body = req.body;
+      const data = {
+        ...req.body
+      }
+
+      const rooms = await Model.Rooms.create(data, { fields: ['label', 'maximum_num', 'price', 'standard_num', 'accommodation_id', 'amenities', 'additional_info'] });
+
+      console.log(rooms);
+      if (rooms) {
+        res.status(200).send(rooms)
+      } else {
+        res.status(500).send()
+      }
+    })
 
     this.express.delete("/:id", async (req: express.Request, res: express.Response, next) => {
       const id = req.params.id;
@@ -103,7 +119,7 @@ class Rooms {
       const target = req.body.target;
       const value = req.body.value;
 
-      const code = await Model.Rooms.update({[target]: value},{
+      const code = await Model.Rooms.update({ [target]: value }, {
         where: {
           id: id
         }

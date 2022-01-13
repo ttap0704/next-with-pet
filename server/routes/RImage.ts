@@ -45,15 +45,35 @@ class Image {
         raw: true
       })
 
-      if (images) {
-        let names = [];
-
+      if (images.length > 0) {
+        console.log(images)
         for (let i = 0, leng = images.length; i < leng; i++) {
-          names.push(images[i].file_name);
-        }
-      }
+          const path = __dirname + "/../uploads/" + type + "/" + images[i].file_name
+          fs.unlink(path, (err:Error) => {
+            console.log(path)
+            if (err) {
+              console.log(err)
+              res.status(500).send()
+              return;
+            }
+          })
 
-      res.status(200).send()
+          if (i == leng - 1) {
+            const code = await Model.Images.destroy({
+              where: {
+                [`${type}_id`]: id
+              }
+            })
+            if (code >= 0) {
+              res.status(200).send()
+            } else {
+              res.status(500).send()
+            }
+          }
+        }
+      } else {
+        res.status(204).send()
+      }
     })
   }
 }
