@@ -17,6 +17,7 @@ const Restaurant = () => {
 
   useEffect(() => {
     fetchGetApi("/restaurant").then((res) => {
+      console.log(res)
       dispatch(actions.pushRestaurantList(res));
     });
     return () => {

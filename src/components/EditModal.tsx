@@ -16,8 +16,9 @@ const UploadModal = (props) => {
   const readOnly = props.readOnly ? props.readOnly : false;
   const [value, setValue] = useState("");
 
+
   useEffect(() => {
-    setValue(props.value);
+      setValue(props.value);
   }, [props_value]);
 
   function changeValue() {

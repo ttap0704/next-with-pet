@@ -25,7 +25,7 @@ import InfoModal from "../../../src/components/InfoModal";
 import {actions} from "../../../reducers/common/upload";
 import {toggleButton, readFile, setSlideNumber} from "../../../src/tools/common";
 
-const EditAccommodation = () => {
+const ManageAccommodation = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     getTableItems("accommodation");
@@ -98,6 +98,7 @@ const EditAccommodation = () => {
       count: 0,
       title: "숙박업소 관리",
       button_disabled: true,
+      page: 1,
     },
     rooms: {
       header: [
@@ -132,6 +133,7 @@ const EditAccommodation = () => {
       count: 0,
       title: "객실 관리",
       button_disabled: true,
+      page: 1,
     },
   });
 
@@ -175,10 +177,19 @@ const EditAccommodation = () => {
   }
 
   function getTableItems(type: string, page?: number) {
-    let page_num = 1;
+    let page_num = contents[type].page;
     let tmp_table_items = [];
 
     if (page) {
+      setContents(state => {
+        return {
+          ...state,
+          [type]: {
+            ...state[type],
+            page: page
+          }
+        }
+      })
       page_num = page;
     }
     fetchGetApi(`/${type}?uid=1&page=${page_num}`).then((res) => {
@@ -273,10 +284,10 @@ const EditAccommodation = () => {
             <Button
               onClick={() => {
                 setEditModal({
-                  title: "최대 인원 수정",
+                  title: "소개",
                   visible: true,
                   value: contents.accommodation.table_items[idx].introduction,
-                  type: "input",
+                  type: "textarea",
                   read_only: true,
                   target: "accommodation",
                   edit_target: "",
@@ -424,6 +435,7 @@ const EditAccommodation = () => {
           if (ok) {
             console.log(target);
             deleteData("rooms", target.id).then(() => {
+              getTableItems("accommodation");
               getTableItems("rooms");
             });
           }
@@ -493,7 +505,8 @@ const EditAccommodation = () => {
         alert("수정이 실패되었습니다.");
       }
       setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""});
-      getTableItems(path);
+      getTableItems("accommodation");
+      getTableItems("rooms");
     });
   }
 
@@ -503,44 +516,47 @@ const EditAccommodation = () => {
         return data.checked == true;
       });
       const target_id = item.id;
-  
+
       let upload_images = new FormData();
-        for (let i = 0, leng = files.length; i < leng; i++) {
-          const file_name_arr = files[i].name.split(".");
-          const file_extention = file_name_arr[file_name_arr.length - 1];
-          let file_name = "";
-          if (target == 'accommodation') {
-            file_name = `${target_id}_${i}.${file_extention}`;
-          } else if (target == 'rooms') {
-            file_name = `${item.accommodation_id}_${target_id}_${i}.${file_extention}`;
-          }
-  
-          const new_file = new File([files[i]], file_name, {
-            type: "image/jpeg",
-          });
-  
-          upload_images.append(`files_${i}`, new_file);
+      for (let i = 0, leng = files.length; i < leng; i++) {
+        const file_name_arr = files[i].name.split(".");
+        const file_extention = file_name_arr[file_name_arr.length - 1];
+        let file_name = "";
+        if (target == "accommodation") {
+          file_name = `${target_id}_${i}.${file_extention}`;
+        } else if (target == "rooms") {
+          file_name = `${item.accommodation_id}_${target_id}_${i}.${file_extention}`;
         }
-        let category = "";
-        if (target == 'accommodation') {
-          category = "2";
-        } else if (target == 'rooms') {
-          category = "21";
-        }
-        upload_images.append("length", files.length.toString());
-        upload_images.append("category", category);
-  
-      fetchDeleteApi(`/image/${target}/${target_id}`)
-      fetchFileApi("/upload/image/multi", upload_images).then((res) => console.log(res, "1")).then(() => {
-        getTableItems(target)
-      })
+
+        const new_file = new File([files[i]], file_name, {
+          type: "image/jpeg",
+        });
+
+        upload_images.append(`files_${i}`, new_file);
+      }
+      let category = "";
+      if (target == "accommodation") {
+        category = "2";
+      } else if (target == "rooms") {
+        category = "21";
+      }
+      upload_images.append("length", files.length.toString());
+      upload_images.append("category", category);
+
+      fetchDeleteApi(`/image/${target}/${target_id}`);
+      fetchFileApi("/upload/image/multi", upload_images)
+        .then((res) => console.log(res, "1"))
+        .then(() => {
+          getTableItems("accommodation");
+          getTableItems("rooms");
+        });
     } else {
-      setAddRoomImages(files, target)
+      setAddRoomImages(files, target);
     }
   }
 
   function setAddRoomImages(files: File[], target: string) {
-    console.log(target)
+    console.log(target);
     files.forEach(async (file: any) => {
       const new_file_name = await readFile(file);
       setAddRoomContents((state) => {
@@ -627,22 +643,45 @@ const EditAccommodation = () => {
     setInfoModalVisible(false);
   }
 
-  function addRoom () {
-    const item = contents.accommodation.table_items.find(data => {
+  function addRoom() {
+    const item = contents.accommodation.table_items.find((data) => {
       return data.checked == true;
-    })
-    console.log(item)
+    });
     const accommodation_id = item.id;
 
-    const ok = confirm('객실을 추가하시겠습니까?')
+    const ok = confirm("객실을 추가하시겠습니까?");
     if (ok) {
       const data = {
         ...addRoomContents.info,
-        accommodation_id 
-      }
+        accommodation_id,
+      };
+      const files = addRoomContents.files;
+      console.log(files);
 
-      fetchPostApi('/rooms/add', data).then((res) => {
-        console.log(res)
+      fetchPostApi("/rooms/add", data).then((res) => {
+        const room_id = res.id;
+        let upload_images = new FormData();
+        for (let i = 0, leng = files.length; i < leng; i++) {
+          const file_name_arr = files[i].file.name.split(".");
+          const file_extention = file_name_arr[file_name_arr.length - 1];
+          const file_name = `${accommodation_id}_${room_id}_${i}.${file_extention}`;
+
+          const new_file = new File([files[i].file], file_name, {
+            type: "image/jpeg",
+          });
+
+          upload_images.append(`files_${i}`, new_file);
+        }
+        let category = "21";
+        upload_images.append("length", files.length.toString());
+        upload_images.append("category", category);
+
+        fetchFileApi("/upload/image/multi", upload_images)
+          .then((res) => console.log(res, "1"))
+          .then(() => {
+            getTableItems("accommodation");
+            getTableItems("rooms");
+          });
       });
     }
   }
@@ -802,7 +841,7 @@ const EditAccommodation = () => {
             <UploadButton title="객실이미지 업로드" onClick={() => showRoomUploadModal()} />
             <button onClick={() => showInfoModal("add")}>추가 정보 입력</button>
           </div>
-          <div className={accom_style.detail_room_util_box} style={{justifyContent: 'center'}}>
+          <div className={accom_style.detail_room_util_box} style={{justifyContent: "center"}}>
             <button onClick={() => addRoom()}>객실 등록</button>
           </div>
         </div>
@@ -811,4 +850,4 @@ const EditAccommodation = () => {
   );
 };
 
-export default EditAccommodation;
+export default ManageAccommodation;

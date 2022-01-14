@@ -102,15 +102,13 @@ const Service = () => {
     slider.style.transition = "500ms";
     slider.style.transform = `translate3d(${distance}, 0px, 0px)`;
   }
-
-  async function uploadImage(event: React.ChangeEvent<HTMLInputElement>, type: string, key?: number, data?: object) {
-    let file = event.currentTarget.files;
+  async function uploadImage(file: File[] | FileList, type: string, key?: number) {
     if (file.length > 0) {
       if (type == "exposure") {
         let files = Array.from(file);
         files.forEach(async (file) => {
           const new_file_name = await readFile(file);
-          setExposureImages((state) => [...state, { file: file, new_file_name }]);
+          setExposureImages((state) => [...state, { file: file, imageUrl: new_file_name }]);
         });
       } else if (type == "exposure_menu") {
         let items = [...exposureMenu];
@@ -485,7 +483,7 @@ const Service = () => {
                             </label>
                             <input
                               type="file"
-                              onChange={(e) => uploadImage(e, "exposure_menu", index)}
+                              onChange={(e) => uploadImage(e.currentTarget.files, "exposure_menu", index)}
                               id={`exposure_menu_img_${index}`}
                             />
                           </div>
@@ -619,7 +617,7 @@ const Service = () => {
         visible={popupVisible}
         complete={(data) => updateAddress(data)}
       />
-      <UploadModal onChange={(e, target) => uploadImage(e, target)} />
+      <UploadModal onChange={(e, target, target_idx) => uploadImage(e, target, target_idx)} />
     </>
   );
 };
