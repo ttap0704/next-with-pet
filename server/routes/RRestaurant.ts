@@ -27,18 +27,68 @@ class Restraunt {
 
   private routes(): void {
     this.express.get("", async (req: any, res: any, next) => {
-      const list = await Model.Restaurant.findAll({
-        include: [
-          {
-            model: Model.Images,
-            as: 'restaurant_images',
-            require: true,
-          }
-        ],
-        attributes: ['sigungu', 'bname', 'label', 'id']
-      });
 
-      res.json(list)
+      let uid = undefined
+      if (Number(req.query.uid) > 0) {
+        uid = req.query.uid;
+      }
+
+      let list = undefined;
+      if (!uid) {
+        list = await Model.Restaurant.findAll({
+          include: [
+            {
+              model: Model.Images,
+              as: 'restaurant_images',
+              require: true,
+            }
+          ],
+          attributes: ['sigungu', 'bname', 'label', 'id']
+        });
+        res.json(list)
+      } else {
+        const count = await Model.Accommodation.count({
+          where: {
+            manager: uid
+          }
+        })
+
+        let page = undefined;
+        if (Number(req.query.page) > 0) {
+          page = Number(req.query.page);
+        }
+
+        let offset = 0;
+        if (page > 1) {
+          offset = 5 * (page - 1);
+        }
+
+        list = await Model.Restaurant.findAll({
+          where: {
+            manager: uid
+          },
+          include: [
+            {
+              model: Model.ExposureMenu,
+              as: 'exposure_menu',
+              require: true
+            },
+            {
+              model: Model.EntireMenu,
+              as: 'entire_menu',
+              require: true
+            },
+            {
+              model: Model.Images,
+              as: 'restaurant_images',
+              require: true
+            }
+          ],
+          offset: offset,
+          limit: 5
+        });
+        res.json({ count: count, rows: list })
+      }
     });
 
     this.express.get("/:id", async (req: express.Request, res: express.Response, next) => {
@@ -162,16 +212,12 @@ class Restraunt {
       res.json(menus);
     });
 
-    this.express.delete("/:id", async (req: express.Request, res: express.Response, next) => {
-      const id = req.params.id;
+    // this.express.delete("/:id", async (req: express.Request, res: express.Response, next) => {
+    //   const id = req.params.id;
 
-      res.status(200).send('Good Connection')
-    })
+    //   res.status(200).send('Good Connection')
+    // })
   }
 }
 
 export default new Restraunt().express;
-
-function individualHooks(category: object[], individualHooks: any, arg2: boolean) {
-  throw new Error("Function not implemented.");
-}

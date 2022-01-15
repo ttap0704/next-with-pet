@@ -1,4 +1,5 @@
-export function toggleButton(ids: string[], type: string) {
+export function toggleButton(ids: string[], type: string, length?: number) {
+  if (length && length == 0) return;
   for (let i = 0, leng = ids.length; i < leng; i++) {
     const id = ids[i];
     const target: HTMLElement = document.getElementById(id);

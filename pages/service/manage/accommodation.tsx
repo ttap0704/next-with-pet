@@ -29,7 +29,7 @@ const ManageAccommodation = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     getTableItems("accommodation");
-    getTableItems("rooms");
+    getTableItems("rooms"); 
   }, []);
 
   const router = useRouter();
@@ -192,6 +192,7 @@ const ManageAccommodation = () => {
       })
       page_num = page;
     }
+    
     fetchGetApi(`/${type}?uid=1&page=${page_num}`).then((res) => {
       setContents((state) => {
         return {
@@ -778,12 +779,8 @@ const ManageAccommodation = () => {
               imgId={`room_image`}
               type="rooms"
               src={addRoomContents.files.length > 0 ? addRoomContents.files[addRoomContents.cur_num].imageUrl : null}
-              onMouseEnter={() =>
-                addRoomContents.files.length > 0 ? toggleButton([`detail_room_slider`], "enter") : null
-              }
-              onMouseLeave={() =>
-                addRoomContents.files.length > 0 ? toggleButton([`detail_room_slider`], "leave") : null
-              }
+              onMouseEnter={() => toggleButton([`detail_room_slider`], "enter", addRoomContents.files.length)}
+              onMouseLeave={() => toggleButton([`detail_room_slider`], "leave", addRoomContents.files.length)}
             >
               {addRoomContents.files.length == 0 ? <h3>{addRoomContents.files.length}</h3> : null}
               <ImageSlider

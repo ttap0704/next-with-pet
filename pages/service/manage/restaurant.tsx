@@ -28,8 +28,8 @@ import {toggleButton, readFile, setSlideNumber} from "../../../src/tools/common"
 const ManageRestraunt = () => {
   const dispatch = useDispatch();
   useEffect(() => {
-    getTableItems("accommodation");
-    getTableItems("rooms");
+    // getTableItems("accommodation");
+    // getTableItems("rooms");
   }, []);
 
   const router = useRouter();
@@ -131,7 +131,7 @@ const ManageRestraunt = () => {
       edit_items: ["객실명 수정", "추가 정보 수정", "기준 인원 수정", "최대 인원 수정", "대표이미지 수정", "객실 삭제"],
       type: "exposure_menu",
       count: 0,
-      title: "객실 관리",
+      title: "대표메뉴 관리",
       button_disabled: true,
       page: 1,
     },
@@ -166,10 +166,10 @@ const ManageRestraunt = () => {
       edit_items: ["객실명 수정", "추가 정보 수정", "기준 인원 수정", "최대 인원 수정", "대표이미지 수정", "객실 삭제"],
       type: "exposure_menu",
       count: 0,
-      title: "객실 관리",
+      title: "전체메뉴 관리",
       button_disabled: true,
       page: 1,
-    },
+    }
   });
 
   function setChecked(idx: number, type: string, event_type: string, e?: React.ChangeEvent<HTMLInputElement>) {

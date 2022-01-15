@@ -4,6 +4,7 @@ import Model from '../models'
 
 import { RESTAURANT } from "../constant";
 import { Category } from "../interfaces/IRestaurant"
+import Rooms from "./RRooms";
 
 class Accommodation {
 
@@ -83,7 +84,7 @@ class Accommodation {
         });
         res.json({ count: count, rows: list })
       }
-
+      
     });
 
     this.express.get("/:id", async (req: express.Request, res: express.Response, next) => {

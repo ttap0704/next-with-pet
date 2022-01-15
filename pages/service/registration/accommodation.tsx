@@ -334,8 +334,8 @@ const Service = () => {
                   alt="exposure_images"
                   type="accommodation"
                   imgId="exposure_slider_image"
-                  onMouseEnter={() => toggleButton([`exposure_image_slider`], "enter")}
-                  onMouseLeave={() => toggleButton([`exposure_image_slider`], "leave")}
+                  onMouseEnter={() => toggleButton([`exposure_image_slider`], "enter", previewFile.length)}
+                  onMouseLeave={() => toggleButton([`exposure_image_slider`], "leave", previewFile.length)}
                 >
                   {previewFile.length == 0 ? (
                     <h3
@@ -439,12 +439,8 @@ const Service = () => {
                           imgId={`room_image_${index}`}
                           type="rooms"
                           src={data.files.length > 0 ? data.files[data.cur_num].imageUrl : null}
-                          onMouseEnter={() =>
-                            data.files.length > 0 ? toggleButton([`detail_room_slider_${index}`], "enter") : null
-                          }
-                          onMouseLeave={() =>
-                            data.files.length > 0 ? toggleButton([`detail_room_slider_${index}`], "leave") : null
-                          }
+                          onMouseEnter={() => toggleButton([`detail_room_slider_${index}`], "enter", data.files.length)}
+                          onMouseLeave={() => toggleButton([`detail_room_slider_${index}`], "leave", data.files.length)}
                         >
                           {data.files.length == 0 ? <h3>이미지를 등록해주세요.</h3> : null}
                           <ImageSlider
