@@ -41,6 +41,7 @@ class Accommodation {
               model: Model.Images,
               as: 'accommodation_images',
               require: true,
+              order: ['seq', 'ASC']
             }
           ],
           attributes: ['sigungu', 'bname', 'label', 'id']
@@ -77,6 +78,7 @@ class Accommodation {
               model: Model.Images,
               as: 'accommodation_images',
               require: true,
+              order: ['seq', 'ASC']
             }
           ],
           offset: offset,
@@ -101,13 +103,15 @@ class Accommodation {
                 model: Model.Images,
                 as: 'rooms_images',
                 require: true,
+                order: ['seq', 'ASC']
               }
             ]
           },
           {
             model: Model.Images,
             as: 'accommodation_images',
-            require: true
+            require: true,
+            order: ['seq', 'ASC']
           }
         ],
         where: { id: id }

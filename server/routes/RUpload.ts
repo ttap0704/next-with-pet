@@ -47,6 +47,8 @@ class Upload {
         const file = files[key];
         const file_name = file.name
         const target_text = IMAGES_ID_LIST[category]
+        const file_name_split = file_name.split(".")
+        const seq = file_name_split[0].split("_")[file_name_split[0].split("_").length - 1];
         let target_idx = undefined;
         if ([RESTAURANT, ACCOMMODATION].includes(category) == true) {
           target_idx = 0;
@@ -63,7 +65,8 @@ class Upload {
               image_bulk.push({
                 file_name: file_name,
                 category: category,
-                [target_text]: target
+                [target_text]: target,
+                seq: seq,
               })
 
               if (image_bulk.length == length) {

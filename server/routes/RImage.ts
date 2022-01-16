@@ -46,7 +46,6 @@ class Image {
       })
 
       if (images.length > 0) {
-        console.log(images)
         for (let i = 0, leng = images.length; i < leng; i++) {
           const path = __dirname + "/../uploads/" + type + "/" + images[i].file_name
           fs.unlink(path, (err:Error) => {

@@ -66,7 +66,8 @@ class Rooms {
             model: Model.Images,
             as: 'rooms_images',
             require: true,
-          }
+            order: ['seq', 'ASC']
+          },
         ],
         attributes: ['id', 'label', 'price', 'standard_num', 'maximum_num', 'amenities', 'additional_info', 'accommodation_id', [
           Model.sequelize.literal(`(

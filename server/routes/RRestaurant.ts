@@ -81,7 +81,8 @@ class Restraunt {
             {
               model: Model.Images,
               as: 'restaurant_images',
-              require: true
+              require: true,
+              order: ['seq', 'ASC']
             }
           ],
           offset: offset,
@@ -105,6 +106,7 @@ class Restraunt {
                 model: Model.Images,
                 as: 'exposure_menu_image',
                 require: true,
+                order: ['seq', 'ASC']
               }
             ]
           },
@@ -124,7 +126,8 @@ class Restraunt {
           {
             model: Model.Images,
             as: 'restaurant_images',
-            require: true
+            require: true,
+            order: ['seq', 'ASC']
           }
         ],
         where: {id: id}

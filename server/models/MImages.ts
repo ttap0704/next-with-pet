@@ -6,6 +6,7 @@ interface ImagesAttributes {
   id: number;
   file_name: string;
   category: number;
+  seq: number;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -14,6 +15,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public readonly id!: number;
     public file_name!: string;
     public category!: number;
+    public seq!: number;
 
     public static associate(models: any) {
       Images.belongsTo(models.Restaurant, {
@@ -47,6 +49,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.INTEGER,
         allowNull: false,
         comment: "1: Restaurant / 11: ExposureMenu / 2: Accommodation / 21: Rooms"
+      },
+      seq: {
+        type: DataTypes.INTEGER,
+        allowNull: false
       }
     },
     {
