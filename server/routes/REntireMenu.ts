@@ -58,20 +58,29 @@ class EntireMenu {
         offset = 5 * (page - 1);
       }
 
+      const attributes = ['id', 'label', 'price', 'restaurant_id', 'category_id', [
+        Model.sequelize.literal(`(
+          SELECT category
+          FROM entire_menu_category
+          WHERE
+          id = EntireMenu.category_id
+        )`), 'category'
+      ], [
+          Model.sequelize.literal(`(
+          SELECT label
+          FROM restaurant
+          WHERE
+          id = EntireMenu.restaurant_id
+        )`), 'restaurant_label'
+        ]]
+
       const list = await Model.EntireMenu.findAll({
         where: {
           restaurant_id: {
             [Model.Sequelize.Op.in]: Model.sequelize.literal(`(${tempSQL})`)
           }
         },
-        attributes: ['id', 'label', 'price', 'restaurant_id', 'category_id', [
-          Model.sequelize.literal(`(
-            SELECT category
-            FROM entire_menu_category
-            WHERE
-            id = EntireMenu.category_id
-          )`), 'category'
-        ]],
+        attributes: attributes,
         offset: offset,
         limit: 5
       });

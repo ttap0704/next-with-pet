@@ -106,7 +106,7 @@ const Detail = () => {
                       <div className={res_style.rest_exposure_menu_img_wrap}>
                         <img
                           className={res_style.detail_exposure_menu_image}
-                          src={`http://localhost:3000/api/image/restaurant/${data.exposure_menu_image.file_name}`}
+                          src={`http://localhost:3000/api/image/exposure_menu/${data.exposure_menu_image.file_name}`}
                         />
                       </div>
                     </div>

@@ -1,14 +1,14 @@
 import styles from "../../../styles/pages/service.module.scss";
 import accom_style from "../../../styles/pages/accommodation.module.scss";
-import { RootState } from "../../../reducers";
-import { useSelector, useDispatch } from "react-redux";
-import { useRouter } from "next/router";
-import { ReactElement, useEffect, useState } from "react";
-import { fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi } from "../../../src/tools/api";
-import { Checkbox, Modal, TableCell, TableRow } from "@mui/material";
-import { getDate } from "../../../src/tools/common";
-import { Button } from "@mui/material";
-import { HiX } from "react-icons/hi";
+import {RootState} from "../../../reducers";
+import {useSelector, useDispatch} from "react-redux";
+import {useRouter} from "next/router";
+import {ReactElement, useEffect, useState} from "react";
+import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi} from "../../../src/tools/api";
+import {Checkbox, Modal, TableCell, TableRow} from "@mui/material";
+import {getDate} from "../../../src/tools/common";
+import {Button} from "@mui/material";
+import {HiX} from "react-icons/hi";
 
 import CustomDropdown from "../../../src/components/CustomDrodown";
 import CustomTable from "../../../src/components/CustomTable";
@@ -22,19 +22,19 @@ import ImageSlider from "../../../src/components/ImageSlider";
 import UploadButton from "../../../src/components/UploadButton";
 import InfoModal from "../../../src/components/InfoModal";
 
-import { actions } from "../../../reducers/common/upload";
-import { toggleButton, readFile, setSlideNumber } from "../../../src/tools/common";
+import {actions} from "../../../reducers/common/upload";
+import {toggleButton, readFile, setSlideNumber} from "../../../src/tools/common";
 
 const ManageRestraunt = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     getTableItems("restaurant");
-    // getTableItems("exposure_menu");
-    // getTableItems("entire_menu");
+    getTableItems("exposure_menu");
+    getTableItems("entire_menu");
   }, []);
 
   const router = useRouter();
-  const { uid } = useSelector((state: RootState) => state.userReducer);
+  const {uid} = useSelector((state: RootState) => state.userReducer);
   const [editModal, setEditModal] = useState({
     title: "",
     visible: false,
@@ -105,76 +105,68 @@ const ManageRestraunt = () => {
       button_disabled: true,
       page: 1,
     },
-    // exposure_menu: {
-    //   header: [
-    //     {
-    //       label: "",
-    //       center: true,
-    //     },
-    //     {
-    //       label: "숙박 업소명",
-    //       center: false,
-    //     },
-    //     {
-    //       label: "객실명",
-    //       center: false,
-    //     },
-    //     {
-    //       label: "기준 인원",
-    //       center: false,
-    //     },
-    //     {
-    //       label: "최대 인원",
-    //       center: false,
-    //     },
-    //     {
-    //       label: "추가 정보",
-    //       center: true,
-    //     },
-    //   ],
-    //   table_items: [],
-    //   edit_items: ["객실명 수정", "추가 정보 수정", "기준 인원 수정", "최대 인원 수정", "대표이미지 수정", "객실 삭제"],
-    //   type: "exposure_menu",
-    //   count: 0,
-    //   title: "전체메뉴 관리",
-    //   button_disabled: true,
-    //   page: 1,
-    // },
-    // entire_menu: {
-    //   header: [
-    //     {
-    //       label: "",
-    //       center: true,
-    //     },
-    //     {
-    //       label: "숙박 업소명",
-    //       center: false,
-    //     },
-    //     {
-    //       label: "객실명",
-    //       center: false,
-    //     },
-    //     {
-    //       label: "기준 인원",
-    //       center: false,
-    //     },
-    //     {
-    //       label: "최대 인원",
-    //       center: false,
-    //     },
-    //     {
-    //       label: "추가 정보",
-    //       center: true,
-    //     },
-    //   ],
-    //   table_items: [],
-    //   edit_items: ["객실명 수정", "추가 정보 수정", "기준 인원 수정", "최대 인원 수정", "대표이미지 수정", "객실 삭제"],
-    //   type: "entire_menu",
-    //   count: 0,
-    //   title: "대표메뉴 관리",
-    //   button_disabled: true,
-    //   page: 1,
-    // }
+    exposure_menu: {
+      header: [
+        {
+          label: "",
+          center: true,
+        },
+        {
+          label: "음식점",
+          center: false,
+        },
+        {
+          label: "메뉴명",
+          center: false,
+        },
+        {
+          label: "가격",
+          center: false,
+        },
+        {
+          label: "한 줄 설명",
+          center: true,
+        },
+      ],
+      table_items: [],
+      edit_items: ["객실명 수정", "추가 정보 수정", "기준 인원 수정", "최대 인원 수정", "대표이미지 수정", "객실 삭제"],
+      type: "exposure_menu",
+      count: 0,
+      title: "대표메뉴 관리",
+      button_disabled: true,
+      page: 1,
+    },
+    entire_menu: {
+      header: [
+        {
+          label: "",
+          center: true,
+        },
+        {
+          label: "음식점",
+          center: false,
+        },
+        {
+          label: "카테고리",
+          center: false,
+        },
+        {
+          label: "메뉴명",
+          center: false,
+        },
+        {
+          label: "가격",
+          center: false,
+        },
+      ],
+      table_items: [],
+      edit_items: ["객실명 수정", "추가 정보 수정", "기준 인원 수정", "최대 인원 수정", "대표이미지 수정", "객실 삭제"],
+      type: "entire_menu",
+      count: 0,
+      title: "대표메뉴 관리",
+      button_disabled: true,
+      page: 1,
+    },
   });
 
   function setChecked(idx: number, type: string, event_type: string, e?: React.ChangeEvent<HTMLInputElement>) {
@@ -219,20 +211,22 @@ const ManageRestraunt = () => {
   function getTableItems(type: string, page?: number) {
     let page_num = contents[type].page;
     let tmp_table_items = [];
+    let count = 0;
 
     if (page) {
-      setContents(state => {
+      setContents((state) => {
         return {
           ...state,
           [type]: {
             ...state[type],
-            page: page
-          }
-        }
-      })
+            page: page,
+          },
+        };
+      });
       page_num = page;
     }
     fetchGetApi(`/${type}?uid=1&page=${page_num}`).then((res) => {
+      count = res.count;
       if (type == "restaurant") {
         for (let x of res.rows) {
           tmp_table_items.push({
@@ -252,41 +246,39 @@ const ManageRestraunt = () => {
             checked: false,
           });
         }
-        setContents((state) => {
-          return {
-            ...state,
-            [type]: {
-              ...state[type],
-              table_items: [...tmp_table_items],
-            },
-          };
-        });
-      } else {
+      } else if (type == "exposure_menu") {
         for (let x of res.rows) {
           tmp_table_items.push({
             id: x.id,
-            maximum_num: x.maximum_num,
-            standard_num: x.standard_num,
             label: x.label,
-            accommodation_label: x.accommodation_label,
-            accommodation_id: x.accommodation_id,
+            restaurant_label: x.restaurant_label,
             price: x.price,
-            images: x.rooms_images,
-            additional_info: x.additional_info,
-            amenities: x.amenities,
+            images: x.exposure_menu_image,
             checked: false,
           });
         }
-        setContents((state) => {
-          return {
-            ...state,
-            [type]: {
-              ...state[type],
-              table_items: [...tmp_table_items],
-            },
-          };
-        });
+      } else if (type == "entire_menu") {
+        for (let x of res.rows) {
+          tmp_table_items.push({
+            id: x.id,
+            label: x.label,
+            restaurant_label: x.restaurant_label,
+            category: x.category,
+            price: x.price,
+            checked: false,
+          });
+        }
       }
+      setContents((state) => {
+        return {
+          ...state,
+          [type]: {
+            ...state[type],
+            table_items: [...tmp_table_items],
+            count: count,
+          },
+        };
+      });
     });
   }
 
@@ -309,10 +301,10 @@ const ManageRestraunt = () => {
           tag = `${contents.restaurant.table_items[idx].sido} ${contents.restaurant.table_items[idx].sigungu} ${contents.restaurant.table_items[idx].bname}`;
           break;
         case "대표메뉴":
-          tag = contents.restaurant.table_items[idx].exposure_menu_num + '개';
+          tag = contents.restaurant.table_items[idx].exposure_menu_num + "개";
           break;
         case "전체메뉴":
-          tag = contents.restaurant.table_items[idx].entire_menu_num + '개';
+          tag = contents.restaurant.table_items[idx].entire_menu_num + "개";
           break;
         case "소개":
           tag = (
@@ -337,36 +329,52 @@ const ManageRestraunt = () => {
           tag = getDate(contents.restaurant.table_items[idx].created_at);
           break;
       }
-    } else {
-      // switch (cell) {
-      //   case "":
-      //     tag = (
-      //       <Checkbox
-      //         checked={contents.entire_menu.table_items[idx].checked}
-      //         onChange={(e) => setChecked(idx, "entire_menu", "change", e)}
-      //       ></Checkbox>
-      //     );
-      //     break;
-      //   case "숙박 업소명":
-      //     tag = contents.entire_menu.table_items[idx].accommodation_label;
-      //     break;
-      //   case "객실명":
-      //     tag = contents.entire_menu.table_items[idx].label;
-      //     break;
-      //   case "기준 인원":
-      //     tag = contents.entire_menu.table_items[idx].standard_num + "명";
-      //     break;
-      //   case "최대 인원":
-      //     tag = contents.entire_menu.table_items[idx].maximum_num + "명";
-      //     break;
-      //   case "추가 정보":
-      //     const data = {
-      //       amenities: contents.entire_menu.table_items[idx].amenities,
-      //       additional_info: contents.entire_menu.table_items[idx].additional_info,
-      //     };
-      //     tag = <Button>확인</Button>;
-      //     break;
-      // }
+    } else if (type == "exposure_menu") {
+      switch (cell) {
+        case "":
+          tag = (
+            <Checkbox
+              checked={contents.exposure_menu.table_items[idx].checked}
+              onChange={(e) => setChecked(idx, "exposure_menu", "change", e)}
+            ></Checkbox>
+          );
+          break;
+        case "음식점":
+          tag = contents.exposure_menu.table_items[idx].restaurant_label;
+          break;
+        case "메뉴명":
+          tag = contents.exposure_menu.table_items[idx].label;
+          break;
+        case "가격":
+          tag = Number(contents.exposure_menu.table_items[idx].price).toLocaleString() + " 원";
+          break;
+        case "한 줄 설명":
+          tag = <Button>확인</Button>;
+          break;
+      }
+    } else if (type == "entire_menu") {
+      switch (cell) {
+        case "":
+          tag = (
+            <Checkbox
+              checked={contents.entire_menu.table_items[idx].checked}
+              onChange={(e) => setChecked(idx, "entire_menu", "change", e)}
+            ></Checkbox>
+          );
+          break;
+        case "음식점":
+          tag = contents.entire_menu.table_items[idx].restaurant_label;
+          break;
+        case "카테고리":
+          tag = contents.entire_menu.table_items[idx].category;
+          break;
+        case "메뉴명":
+          tag = contents.entire_menu.table_items[idx].label;
+          break;
+        case "가격":
+          tag = Number(contents.entire_menu.table_items[idx].price).toLocaleString() + " 원";
+          break;
+      }
     }
 
     return tag;
@@ -532,13 +540,13 @@ const ManageRestraunt = () => {
       return data.checked == true;
     });
 
-    fetchPatchApi(`/${path}/${item.id}`, { target, value }).then((status) => {
+    fetchPatchApi(`/${path}/${item.id}`, {target, value}).then((status) => {
       if (status == 200) {
         alert("수정이 완료되었습니다.");
       } else {
         alert("수정이 실패되었습니다.");
       }
-      setEditModal({ title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: "" });
+      setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""});
       getTableItems("accommodation");
       getTableItems("rooms");
     });
@@ -558,7 +566,7 @@ const ManageRestraunt = () => {
                 onClick={(type, idx) => handleDropdown(type, idx)}
               />
             </div>
-            <div style={{ height: "28rem", width: "100%" }}>
+            <div style={{height: "28rem", width: "100%"}}>
               <CustomTable
                 header={contents[key].header}
                 footerColspan={contents[key].header.length}

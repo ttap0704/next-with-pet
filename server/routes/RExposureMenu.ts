@@ -71,6 +71,14 @@ class ExposureMenu {
             require: true,
           }
         ],
+        attributes: ['id', 'label', 'price', 'restaurant_id', [
+          Model.sequelize.literal(`(
+            SELECT label
+            FROM restaurant
+            WHERE
+            id = ExposureMenu.restaurant_id
+          )`), 'restaurant_label'
+        ]],
         offset: offset,
         limit: 5
       });
