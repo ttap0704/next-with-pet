@@ -42,7 +42,7 @@ class EntireMenu {
 
       const count = await Model.EntireMenu.count({
         where: {
-          restraurant_id: {
+          restaurant_id: {
             [Model.Sequelize.Op.in]: Model.sequelize.literal(`(${tempSQL})`)
           }
         }
@@ -60,16 +60,16 @@ class EntireMenu {
 
       const list = await Model.EntireMenu.findAll({
         where: {
-          restraurant_id: {
+          restaurant_id: {
             [Model.Sequelize.Op.in]: Model.sequelize.literal(`(${tempSQL})`)
           }
         },
-        attributes: ['id', 'label', 'price', 'restaurnat_id', 'category_id',[
+        attributes: ['id', 'label', 'price', 'restaurant_id', 'category_id', [
           Model.sequelize.literal(`(
-            SELECT label
-            FROM category
+            SELECT category
+            FROM entire_menu_category
             WHERE
-            id = entire_menu.category_id
+            id = EntireMenu.category_id
           )`), 'category'
         ]],
         offset: offset,

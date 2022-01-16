@@ -47,7 +47,7 @@ class Restraunt {
         });
         res.json(list)
       } else {
-        const count = await Model.Accommodation.count({
+        const count = await Model.Restaurant.count({
           where: {
             manager: uid
           }

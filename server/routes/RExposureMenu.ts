@@ -42,7 +42,7 @@ class ExposureMenu {
 
       const count = await Model.ExposureMenu.count({
         where: {
-          restraurant_id: {
+          restaurant_id: {
             [Model.Sequelize.Op.in]: Model.sequelize.literal(`(${tempSQL})`)
           }
         }
@@ -60,7 +60,7 @@ class ExposureMenu {
 
       const list = await Model.ExposureMenu.findAll({
         where: {
-          restraurant_id: {
+          restaurant_id: {
             [Model.Sequelize.Op.in]: Model.sequelize.literal(`(${tempSQL})`)
           }
         },
