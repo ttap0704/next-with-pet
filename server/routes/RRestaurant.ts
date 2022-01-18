@@ -132,9 +132,31 @@ class Restraunt {
         ],
         where: {id: id}
       })
-
       
       res.json(restaurant)
+    })
+
+    this.express.get("/:id/category", async (req: express.Request, res: express.Response, next) => {
+      const id = req.params.id;
+
+      const tempSQL = Model.sequelize.dialect.queryGenerator.selectQuery('entire_menu', {
+        attributes: ['category_id'],
+        where: {
+          restaurant_id: id,
+        }
+      })
+        .slice(0, -1);
+
+      const category = await Model.EntireMenuCategory.findAll({
+        where: {
+          id: {
+            [Model.Sequelize.Op.in]: Model.sequelize.literal(`(${tempSQL})`)
+          }
+        },
+        group: ['id']
+      })
+      
+      res.status(200).json(category)
     })
 
     this.express.post("/add", async (req: any, res: any, next) => {
@@ -215,11 +237,22 @@ class Restraunt {
       res.json(menus);
     });
 
-    // this.express.delete("/:id", async (req: express.Request, res: express.Response, next) => {
-    //   const id = req.params.id;
+    this.express.patch("/:id", async (req: express.Request, res: express.Response, next) => {
+      const id = req.params.id;
+      const target = req.body.target;
+      const value = req.body.value;
 
-    //   res.status(200).send('Good Connection')
-    // })
+      const code = await Model.Restaurant.update({[target]: value},{
+        where: {
+          id: id
+        }
+      })
+      if (code >= 0) {
+        res.status(200).send()
+      } else {
+        res.status(500).send()
+      }
+    })
   }
 }
 

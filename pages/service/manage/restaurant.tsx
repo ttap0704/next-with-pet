@@ -21,6 +21,7 @@ import CustomInput from "../../../src/components/CustomInput";
 import ImageSlider from "../../../src/components/ImageSlider";
 import UploadButton from "../../../src/components/UploadButton";
 import InfoModal from "../../../src/components/InfoModal";
+import RadioModal from "../../../src/components/RadioModal";
 
 import {actions} from "../../../reducers/common/upload";
 import {toggleButton, readFile, setSlideNumber} from "../../../src/tools/common";
@@ -43,6 +44,12 @@ const ManageRestraunt = () => {
     read_only: false,
     target: "",
     edit_target: "",
+  });
+  const [radioModalVisible, setRadioModalVisible] = useState(true);
+  const [radioModalContents, setRadioModalContents] = useState({
+    visible: false,
+    title: "",
+    contents: []
   });
   const [postCodeVisible, setPostCodeVisible] = useState(false);
   const [roomModalVisible, setRoomModalVisible] = useState(false);
@@ -98,7 +105,15 @@ const ManageRestraunt = () => {
         },
       ],
       table_items: [],
-      edit_items: ["객실 추가", "업소명 수정", "주소 수정", "소개 수정", "대표이미지 수정", "업소 삭제"],
+      edit_items: [
+        "대표메뉴 추가",
+        "전체메뉴 추가",
+        "업소명 수정",
+        "주소 수정",
+        "소개 수정",
+        "대표이미지 수정",
+        "음식점 삭제",
+      ],
       type: "restaurant",
       count: 0,
       title: "음식점 관리",
@@ -129,7 +144,7 @@ const ManageRestraunt = () => {
         },
       ],
       table_items: [],
-      edit_items: ["객실명 수정", "추가 정보 수정", "기준 인원 수정", "최대 인원 수정", "대표이미지 수정", "객실 삭제"],
+      edit_items: ["메뉴명 수정", "가격 수정", "대표이미지 수정", "설명 수정", "메뉴 삭제"],
       type: "exposure_menu",
       count: 0,
       title: "대표메뉴 관리",
@@ -160,10 +175,10 @@ const ManageRestraunt = () => {
         },
       ],
       table_items: [],
-      edit_items: ["객실명 수정", "추가 정보 수정", "기준 인원 수정", "최대 인원 수정", "대표이미지 수정", "객실 삭제"],
+      edit_items: ["메뉴명 수정", "가격 수정", "카테고리 수정", "메뉴 삭제"],
       type: "entire_menu",
       count: 0,
-      title: "대표메뉴 관리",
+      title: "전체메뉴 관리",
       button_disabled: true,
       page: 1,
     },
@@ -252,6 +267,8 @@ const ManageRestraunt = () => {
             id: x.id,
             label: x.label,
             restaurant_label: x.restaurant_label,
+            restaurant_id: x.restaurant_id,
+            comment: x.comment,
             price: x.price,
             images: x.exposure_menu_image,
             checked: false,
@@ -263,6 +280,7 @@ const ManageRestraunt = () => {
             id: x.id,
             label: x.label,
             restaurant_label: x.restaurant_label,
+            restaurant_id: x.restaurant_id,
             category: x.category,
             price: x.price,
             checked: false,
@@ -276,6 +294,7 @@ const ManageRestraunt = () => {
             ...state[type],
             table_items: [...tmp_table_items],
             count: count,
+            button_disabled: true,
           },
         };
       });
@@ -349,7 +368,23 @@ const ManageRestraunt = () => {
           tag = Number(contents.exposure_menu.table_items[idx].price).toLocaleString() + " 원";
           break;
         case "한 줄 설명":
-          tag = <Button>확인</Button>;
+          tag = (
+            <Button
+              onClick={() => {
+                setEditModal({
+                  title: "설명 확인",
+                  visible: true,
+                  value: contents.exposure_menu.table_items[idx].comment,
+                  type: "input",
+                  read_only: true,
+                  target: "exposure_menu",
+                  edit_target: "comment",
+                });
+              }}
+            >
+              확인
+            </Button>
+          );
           break;
       }
     } else if (type == "entire_menu") {
@@ -385,7 +420,7 @@ const ManageRestraunt = () => {
       return data.checked == true;
     });
 
-    if (type == "accommodation") {
+    if (type == "restaurant") {
       switch (idx) {
         case 0:
           setRoomModalVisible(true);
@@ -402,24 +437,35 @@ const ManageRestraunt = () => {
           });
           break;
         case 2:
-          setPostCodeVisible(true);
+          setEditModal({
+            title: "업소명 수정",
+            visible: true,
+            value: target.label,
+            type: "input",
+            read_only: false,
+            target: "restaurant",
+            edit_target: "label",
+          });
           break;
         case 3:
+          setPostCodeVisible(true);
+          break;
+        case 4:
           setEditModal({
             title: "소개 수정",
             visible: true,
             value: target.introduction,
             type: "textarea",
             read_only: false,
-            target: "accommodation",
+            target: "restaurant",
             edit_target: "introduction",
           });
           break;
-        case 4:
+        case 5:
           imageToBlob(target, type);
           break;
-        case 5:
-          const ok = confirm(`${target.label} 업소를 삭제하시겠습니까?`);
+        case 6:
+          const ok = confirm(`${target.label} 음식점을 삭제하시겠습니까?`);
           if (ok) {
             deleteData("accommodation", target.id).then(() => {
               getTableItems("accommodation");
@@ -428,62 +474,96 @@ const ManageRestraunt = () => {
           }
           break;
       }
-    } else {
+    } else if (type == "exposure_menu") {
       switch (idx) {
         case 0:
           setEditModal({
-            title: "객실명 수정",
+            title: "메뉴명 수정",
             visible: true,
             value: target.label,
             type: "input",
             read_only: false,
-            target: "rooms",
+            target: "exposure_menu",
             edit_target: "label",
           });
           break;
         case 1:
-          const data = {
-            amenities: target.amenities,
-            additional_info: target.additional_info,
-          };
-          break;
-        case 2:
           setEditModal({
-            title: "기준 인원 수정",
+            title: "가격 수정",
             visible: true,
-            value: target.standard_num,
+            value: target.price,
             type: "input",
             read_only: false,
-            target: "rooms",
-            edit_target: "standard_num",
+            target: "exposure_menu",
+            edit_target: "price",
           });
+          break;
+        case 2:
+          // 대표이미지 수정
           break;
         case 3:
           setEditModal({
-            title: "최대 인원 수정",
+            title: "설명 수정",
             visible: true,
-            value: target.maximum_num,
+            value: target.comment,
             type: "input",
             read_only: false,
-            target: "rooms",
-            edit_target: "maximum_num",
+            target: "exposure_menu",
+            edit_target: "comment",
           });
           break;
         case 4:
-          imageToBlob(target, type);
+          // 메뉴 삭제
           break;
-        case 5:
-          const ok = confirm(`${target.label} 객실을 삭제하시겠습니까?`);
-          if (ok) {
-            console.log(target);
-            deleteData("rooms", target.id).then(() => {
-              getTableItems("accommodation");
-              getTableItems("rooms");
-            });
-          }
+      }
+    } else if (type == "entire_menu") {
+      switch (idx) {
+        case 0:
+          setEditModal({
+            title: "메뉴명 수정",
+            visible: true,
+            value: target.label,
+            type: "input",
+            read_only: false,
+            target: "entire_menu",
+            edit_target: "label",
+          });
+          break;
+        case 1:
+          setEditModal({
+            title: "가격 수정",
+            visible: true,
+            value: target.price,
+            type: "input",
+            read_only: false,
+            target: "entire_menu",
+            edit_target: "price",
+          });
+          break;
+        case 2:
+          setRadioModal(target);
+          // 카테고리 수정
+          break;
+        case 3:
+          // 메뉴 삭제
           break;
       }
     }
+  }
+
+  async function setRadioModal(target) {
+    const category = await fetchGetApi(`/restaurant/${target.restaurant_id}/category`);
+
+    let data = [];
+    for (let x of category) {
+      data.push({id: x.id, value: x.category})
+    }
+
+    setRadioModalContents({
+      visible: true,
+      title: '카테고리 수정',
+      contents: [...data]
+    });
   }
 
   function imageToBlob(target, type: string) {
@@ -547,8 +627,32 @@ const ManageRestraunt = () => {
         alert("수정이 실패되었습니다.");
       }
       setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""});
-      getTableItems("accommodation");
-      getTableItems("rooms");
+      getTableItems("restaurant");
+      getTableItems("exposure_menu");
+      getTableItems("entire_menu");
+    });
+  }
+
+  function handleRadioModal (val) {
+    const item = contents.entire_menu.table_items.find(data => {
+      return data.checked == true;
+    })
+    const target = "category_id";
+    const value = val;
+    fetchPatchApi(`/entire_menu/${item.id}`, {target, value}).then((status) => {
+      if (status == 200) {
+        alert("수정이 완료되었습니다.");
+      } else {
+        alert("수정이 실패되었습니다.");
+      }
+      getTableItems("restaurant");
+      getTableItems("exposure_menu");
+      getTableItems("entire_menu");
+      setRadioModalContents({
+        visible: false,
+        title: "",
+        contents: []
+      })
     });
   }
 
@@ -597,11 +701,11 @@ const ManageRestraunt = () => {
           </div>
         );
       })}
-      {/* <PostCode
+      <PostCode
         hideModal={() => setPostCodeVisible(false)}
         visible={postCodeVisible}
         complete={(data) => updateAddress(data)}
-      /> */}
+      />
       <EditModal
         visible={editModal.visible}
         title={editModal.title}
@@ -614,6 +718,13 @@ const ManageRestraunt = () => {
         onSubmit={(value) => updateValues(value)}
       />
       {/* <UploadModal onChange={(files, target) => updateImages(files, target)} /> */}
+      <RadioModal
+        visible={radioModalContents.visible}
+        contents={radioModalContents.contents}
+        title={radioModalContents.title}
+        hideModal={() => setRadioModalContents({visible: false, title: "", contents: []})}
+        onChange={(val) => handleRadioModal(val)}
+      />
     </div>
   );
 };

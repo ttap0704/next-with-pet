@@ -412,3 +412,41 @@
   }
 }
 
+
+.radio_modal {
+  width: 20rem;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: auto;
+  border: 1px solid #e3e3e3;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  z-index: 1;
+  background-color: #fff;
+
+  & > .radio_modal_contents {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: center;
+    width: 100%;
+    padding: 2rem;
+    gap: 2rem;
+    & > div {
+      width: 100%;
+      max-height: 210px;
+      overflow-y: auto;
+      & > label {
+        width: 100%;
+        flex-direction: row-reverse;
+        justify-content: space-between;
+        margin: 0 auto;
+      }
+    }
+  }
+}

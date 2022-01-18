@@ -140,22 +140,22 @@ class EntireMenu {
     //   }
     // })
 
-    // this.express.patch("/:id", async (req: express.Request, res: express.Response, next) => {
-    //   const id = req.params.id;
-    //   const target = req.body.target;
-    //   const value = req.body.value;
+    this.express.patch("/:id", async (req: express.Request, res: express.Response, next) => {
+      const id = req.params.id;
+      const target = req.body.target;
+      const value = req.body.value;
 
-    //   const code = await Model.Accommodation.update({[target]: value},{
-    //     where: {
-    //       id: id
-    //     }
-    //   })
-    //   if (code >= 0) {
-    //     res.status(200).send()
-    //   } else {
-    //     res.status(500).send()
-    //   }
-    // })
+      const code = await Model.EntireMenu.update({[target]: value},{
+        where: {
+          id: id
+        }
+      })
+      if (code >= 0) {
+        res.status(200).send()
+      } else {
+        res.status(500).send()
+      }
+    })
   }
 }
 
