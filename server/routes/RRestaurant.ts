@@ -26,8 +26,13 @@ class Restraunt {
   }
 
   private routes(): void {
-    this.express.get("", async (req: any, res: any, next) => {
+    this.express.get("", getRestaurant);
+    this.express.get("/:id", getAdminRestaurant)
+    this.express.get("/:id/category", getAdminRestaurantCategory)
+    this.express.post("/add", createRestaurant)
+    this.express.patch("/:id", patchRestaurant);
 
+    async function getRestaurant(req: any, res: any, next: any) {
       let uid = undefined
       if (Number(req.query.uid) > 0) {
         uid = req.query.uid;
@@ -81,21 +86,21 @@ class Restraunt {
             {
               model: Model.Images,
               as: 'restaurant_images',
-              require: true,
-              order: ['seq', 'ASC']
+              attributes: ['seq', 'id', 'file_name', 'category', 'restaurant_id'],
+              separate: true,
             }
           ],
           offset: offset,
-          limit: 5
+          limit: 5,
         });
         res.json({ count: count, rows: list })
       }
-    });
+    }
 
-    this.express.get("/:id", async (req: express.Request, res: express.Response, next) => {
+    async function getAdminRestaurant(req: express.Request, res: express.Response, next: express.NextFunction) {
       const id = req.params.id;
 
-      const restaurant = await Model.Restaurant.findOne({
+      const restaurant = await Model.Restaurant.findAll({
         include: [
           {
             model: Model.ExposureMenu,
@@ -106,9 +111,9 @@ class Restraunt {
                 model: Model.Images,
                 as: 'exposure_menu_image',
                 require: true,
-                order: ['seq', 'ASC']
               }
-            ]
+            ],
+            order: [[Model.Images, 'seq', 'ASC']]
           },
           {
             model: Model.EntireMenu,
@@ -126,17 +131,16 @@ class Restraunt {
           {
             model: Model.Images,
             as: 'restaurant_images',
-            require: true,
-            order: ['seq', 'ASC']
+            require: true
           }
         ],
-        where: {id: id}
+        where: { id: id },
       })
-      
-      res.json(restaurant)
-    })
 
-    this.express.get("/:id/category", async (req: express.Request, res: express.Response, next) => {
+      res.json(restaurant)
+    }
+
+    async function getAdminRestaurantCategory (req: express.Request, res: express.Response, next:express.NextFunction) {
       const id = req.params.id;
 
       const tempSQL = Model.sequelize.dialect.queryGenerator.selectQuery('entire_menu', {
@@ -155,11 +159,11 @@ class Restraunt {
         },
         group: ['id']
       })
-      
-      res.status(200).json(category)
-    })
 
-    this.express.post("/add", async (req: any, res: any, next) => {
+      res.status(200).json(category)
+    }
+
+    async function createRestaurant (req: any, res:any, next:any) {
       this.logger.info("url:::::::" + req.url);
       const data = req.body;
       const manager = req.session.uid;
@@ -235,14 +239,14 @@ class Restraunt {
       }
 
       res.json(menus);
-    });
+    }
 
-    this.express.patch("/:id", async (req: express.Request, res: express.Response, next) => {
+    async function patchRestaurant(req: express.Request, res: express.Response, next: express.NextFunction) {
       const id = req.params.id;
       const target = req.body.target;
       const value = req.body.value;
 
-      const code = await Model.Restaurant.update({[target]: value},{
+      const code = await Model.Restaurant.update({ [target]: value }, {
         where: {
           id: id
         }
@@ -252,6 +256,10 @@ class Restraunt {
       } else {
         res.status(500).send()
       }
+    }
+
+    this.express.patch("/:id", async (req: express.Request, res: express.Response, next) => {
+      
     })
   }
 }

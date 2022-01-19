@@ -1,9 +1,9 @@
 import styles from "../../../styles/pages/service.module.scss";
-import accom_style from "../../../styles/pages/accommodation.module.scss";
+import res_style from "../../../styles/pages/restaurant.module.scss";
 import {RootState} from "../../../reducers";
 import {useSelector, useDispatch} from "react-redux";
 import {useRouter} from "next/router";
-import {ReactElement, useEffect, useState} from "react";
+import React, {ReactElement, useEffect, useState} from "react";
 import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi} from "../../../src/tools/api";
 import {Checkbox, Modal, TableCell, TableRow} from "@mui/material";
 import {getDate} from "../../../src/tools/common";
@@ -45,31 +45,28 @@ const ManageRestraunt = () => {
     target: "",
     edit_target: "",
   });
+  const [exposureMenuContents, setExposureMenuContents] = useState({
+    modal_visible: false,
+    label: "",
+    price: "",
+    comment: "",
+    image: {
+      file: null,
+      imageUrl: "",
+    },
+  });
   const [radioModalVisible, setRadioModalVisible] = useState(true);
   const [radioModalContents, setRadioModalContents] = useState({
     visible: false,
     title: "",
-    contents: []
+    contents: [],
   });
   const [postCodeVisible, setPostCodeVisible] = useState(false);
-  const [roomModalVisible, setRoomModalVisible] = useState(false);
   const [infoModalVisible, setInfoModalVisible] = useState(false);
   const [infoModalType, setInfoModalType] = useState("");
   const [infoModalData, setInfoModalData] = useState({
     amenities: "",
     additional_info: "",
-  });
-  const [addRoomContents, setAddRoomContents] = useState({
-    files: [],
-    info: {
-      label: "",
-      standard_num: "",
-      maximum_num: "",
-      price: "",
-      amenities: "",
-      additional_info: "",
-    },
-    cur_num: 0,
   });
 
   const [contents, setContents] = useState({
@@ -107,6 +104,7 @@ const ManageRestraunt = () => {
       table_items: [],
       edit_items: [
         "대표메뉴 추가",
+        "카테고리 추가",
         "전체메뉴 추가",
         "업소명 수정",
         "주소 수정",
@@ -257,7 +255,7 @@ const ManageRestraunt = () => {
             created_at: x.createdAt,
             exposure_menu_num: x.exposure_menu.length,
             entire_menu_num: x.entire_menu.length,
-            images: x.accommodation_images,
+            images: x.restaurant_images,
             checked: false,
           });
         }
@@ -423,7 +421,7 @@ const ManageRestraunt = () => {
     if (type == "restaurant") {
       switch (idx) {
         case 0:
-          setRoomModalVisible(true);
+          setExposureMenuContents({...exposureMenuContents, modal_visible: true});
           break;
         case 1:
           setEditModal({
@@ -437,6 +435,17 @@ const ManageRestraunt = () => {
           });
           break;
         case 2:
+          setEditModal({
+            title: "업소명 수정",
+            visible: true,
+            value: target.label,
+            type: "input",
+            read_only: false,
+            target: "accommodation",
+            edit_target: "label",
+          });
+          break;
+        case 3:
           setEditModal({
             title: "업소명 수정",
             visible: true,
@@ -556,13 +565,13 @@ const ManageRestraunt = () => {
 
     let data = [];
     for (let x of category) {
-      data.push({id: x.id, value: x.category})
+      data.push({id: x.id, value: x.category});
     }
 
     setRadioModalContents({
       visible: true,
-      title: '카테고리 수정',
-      contents: [...data]
+      title: "카테고리 수정",
+      contents: [...data],
     });
   }
 
@@ -602,6 +611,44 @@ const ManageRestraunt = () => {
     }
   }
 
+  function updateImages(files: File[], target: string) {
+    const item = contents[target].table_items.find((data) => {
+      return data.checked == true;
+    });
+    const target_id = item.id;
+
+    let upload_images = new FormData();
+    for (let i = 0, leng = files.length; i < leng; i++) {
+      const file_name_arr = files[i].name.split(".");
+      const file_extention = file_name_arr[file_name_arr.length - 1];
+      let file_name = "";
+      if (target == "restaurant") {
+        file_name = `${target_id}_${i}.${file_extention}`;
+      } else if (target == "exposure_menu") {
+        file_name = `${item.restaurant_id}_${target_id}_${i}.${file_extention}`;
+      }
+
+      const new_file = new File([files[i]], file_name, {
+        type: "image/jpeg",
+      });
+
+      upload_images.append(`files_${i}`, new_file);
+    }
+    let category = "";
+    if (target == "restaurant") {
+      category = "1";
+    }
+    upload_images.append("length", files.length.toString());
+    upload_images.append("category", category);
+
+    fetchDeleteApi(`/image/${target}/${target_id}`);
+    fetchFileApi("/upload/image/multi", upload_images)
+      .then((res) => console.log(res, "1"))
+      .then(() => {
+        getTableItems("restaurant");
+      });
+  }
+
   async function deleteData(type: string, id: number) {
     const status = await fetchDeleteApi(`/${type}/${id}`);
 
@@ -610,6 +657,10 @@ const ManageRestraunt = () => {
 
   function updateAddress(data) {
     console.log(data);
+  }
+
+  function test(files: File[], target: string) {
+    console.log(files, target);
   }
 
   function updateValues(val: string) {
@@ -633,10 +684,10 @@ const ManageRestraunt = () => {
     });
   }
 
-  function handleRadioModal (val) {
-    const item = contents.entire_menu.table_items.find(data => {
+  function handleRadioModal(val) {
+    const item = contents.entire_menu.table_items.find((data) => {
       return data.checked == true;
-    })
+    });
     const target = "category_id";
     const value = val;
     fetchPatchApi(`/entire_menu/${item.id}`, {target, value}).then((status) => {
@@ -651,9 +702,31 @@ const ManageRestraunt = () => {
       setRadioModalContents({
         visible: false,
         title: "",
-        contents: []
-      })
+        contents: [],
+      });
     });
+  }
+
+  function clearExposureMenuContents() {
+    setExposureMenuContents({
+      modal_visible: false,
+      label: "",
+      price: "",
+      comment: "",
+      image: {
+        file: null,
+        imageUrl: "",
+      },
+    });
+  }
+
+  function handleExposureMenuContents(e: React.ChangeEvent<HTMLInputElement>, target) {
+    setExposureMenuContents({
+      ...exposureMenuContents,
+      [target]: e.target.value,
+    });
+
+    console.log(exposureMenuContents[target]);
   }
 
   return (
@@ -717,7 +790,7 @@ const ManageRestraunt = () => {
         }
         onSubmit={(value) => updateValues(value)}
       />
-      {/* <UploadModal onChange={(files, target) => updateImages(files, target)} /> */}
+      <UploadModal onChange={(files, target) => updateImages(files, target)} />
       <RadioModal
         visible={radioModalContents.visible}
         contents={radioModalContents.contents}
@@ -725,6 +798,70 @@ const ManageRestraunt = () => {
         hideModal={() => setRadioModalContents({visible: false, title: "", contents: []})}
         onChange={(val) => handleRadioModal(val)}
       />
+      <ModalContainer backClicked={() => clearExposureMenuContents()} visible={exposureMenuContents.modal_visible}>
+        <div
+          style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "60rem",
+            backgroundColor: "#fff",
+            height: "auto",
+          }}
+        >
+          <h2 className={styles.modal_title} style={{marginBottom: "1rem"}}>
+            대표메뉴 추가
+            <HiX onClick={() => clearExposureMenuContents()} />
+          </h2>
+          <div className={res_style.rest_exposure_menu}>
+            <div className={res_style.rest_menu_circle}></div>
+            <div className={res_style.rest_exposure_menu_imgbox}>
+              <label htmlFor={`exposure_menu_img`}>
+                {/* {data.file.file == null ? (
+                <span>이미지</span>
+              ) : (
+                <div className={res_style.rest_exposure_menu_img_wrap}>
+                  <img src={data.file.imageUrl} alt="exposure_menu_image" />
+                </div>
+              )} */}
+              </label>
+              <input
+                type="file"
+                // onChange={(e) => uploadImage(e.currentTarget.files, "exposure_menu", index)}
+                id={`exposure_menu_img`}
+              />
+            </div>
+            <div className={res_style.rest_exposure_menu_textbox}>
+              <input
+                type="text"
+                placeholder="메뉴 이름을 입력해주세요."
+                onChange={(e) => handleExposureMenuContents(e, "label")}
+                value={exposureMenuContents.label}
+              />
+
+              <div style={exposureMenuContents.price.length > 0 ? {paddingRight: "8px"} : null}>
+                <input
+                  type="text"
+                  placeholder="메뉴 가격을 입력해주세요."
+                  onChange={(e) => handleExposureMenuContents(e, "price")}
+                  value={exposureMenuContents.price}
+                />
+                {exposureMenuContents.price.length > 0 ? "원" : null}
+              </div>
+              <input
+                type="text"
+                placeholder="한 줄 설명을 입력해주세요."
+                onChange={(e) => handleExposureMenuContents(e, "comment")}
+                value={exposureMenuContents.comment}
+              />
+            </div>
+          </div>
+          <div className={styles.util_box}>
+            <button>gig</button>
+          </div>
+        </div>
+      </ModalContainer>
     </div>
   );
 };
