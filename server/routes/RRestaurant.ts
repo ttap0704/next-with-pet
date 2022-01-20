@@ -29,6 +29,7 @@ class Restraunt {
     this.express.get("", getRestaurant);
     this.express.get("/:id", getAdminRestaurant)
     this.express.get("/:id/category", getAdminRestaurantCategory)
+    this.express.post("/:id/:menu", addMenu)
     this.express.post("/add", createRestaurant)
     this.express.patch("/:id", patchRestaurant);
 
@@ -100,7 +101,7 @@ class Restraunt {
     async function getAdminRestaurant(req: express.Request, res: express.Response, next: express.NextFunction) {
       const id = req.params.id;
 
-      const restaurant = await Model.Restaurant.findAll({
+      const restaurant = await Model.Restaurant.findOne({
         include: [
           {
             model: Model.ExposureMenu,
@@ -140,7 +141,7 @@ class Restraunt {
       res.json(restaurant)
     }
 
-    async function getAdminRestaurantCategory (req: express.Request, res: express.Response, next:express.NextFunction) {
+    async function getAdminRestaurantCategory(req: express.Request, res: express.Response, next: express.NextFunction) {
       const id = req.params.id;
 
       const tempSQL = Model.sequelize.dialect.queryGenerator.selectQuery('entire_menu', {
@@ -163,8 +164,29 @@ class Restraunt {
       res.status(200).json(category)
     }
 
-    async function createRestaurant (req: any, res:any, next:any) {
-      this.logger.info("url:::::::" + req.url);
+    async function addMenu(req: express.Request, res: express.Response, next: express.NextFunction) {
+      const id = req.params.id;
+      const menu = req.params.menu;
+
+      if (menu == 'exposure_menu') {
+        const data = {
+          label: req.body.label,
+          price: req.body.price,
+          comment: req.body.comment,
+          restaurant_id: id.toString()
+        }
+
+        console.log(data, 'data')
+
+        const menu = await Model.ExposureMenu.create(data, { fields: ['label', 'price', 'comment', 'restaurant_id', 'id'] });
+
+        res.status(200).send(menu);
+      }
+
+    }
+
+    async function createRestaurant(req: any, res: any, next: any) {
+      // this.logger.info("url:::::::" + req.url);
       const data = req.body;
       const manager = req.session.uid;
       const restaurant = await Model.Restaurant.create({
@@ -259,7 +281,7 @@ class Restraunt {
     }
 
     this.express.patch("/:id", async (req: express.Request, res: express.Response, next) => {
-      
+
     })
   }
 }

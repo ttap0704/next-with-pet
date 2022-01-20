@@ -285,7 +285,7 @@ const Service = () => {
       for (let i = 0, leng = exposureImages.length; i < leng; i++) {
         const file_name_arr = exposureImages[i].file.name.split(".");
         const file_extention = file_name_arr[file_name_arr.length - 1];
-        const new_file = new File([exposureImages[i].file], `${res_restaraunt_id}_${i}.${file_extention}`, {
+        const new_file = new File([exposureImages[i].file], `${res_restaraunt_id}_${i}_${new Date().getTime()}.${file_extention}`, {
           type: "image/jpeg",
         });
         exposure_images.append(`files_${i}`, new_file);
@@ -300,7 +300,7 @@ const Service = () => {
 
         const new_file = new File(
           [exposureMenu[menu_idx].file.file],
-          `${res_restaraunt_id}_${res_exposure_menu[i].id}.${file_extention}`,
+          `${res_restaraunt_id}_${res_exposure_menu[i].id}_0_${new Date().getTime()}.${file_extention}`,
           { type: "image/jpeg" }
         );
         exposure_menu_images.append(`files_${i}`, new_file);

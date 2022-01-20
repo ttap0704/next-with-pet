@@ -524,9 +524,9 @@ const ManageAccommodation = () => {
         const file_extention = file_name_arr[file_name_arr.length - 1];
         let file_name = "";
         if (target == "accommodation") {
-          file_name = `${target_id}_${i}.${file_extention}`;
+          file_name = `${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
         } else if (target == "rooms") {
-          file_name = `${item.accommodation_id}_${target_id}_${i}.${file_extention}`;
+          file_name = `${item.accommodation_id}_${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
         }
 
         const new_file = new File([files[i]], file_name, {
@@ -665,7 +665,7 @@ const ManageAccommodation = () => {
         for (let i = 0, leng = files.length; i < leng; i++) {
           const file_name_arr = files[i].file.name.split(".");
           const file_extention = file_name_arr[file_name_arr.length - 1];
-          const file_name = `${accommodation_id}_${room_id}_${i}.${file_extention}`;
+          const file_name = `${accommodation_id}_${room_id}_${i}_${new Date().getTime()}.${file_extention}`;
 
           const new_file = new File([files[i].file], file_name, {
             type: "image/jpeg",

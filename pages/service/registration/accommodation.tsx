@@ -114,7 +114,7 @@ const Service = () => {
       for (let i = 0, leng = previewFile.length; i < leng; i++) {
         const file_name_arr = previewFile[i].file.name.split(".");
         const file_extention = file_name_arr[file_name_arr.length - 1];
-        const new_file = new File([previewFile[i].file], `${res_accommodation_id}_${i}.${file_extention}`, {
+        const new_file = new File([previewFile[i].file], `${res_accommodation_id}_${i}_${new Date().getTime()}.${file_extention}`, {
           type: "image/jpeg",
         });
         accommodation_images.append(`files_${i}`, new_file);
@@ -130,7 +130,7 @@ const Service = () => {
           const file_extention = file_name_arr[file_name_arr.length - 1];
           const new_file = new File(
             [roomDetail[i].files[y].file],
-            `${res_accommodation_id}_${room_id}_${y}.${file_extention}`,
+            `${res_accommodation_id}_${room_id}_${y}_${new Date().getTime()}.${file_extention}`,
             { type: "image/jpeg" }
           );
           rooms_images.append(`files_${rooms_images_cnt}`, new_file);

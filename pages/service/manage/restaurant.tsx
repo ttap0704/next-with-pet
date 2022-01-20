@@ -623,9 +623,9 @@ const ManageRestraunt = () => {
       const file_extention = file_name_arr[file_name_arr.length - 1];
       let file_name = "";
       if (target == "restaurant") {
-        file_name = `${target_id}_${i}.${file_extention}`;
+        file_name = `${target_id}_${i}_${new Date().getTime()}.${file_extention}`;
       } else if (target == "exposure_menu") {
-        file_name = `${item.restaurant_id}_${target_id}_${i}.${file_extention}`;
+        file_name = `${item.restaurant_id}_${target_id}_0_${new Date().getTime()}.${file_extention}`;
       }
 
       const new_file = new File([files[i]], file_name, {
@@ -721,12 +721,63 @@ const ManageRestraunt = () => {
   }
 
   function handleExposureMenuContents(e: React.ChangeEvent<HTMLInputElement>, target) {
+    let value = e.target.value;
+    if (target == 'price') {
+      value = value.toLocaleString()
+    }
     setExposureMenuContents({
       ...exposureMenuContents,
-      [target]: e.target.value,
+      [target]: value,
     });
+  }
 
-    console.log(exposureMenuContents[target]);
+  async function setExposureMenuContentsImage (e: React.ChangeEvent<HTMLInputElement>) {
+    const files = e.currentTarget.files;
+    if (files.length == 0) return;
+    const new_file_name = await readFile(files[0]);
+    setExposureMenuContents({
+      ...exposureMenuContents,
+      image: {
+        file: files[0],
+        imageUrl: new_file_name
+      }
+    })
+  }
+
+  async function addExposureMenu () {
+    const ok = confirm('대표메뉴를 등록하시겠습니까?')
+    if (ok) {
+      const target = contents.restaurant.table_items.find(data => {
+        return data.checked == true
+      })
+  
+      const param = {
+        label: exposureMenuContents.label,
+        price: exposureMenuContents.price,
+        comment: exposureMenuContents.comment,
+        restaurant_id: target.id
+      }
+  
+      const menu = await fetchPostApi(`/restaurant/${target.id}/exposure_menu`, param)
+      
+      let upload_image = new FormData();
+      const file_name_arr = exposureMenuContents.image.file.name.split(".");
+      const file_extention = file_name_arr[file_name_arr.length - 1];
+      const new_file = new File([exposureMenuContents.image.file], `${target.id}_${menu.id}_0_${new Date().getTime()}.${file_extention}`, {
+        type: "image/jpeg",
+      });
+  
+      upload_image.append(`files_0`, new_file);
+      upload_image.append("length", '1');
+      upload_image.append("category", "11");
+  
+      fetchFileApi("/upload/image/multi", upload_image)
+        .then(() => {
+          clearExposureMenuContents()
+          getTableItems("restaurant");
+          getTableItems("exposure_menu");
+        })
+    }
   }
 
   return (
@@ -818,47 +869,50 @@ const ManageRestraunt = () => {
             <div className={res_style.rest_menu_circle}></div>
             <div className={res_style.rest_exposure_menu_imgbox}>
               <label htmlFor={`exposure_menu_img`}>
-                {/* {data.file.file == null ? (
-                <span>이미지</span>
+                {exposureMenuContents.image.file == null ? (
+                <span>업로드</span>
               ) : (
                 <div className={res_style.rest_exposure_menu_img_wrap}>
-                  <img src={data.file.imageUrl} alt="exposure_menu_image" />
+                  <img src={exposureMenuContents.image.imageUrl} alt="exposure_menu_image" />
                 </div>
-              )} */}
+              )}
               </label>
               <input
                 type="file"
-                // onChange={(e) => uploadImage(e.currentTarget.files, "exposure_menu", index)}
+                onChange={(e) => setExposureMenuContentsImage(e)}
                 id={`exposure_menu_img`}
               />
             </div>
             <div className={res_style.rest_exposure_menu_textbox}>
-              <input
+              <CustomInput
                 type="text"
                 placeholder="메뉴 이름을 입력해주세요."
                 onChange={(e) => handleExposureMenuContents(e, "label")}
                 value={exposureMenuContents.label}
+                align="right"
               />
 
               <div style={exposureMenuContents.price.length > 0 ? {paddingRight: "8px"} : null}>
-                <input
+                <CustomInput
                   type="text"
                   placeholder="메뉴 가격을 입력해주세요."
                   onChange={(e) => handleExposureMenuContents(e, "price")}
                   value={exposureMenuContents.price}
+                  align="right"
                 />
                 {exposureMenuContents.price.length > 0 ? "원" : null}
               </div>
-              <input
+              <CustomInput
                 type="text"
                 placeholder="한 줄 설명을 입력해주세요."
                 onChange={(e) => handleExposureMenuContents(e, "comment")}
                 value={exposureMenuContents.comment}
+                align="right"
               />
             </div>
           </div>
-          <div className={styles.util_box}>
-            <button>gig</button>
+          <div className={styles.util_box} style={{paddingRight: '48px'}}>
+            <button className={styles.regi_button} onClick={() => addExposureMenu()}>등록</button>
           </div>
         </div>
       </ModalContainer>

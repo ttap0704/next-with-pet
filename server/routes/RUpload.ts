@@ -48,7 +48,7 @@ class Upload {
         const file_name = file.name
         const target_text = IMAGES_ID_LIST[category]
         const file_name_split = file_name.split(".")
-        const seq = file_name_split[0].split("_")[file_name_split[0].split("_").length - 1];
+        const seq = file_name_split[0].split("_")[file_name_split[0].split("_").length - 2];
         let target_idx = undefined;
         if ([RESTAURANT, ACCOMMODATION].includes(category) == true) {
           target_idx = 0;
