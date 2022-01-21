@@ -18,6 +18,7 @@ db.sequelize.sync({ force: false })
     .catch((error: any) => {
         console.error(error);
     });
+
 server.listen(port);
 
 const logger = new Logger();
@@ -28,7 +29,7 @@ server.on("listening", function (): void {
     if (!fs.existsSync(dir)) fs.mkdirSync(dir);
     for (let x of contents_dir) {
         if (!fs.existsSync(`${dir}/${x}`)) fs.mkdirSync(`${dir}/${x}`);
-    }
+}
 
     const addr = server.address();
     const bind = (typeof addr === "string") ? `pipe ${addr}` : `port ${addr.port}`;

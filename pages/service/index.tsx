@@ -5,6 +5,7 @@ import styles from "../../styles/pages/service.module.scss";
 import { RootState } from "../../reducers";
 import { useSelector } from "react-redux";
 import { useRouter } from "next/router";
+import Link from "next/link";
 
 const Service = () => {
   const router = useRouter();
@@ -45,17 +46,6 @@ const Service = () => {
     },
   ];
 
-  const movePage = (data: { path: string; type: string }) => {
-    if (data.type == "modify") {
-      router.push({ pathname: "/service/info" });
-    } else {
-      router.push({
-        pathname: `/service/${data.path}/[type]`,
-        query: { type: data.type },
-      });
-    }
-  };
-
   return (
     <div className={styles.service_container}>
       <div
@@ -70,12 +60,17 @@ const Service = () => {
               <div
                 className={styles.service_btn}
                 key={`${data.path}_${data.type}`}
-                onClick={() => movePage(data)}
               >
-                <a>
-                  <span>{data.label}</span>
-                  <p>{data.icon_path}</p>
-                </a>
+                <Link
+                  href={`/service/${data.path}/${data.type}`}
+                  as={`/service/${data.path}/${data.type}`}
+                >
+                  <a>
+                    <span>{data.label}</span>
+                    <p>{data.icon_path}</p>
+                  </a>
+                </Link>
+
               </div>
             );
           })}

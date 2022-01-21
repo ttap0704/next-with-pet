@@ -102,10 +102,12 @@ const Service = () => {
     slider.style.transition = "500ms";
     slider.style.transform = `translate3d(${distance}, 0px, 0px)`;
   }
-  async function uploadImage(file: File[] | FileList, type: string, key?: number) {
-    if (file.length > 0) {
+  async function uploadImage(res_files: File[] | FileList, type: string, key?: number) {
+    if (res_files.length > 0) {
       if (type == "exposure") {
-        let files = Array.from(file);
+        setExposureImages([])
+        let files = Array.from(res_files);
+        console.log(files);
         files.forEach(async (file) => {
           const new_file_name = await readFile(file);
           setExposureImages((state) => [...state, { file: file, imageUrl: new_file_name }]);
@@ -114,8 +116,8 @@ const Service = () => {
         let items = [...exposureMenu];
         let item = items[key];
 
-        let files = Array.from(file);
-        const new_file_name = await readFile(file[0]);
+        let files = Array.from(res_files);
+        const new_file_name = await readFile(res_files[0]);
         item.file.file = files[0];
         item.file.imageUrl = new_file_name;
 
@@ -317,6 +319,29 @@ const Service = () => {
     console.log(data);
   }
 
+  function showUploadModal() {
+    let files = [];
+    if (exposureImages.length > 0) {
+      for (let x of exposureImages) {
+        files.push(x.file);
+      }
+    }
+    dispatch(
+      actions.pushFiles({
+        files: files,
+      })
+    );
+    dispatch(
+      actions.setUploadModalVisible({
+        visible: true,
+        title: exposureImages.length == 0 ? "대표이미지 업로드" : "대표이미지 수정",
+        target: 'exposure',
+        multiple: true,
+        image_type: "restaurant",
+      })
+    );
+  }
+
   return (
     <>
       <div className={styles.test}>
@@ -379,17 +404,7 @@ const Service = () => {
               <form className={styles.form_box} id="preview_images">
                 <UploadButton
                   title={exposureImages.length == 0 ? "대표이미지 업로드" : "대표이미지 수정"}
-                  onClick={() =>
-                    dispatch(
-                      actions.setUploadModalVisible({
-                        visible: true,
-                        title: exposureImages.length == 0 ? "대표이미지 업로드" : "대표이미지 수정",
-                        target: "exposure",
-                        multiple: true,
-                        image_type: "restaurant"
-                      })
-                    )
-                  }
+                  onClick={() => showUploadModal()}
                 />
                 <h3>식당 이름</h3>
                 <input

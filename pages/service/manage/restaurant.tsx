@@ -1,14 +1,14 @@
 import styles from "../../../styles/pages/service.module.scss";
 import res_style from "../../../styles/pages/restaurant.module.scss";
-import {RootState} from "../../../reducers";
-import {useSelector, useDispatch} from "react-redux";
-import {useRouter} from "next/router";
-import React, {ReactElement, useEffect, useState} from "react";
-import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi} from "../../../src/tools/api";
-import {Checkbox, Modal, TableCell, TableRow} from "@mui/material";
-import {getDate} from "../../../src/tools/common";
-import {Button} from "@mui/material";
-import {HiX} from "react-icons/hi";
+import { RootState } from "../../../reducers";
+import { useSelector, useDispatch } from "react-redux";
+import { useRouter } from "next/router";
+import React, { ReactElement, useEffect, useState } from "react";
+import { fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi } from "../../../src/tools/api";
+import { Checkbox, Modal, TableCell, TableRow } from "@mui/material";
+import { getDate } from "../../../src/tools/common";
+import { Button } from "@mui/material";
+import { HiX } from "react-icons/hi";
 
 import CustomDropdown from "../../../src/components/CustomDrodown";
 import CustomTable from "../../../src/components/CustomTable";
@@ -23,8 +23,8 @@ import UploadButton from "../../../src/components/UploadButton";
 import InfoModal from "../../../src/components/InfoModal";
 import RadioModal from "../../../src/components/RadioModal";
 
-import {actions} from "../../../reducers/common/upload";
-import {toggleButton, readFile, setSlideNumber} from "../../../src/tools/common";
+import { actions } from "../../../reducers/common/upload";
+import { toggleButton, readFile, setSlideNumber } from "../../../src/tools/common";
 
 const ManageRestraunt = () => {
   const dispatch = useDispatch();
@@ -35,7 +35,7 @@ const ManageRestraunt = () => {
   }, []);
 
   const router = useRouter();
-  const {uid} = useSelector((state: RootState) => state.userReducer);
+  const { uid } = useSelector((state: RootState) => state.userReducer);
   const [editModal, setEditModal] = useState({
     title: "",
     visible: false,
@@ -421,7 +421,7 @@ const ManageRestraunt = () => {
     if (type == "restaurant") {
       switch (idx) {
         case 0:
-          setExposureMenuContents({...exposureMenuContents, modal_visible: true});
+          setExposureMenuContents({ ...exposureMenuContents, modal_visible: true });
           break;
         case 1:
           setEditModal({
@@ -456,10 +456,10 @@ const ManageRestraunt = () => {
             edit_target: "label",
           });
           break;
-        case 3:
+        case 4:
           setPostCodeVisible(true);
           break;
-        case 4:
+        case 5:
           setEditModal({
             title: "소개 수정",
             visible: true,
@@ -470,15 +470,16 @@ const ManageRestraunt = () => {
             edit_target: "introduction",
           });
           break;
-        case 5:
+        case 6:
           imageToBlob(target, type);
           break;
-        case 6:
+        case 7:
           const ok = confirm(`${target.label} 음식점을 삭제하시겠습니까?`);
           if (ok) {
-            deleteData("accommodation", target.id).then(() => {
-              getTableItems("accommodation");
-              getTableItems("rooms");
+            deleteData("restaurant", target.id).then(() => {
+              getTableItems("restaurant");
+              getTableItems("exposure_menu");
+              getTableItems("entire_menu");
             });
           }
           break;
@@ -522,7 +523,15 @@ const ManageRestraunt = () => {
           });
           break;
         case 4:
-          // 메뉴 삭제
+          const ok = confirm(`${target.label} 메뉴를 삭제하시겠습니까?`);
+          if (ok) {
+            fetchDeleteApi(`/image/exposure_menu/${target.id}`).then(() => {
+              deleteData("exposure_menu", target.id).then(() => {
+                getTableItems("restaurant");
+                getTableItems("exposure_menu");
+              });
+            });
+          }
           break;
       }
     } else if (type == "entire_menu") {
@@ -554,7 +563,13 @@ const ManageRestraunt = () => {
           // 카테고리 수정
           break;
         case 3:
-          // 메뉴 삭제
+          const ok = confirm(`${target.label} 메뉴를 삭제하시겠습니까?`);
+          if (ok) {
+            deleteData("entire_menu", target.id).then(() => {
+              getTableItems("restaurant");
+              getTableItems("entire_menu");
+            });
+          }
           break;
       }
     }
@@ -565,7 +580,7 @@ const ManageRestraunt = () => {
 
     let data = [];
     for (let x of category) {
-      data.push({id: x.id, value: x.category});
+      data.push({ id: x.id, value: x.category });
     }
 
     setRadioModalContents({
@@ -652,7 +667,7 @@ const ManageRestraunt = () => {
   async function deleteData(type: string, id: number) {
     const status = await fetchDeleteApi(`/${type}/${id}`);
 
-    console.log(status);
+    return status;
   }
 
   function updateAddress(data) {
@@ -671,13 +686,13 @@ const ManageRestraunt = () => {
       return data.checked == true;
     });
 
-    fetchPatchApi(`/${path}/${item.id}`, {target, value}).then((status) => {
+    fetchPatchApi(`/${path}/${item.id}`, { target, value }).then((status) => {
       if (status == 200) {
         alert("수정이 완료되었습니다.");
       } else {
         alert("수정이 실패되었습니다.");
       }
-      setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""});
+      setEditModal({ title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: "" });
       getTableItems("restaurant");
       getTableItems("exposure_menu");
       getTableItems("entire_menu");
@@ -690,7 +705,7 @@ const ManageRestraunt = () => {
     });
     const target = "category_id";
     const value = val;
-    fetchPatchApi(`/entire_menu/${item.id}`, {target, value}).then((status) => {
+    fetchPatchApi(`/entire_menu/${item.id}`, { target, value }).then((status) => {
       if (status == 200) {
         alert("수정이 완료되었습니다.");
       } else {
@@ -731,7 +746,7 @@ const ManageRestraunt = () => {
     });
   }
 
-  async function setExposureMenuContentsImage (e: React.ChangeEvent<HTMLInputElement>) {
+  async function setExposureMenuContentsImage(e: React.ChangeEvent<HTMLInputElement>) {
     const files = e.currentTarget.files;
     if (files.length == 0) return;
     const new_file_name = await readFile(files[0]);
@@ -744,33 +759,33 @@ const ManageRestraunt = () => {
     })
   }
 
-  async function addExposureMenu () {
+  async function addExposureMenu() {
     const ok = confirm('대표메뉴를 등록하시겠습니까?')
     if (ok) {
       const target = contents.restaurant.table_items.find(data => {
         return data.checked == true
       })
-  
+
       const param = {
         label: exposureMenuContents.label,
         price: exposureMenuContents.price,
         comment: exposureMenuContents.comment,
         restaurant_id: target.id
       }
-  
+
       const menu = await fetchPostApi(`/restaurant/${target.id}/exposure_menu`, param)
-      
+
       let upload_image = new FormData();
       const file_name_arr = exposureMenuContents.image.file.name.split(".");
       const file_extention = file_name_arr[file_name_arr.length - 1];
       const new_file = new File([exposureMenuContents.image.file], `${target.id}_${menu.id}_0_${new Date().getTime()}.${file_extention}`, {
         type: "image/jpeg",
       });
-  
+
       upload_image.append(`files_0`, new_file);
       upload_image.append("length", '1');
       upload_image.append("category", "11");
-  
+
       fetchFileApi("/upload/image/multi", upload_image)
         .then(() => {
           clearExposureMenuContents()
@@ -794,7 +809,7 @@ const ManageRestraunt = () => {
                 onClick={(type, idx) => handleDropdown(type, idx)}
               />
             </div>
-            <div style={{height: "28rem", width: "100%"}}>
+            <div style={{ height: "28rem", width: "100%" }}>
               <CustomTable
                 header={contents[key].header}
                 footerColspan={contents[key].header.length}
@@ -837,7 +852,7 @@ const ManageRestraunt = () => {
         type={editModal.type}
         readOnly={editModal.read_only}
         hideModal={() =>
-          setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""})
+          setEditModal({ title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: "" })
         }
         onSubmit={(value) => updateValues(value)}
       />
@@ -846,7 +861,7 @@ const ManageRestraunt = () => {
         visible={radioModalContents.visible}
         contents={radioModalContents.contents}
         title={radioModalContents.title}
-        hideModal={() => setRadioModalContents({visible: false, title: "", contents: []})}
+        hideModal={() => setRadioModalContents({ visible: false, title: "", contents: [] })}
         onChange={(val) => handleRadioModal(val)}
       />
       <ModalContainer backClicked={() => clearExposureMenuContents()} visible={exposureMenuContents.modal_visible}>
@@ -861,7 +876,7 @@ const ManageRestraunt = () => {
             height: "auto",
           }}
         >
-          <h2 className={styles.modal_title} style={{marginBottom: "1rem"}}>
+          <h2 className={styles.modal_title} style={{ marginBottom: "1rem" }}>
             대표메뉴 추가
             <HiX onClick={() => clearExposureMenuContents()} />
           </h2>
@@ -870,12 +885,12 @@ const ManageRestraunt = () => {
             <div className={res_style.rest_exposure_menu_imgbox}>
               <label htmlFor={`exposure_menu_img`}>
                 {exposureMenuContents.image.file == null ? (
-                <span>업로드</span>
-              ) : (
-                <div className={res_style.rest_exposure_menu_img_wrap}>
-                  <img src={exposureMenuContents.image.imageUrl} alt="exposure_menu_image" />
-                </div>
-              )}
+                  <span>업로드</span>
+                ) : (
+                  <div className={res_style.rest_exposure_menu_img_wrap}>
+                    <img src={exposureMenuContents.image.imageUrl} alt="exposure_menu_image" />
+                  </div>
+                )}
               </label>
               <input
                 type="file"
@@ -892,7 +907,7 @@ const ManageRestraunt = () => {
                 align="right"
               />
 
-              <div style={exposureMenuContents.price.length > 0 ? {paddingRight: "8px"} : null}>
+              <div style={exposureMenuContents.price.length > 0 ? { paddingRight: "8px" } : null}>
                 <CustomInput
                   type="text"
                   placeholder="메뉴 가격을 입력해주세요."
@@ -911,7 +926,7 @@ const ManageRestraunt = () => {
               />
             </div>
           </div>
-          <div className={styles.util_box} style={{paddingRight: '48px'}}>
+          <div className={styles.util_box} style={{ paddingRight: '48px' }}>
             <button className={styles.regi_button} onClick={() => addExposureMenu()}>등록</button>
           </div>
         </div>

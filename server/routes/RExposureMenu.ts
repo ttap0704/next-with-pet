@@ -115,28 +115,21 @@ class ExposureMenu {
     //   res.json(accommodation)
     // })
 
-    // this.express.delete("/:id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    //   const id = req.params.id;
+    this.express.delete("/:id", async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+      const id = req.params.id;
 
-    //   const code1 = await Model.Accommodation.destroy({
-    //     where: {
-    //       id: id
-    //     }
-    //   })
+      const code1 = await Model.ExposureMenu.destroy({
+        where: {
+          id: id
+        }
+      })
 
-    //   const code2 = await Model.Rooms.destroy({
-    //     where: {
-    //       accommodation_id: id
-    //     }
-    //   })
-
-    //   console.log(code1, code2, 'code')
-    //   if (code1 >= 0 && code2 >= 0) {
-    //     res.status(200).send();
-    //   } else {
-    //     res.status(500).send();
-    //   }
-    // })
+      if (code1 >= 0) {
+        res.status(200).send();
+      } else {
+        res.status(500).send();
+      }
+    })
 
     this.express.patch("/:id", async (req: express.Request, res: express.Response, next) => {
       const id = req.params.id;

@@ -27,11 +27,12 @@ class Restraunt {
 
   private routes(): void {
     this.express.get("", getRestaurant);
-    this.express.get("/:id", getAdminRestaurant)
+    this.express.get("/:id", getRestaurantOne)
     this.express.get("/:id/category", getAdminRestaurantCategory)
     this.express.post("/:id/:menu", addMenu)
     this.express.post("/add", createRestaurant)
     this.express.patch("/:id", patchRestaurant);
+    this.express.delete("/:id", deleteRestaurant)
 
     async function getRestaurant(req: any, res: any, next: any) {
       let uid = undefined
@@ -49,7 +50,8 @@ class Restraunt {
               require: true,
             }
           ],
-          attributes: ['sigungu', 'bname', 'label', 'id']
+          attributes: ['sigungu', 'bname', 'label', 'id'],
+          order: [[{model: Model.Images, as: 'restaurant_images'}, 'seq', 'ASC']],
         });
         res.json(list)
       } else {
@@ -87,10 +89,10 @@ class Restraunt {
             {
               model: Model.Images,
               as: 'restaurant_images',
-              attributes: ['seq', 'id', 'file_name', 'category', 'restaurant_id'],
-              separate: true,
+              attributes: ['seq', 'id', 'file_name', 'category', 'restaurant_id']
             }
           ],
+          order: [[{model: Model.Images, as: 'restaurant_images'}, 'seq', 'ASC']],
           offset: offset,
           limit: 5,
         });
@@ -98,7 +100,7 @@ class Restraunt {
       }
     }
 
-    async function getAdminRestaurant(req: express.Request, res: express.Response, next: express.NextFunction) {
+    async function getRestaurantOne(req: express.Request, res: express.Response, next: express.NextFunction) {
       const id = req.params.id;
 
       const restaurant = await Model.Restaurant.findOne({
@@ -132,9 +134,10 @@ class Restraunt {
           {
             model: Model.Images,
             as: 'restaurant_images',
-            require: true
+            require: true,
           }
         ],
+        order: [[{model: Model.Images, as: 'restaurant_images'}, 'seq', 'ASC']],
         where: { id: id },
       })
 
@@ -280,9 +283,35 @@ class Restraunt {
       }
     }
 
-    this.express.patch("/:id", async (req: express.Request, res: express.Response, next) => {
+    async function deleteRestaurant (req: express.Request, res: express.Response, next: express.NextFunction) {
+      const id = req.params.id;
 
-    })
+      const code1 = await Model.EntireMenu.destroy({
+        where: {
+          accommodation_id: id
+        }
+      })
+
+      const code2 = await Model.ExposureMenu.destroy({
+        where: {
+          accommodation_id: id
+        }
+      })
+
+      const code3 = await Model.Restaurant.destroy({
+        where: {
+          id: id
+        }
+      })
+
+      if (code1 >= 0 && code2 >= 0 && code3 >= 0) {
+        res.status(200).send();
+      } else {
+        res.status(500).send();
+      }
+    }
+
+
   }
 }
 
