@@ -33,7 +33,12 @@ const ManageRestraunt = () => {
 
   const router = useRouter();
   const { uid } = useSelector((state: RootState) => state.userReducer);
-  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
+  const [categoryModalContents, setCategoryModalContents] = useState({
+    target: "",
+    visible: false,
+    title: "",
+    category_id: 0
+  })
   const [editModal, setEditModal] = useState({
     title: "",
     visible: false,
@@ -67,6 +72,7 @@ const ManageRestraunt = () => {
     visible: false,
     title: "",
     contents: [],
+    target: ""
   });
   const [postCodeVisible, setPostCodeVisible] = useState(false);
   const [contents, setContents] = useState({
@@ -424,18 +430,10 @@ const ManageRestraunt = () => {
           setExposureMenuContents({ ...exposureMenuContents, modal_visible: true });
           break;
         case 1:
-          setCategoryModalVisible(true)
+          setCategoryModalContents({visible: true, target: 'category', title: "카테고리 추가", category_id: 0})
           break;
         case 2:
-          setEditModal({
-            title: "업소명 수정",
-            visible: true,
-            value: target.label,
-            type: "input",
-            read_only: false,
-            target: "accommodation",
-            edit_target: "label",
-          });
+          setRadioModal(target, type);
           break;
         case 3:
           setEditModal({
@@ -551,8 +549,7 @@ const ManageRestraunt = () => {
           });
           break;
         case 2:
-          setRadioModal(target);
-          // 카테고리 수정
+          setRadioModal(target, type);
           break;
         case 3:
           const ok = confirm(`${target.label} 메뉴를 삭제하시겠습니까?`);
@@ -567,8 +564,17 @@ const ManageRestraunt = () => {
     }
   }
 
-  async function setRadioModal(target) {
-    const category = await fetchGetApi(`/restaurant/${target.restaurant_id}/category`);
+  async function setRadioModal(target, type: string) {
+    let restaurant_id = 0;
+    let title = "";
+    if (type == 'restaurant') {
+      restaurant_id = target.id;
+      title = "카테고리 선택";
+    } else {
+      restaurant_id = target.restaurant_id
+      title = "카테고리 수정";
+    }
+    const category = await fetchGetApi(`/restaurant/${restaurant_id}/category`);
 
     let data = [];
     for (let x of category) {
@@ -577,8 +583,9 @@ const ManageRestraunt = () => {
 
     setRadioModalContents({
       visible: true,
-      title: "카테고리 수정",
+      title: title,
       contents: [...data],
+      target: type
     });
   }
 
@@ -692,26 +699,31 @@ const ManageRestraunt = () => {
   }
 
   function handleRadioModal(val) {
-    const item = contents.entire_menu.table_items.find((data) => {
+    const item = contents[radioModalContents.target].table_items.find((data) => {
       return data.checked == true;
     });
-    const target = "category_id";
     const value = val;
-    fetchPatchApi(`/entire_menu/${item.id}`, { target, value }).then((status) => {
-      if (status == 200) {
-        alert("수정이 완료되었습니다.");
-      } else {
-        alert("수정이 실패되었습니다.");
-      }
-      getTableItems("restaurant");
-      getTableItems("exposure_menu");
-      getTableItems("entire_menu");
-      setRadioModalContents({
-        visible: false,
-        title: "",
-        contents: [],
-      });
+    setRadioModalContents({
+      visible: false,
+      title: "",
+      contents: [],
+      target: ""
     });
+
+    if (radioModalContents.target == 'entire_menu') {
+      fetchPatchApi(`/entire_menu/${item.id}`, { target: 'category_id', value }).then((status) => {
+        if (status == 200) {
+          alert("수정이 완료되었습니다.");
+        } else {
+          alert("수정이 실패되었습니다.");
+        }
+        getTableItems("restaurant");
+        getTableItems("exposure_menu");
+        getTableItems("entire_menu");
+      });
+    } else {
+      setCategoryModalContents({visible: true, target: 'entire_menu', title: '전체메뉴 추가', category_id: val})
+    }
   }
 
   function clearExposureMenuContents() {
@@ -801,7 +813,14 @@ const ManageRestraunt = () => {
   }
 
   async function addCategory (data: {category: string, menu: {label: string, price: string}[]}) {
-    const res_category = await fetchPostApi(`/entire_menu_category`, {category: data.category})
+    let category_id = 0;
+    if (categoryModalContents.category_id != 0) {
+      const res_category = await fetchPostApi(`/entire_menu_category`, {category: data.category})
+      category_id = res_category[0].id
+    } else {
+      category_id = categoryModalContents.category_id
+    }
+    
 
     const menu = data.menu;
     const target = contents.restaurant.table_items.find(item => {
@@ -813,13 +832,16 @@ const ManageRestraunt = () => {
         label: x.label,
         price: x.price,
         restaurant_id: target.id,
-        category_id: res_category[0].id
+        category_id: category_id
       })
     }
 
     const res_entire_menu = await fetchPostApi(`/entire_menu`, {params});
-
-    console.log(res_entire_menu)
+    if (res_entire_menu.length > 0) {
+      clearCategoryContents()
+      getTableItems("restaurant");
+      getTableItems("entire_menu");
+    }
   }
 
   return (
@@ -888,12 +910,14 @@ const ManageRestraunt = () => {
         visible={radioModalContents.visible}
         contents={radioModalContents.contents}
         title={radioModalContents.title}
-        hideModal={() => setRadioModalContents({ visible: false, title: "", contents: [] })}
+        hideModal={() => setRadioModalContents({ visible: false, title: "", contents: [], target: "" })}
         onChange={(val) => handleRadioModal(val)}
       />
       <CategoryModal 
-        visible={categoryModalVisible}
-        hideModal={() => setCategoryModalVisible(false)}
+        visible={categoryModalContents.visible}
+        target={categoryModalContents.target}
+        title={categoryModalContents.title}
+        hideModal={() => setCategoryModalContents({visible: false, target: "", title: "", category_id: 0})}
         onSubmit={(data) => addCategory(data)}
       />
       <ModalContainer backClicked={() => clearExposureMenuContents()} visible={exposureMenuContents.modal_visible}>

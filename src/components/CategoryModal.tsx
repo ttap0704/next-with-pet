@@ -9,8 +9,9 @@ import CustomInput from "./CustomInput";
 import UtilBox from "./UtilBox";
 
 const CategoryModal = (props) => {
-
   const visible = props.visible;
+  const target = props.target;
+  const title = props.title;
   const [category, setCategory] = useState("");
   const [menu, setMenu] = useState([
     {
@@ -88,18 +89,20 @@ const CategoryModal = (props) => {
         }}
       >
         <h2>
-          카테고리 추가
+          {title}
           <HiX onClick={() => props.hideModal()} />
         </h2>
         <div
           className={styles.entire_menu_modal}
         >
           <div className={styles.entire_menu_modal_container}>
-            <CustomInput
-              placeholder="카테고리를 입력해주세요."
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            />
+            {target == 'category' ? (
+              <CustomInput
+                placeholder="카테고리를 입력해주세요."
+                value={category}
+                onChange={(e) => setCategory(e.target.value)}
+              />
+            ) : null}
             <div style={{ textAlign: 'right', padding: '1rem 0' }}>
               <Button onClick={() => addMenu()}>
                 메뉴 추가하기
