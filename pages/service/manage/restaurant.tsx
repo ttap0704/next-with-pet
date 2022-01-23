@@ -5,7 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 import React, { ReactElement, useEffect, useState } from "react";
 import { fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi } from "../../../src/tools/api";
-import { Checkbox, Modal, TableCell, TableRow } from "@mui/material";
+import { Checkbox, TableCell, TableRow } from "@mui/material";
 import { getDate } from "../../../src/tools/common";
 import { Button } from "@mui/material";
 import { HiX } from "react-icons/hi";
@@ -16,15 +16,12 @@ import EditModal from "../../../src/components/EditModal";
 import PostCode from "../../../src/components/PostCode";
 import UploadModal from "../../../src/components/UploadModal";
 import ModalContainer from "../../../src/components/ModalContainer";
-import ImageBox from "../../../src/components/ImageBox";
 import CustomInput from "../../../src/components/CustomInput";
-import ImageSlider from "../../../src/components/ImageSlider";
-import UploadButton from "../../../src/components/UploadButton";
-import InfoModal from "../../../src/components/InfoModal";
 import RadioModal from "../../../src/components/RadioModal";
+import CategoryModal from "../../../src/components/CategoryModal";
 
 import { actions } from "../../../reducers/common/upload";
-import { toggleButton, readFile, setSlideNumber } from "../../../src/tools/common";
+import { readFile } from "../../../src/tools/common";
 
 const ManageRestraunt = () => {
   const dispatch = useDispatch();
@@ -36,6 +33,7 @@ const ManageRestraunt = () => {
 
   const router = useRouter();
   const { uid } = useSelector((state: RootState) => state.userReducer);
+  const [categoryModalVisible, setCategoryModalVisible] = useState(false);
   const [editModal, setEditModal] = useState({
     title: "",
     visible: false,
@@ -55,20 +53,22 @@ const ManageRestraunt = () => {
       imageUrl: "",
     },
   });
-  const [radioModalVisible, setRadioModalVisible] = useState(true);
+  const [categoryContents, setCategoryContents] = useState({
+    category: "",
+    visible: false,
+    menus: [
+      {
+        label: "",
+        price: "",
+      }
+    ],
+  })
   const [radioModalContents, setRadioModalContents] = useState({
     visible: false,
     title: "",
     contents: [],
   });
   const [postCodeVisible, setPostCodeVisible] = useState(false);
-  const [infoModalVisible, setInfoModalVisible] = useState(false);
-  const [infoModalType, setInfoModalType] = useState("");
-  const [infoModalData, setInfoModalData] = useState({
-    amenities: "",
-    additional_info: "",
-  });
-
   const [contents, setContents] = useState({
     restaurant: {
       header: [
@@ -424,15 +424,7 @@ const ManageRestraunt = () => {
           setExposureMenuContents({ ...exposureMenuContents, modal_visible: true });
           break;
         case 1:
-          setEditModal({
-            title: "업소명 수정",
-            visible: true,
-            value: target.label,
-            type: "input",
-            read_only: false,
-            target: "accommodation",
-            edit_target: "label",
-          });
+          setCategoryModalVisible(true)
           break;
         case 2:
           setEditModal({
@@ -735,6 +727,19 @@ const ManageRestraunt = () => {
     });
   }
 
+  function clearCategoryContents() {
+    setCategoryContents({
+      category: "",
+      visible: false,
+      menus: [
+        {
+          label: "",
+          price: "",
+        }
+      ],
+    })
+  }
+
   function handleExposureMenuContents(e: React.ChangeEvent<HTMLInputElement>, target) {
     let value = e.target.value;
     if (target == 'price') {
@@ -793,6 +798,28 @@ const ManageRestraunt = () => {
           getTableItems("exposure_menu");
         })
     }
+  }
+
+  async function addCategory (data: {category: string, menu: {label: string, price: string}[]}) {
+    const res_category = await fetchPostApi(`/entire_menu_category`, {category: data.category})
+
+    const menu = data.menu;
+    const target = contents.restaurant.table_items.find(item => {
+      return item.checked == true
+    })
+    let params = [];
+    for (let x of menu) {
+      params.push({
+        label: x.label,
+        price: x.price,
+        restaurant_id: target.id,
+        category_id: res_category[0].id
+      })
+    }
+
+    const res_entire_menu = await fetchPostApi(`/entire_menu`, {params});
+
+    console.log(res_entire_menu)
   }
 
   return (
@@ -864,6 +891,11 @@ const ManageRestraunt = () => {
         hideModal={() => setRadioModalContents({ visible: false, title: "", contents: [] })}
         onChange={(val) => handleRadioModal(val)}
       />
+      <CategoryModal 
+        visible={categoryModalVisible}
+        hideModal={() => setCategoryModalVisible(false)}
+        onSubmit={(data) => addCategory(data)}
+      />
       <ModalContainer backClicked={() => clearExposureMenuContents()} visible={exposureMenuContents.modal_visible}>
         <div
           style={{
@@ -931,6 +963,7 @@ const ManageRestraunt = () => {
           </div>
         </div>
       </ModalContainer>
+      
     </div>
   );
 };

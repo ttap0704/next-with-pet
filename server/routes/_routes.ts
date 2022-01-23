@@ -4,6 +4,7 @@ import User from "./RUser";
 import Restaurant from "./RRestaurant";
 import ExposureMenu from "./RExposureMenu";
 import EntireMenu from "./REntireMenu";
+import EntireMenuCategory from "./REntireMenuCategory";
 import Accommodation from "./RAccommodation";
 import Rooms from "./RRooms";
 import Upload from "./RUpload";
@@ -35,6 +36,7 @@ class Routes {
         this.express.use("/restaurant", Restaurant);
         this.express.use("/exposure_menu", ExposureMenu);
         this.express.use("/entire_menu", EntireMenu);
+        this.express.use("/entire_menu_category", EntireMenuCategory);
         this.express.use("/accommodation", Accommodation);
         this.express.use("/rooms", Rooms);
         this.express.use("/upload", Upload);

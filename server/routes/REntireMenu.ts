@@ -26,6 +26,8 @@ class EntireMenu {
   }
 
   private routes(): void {
+    this.express.post("", addEntireMenu)
+
     this.express.get("", async (req: express.Request, res: express.Response, next) => {
       let uid = undefined
       if (Number(req.query.uid) > 0) {
@@ -119,6 +121,14 @@ class EntireMenu {
         res.status(500).send()
       }
     })
+
+    async function addEntireMenu (req: express.Request, res: express.Response, next:express.NextFunction) {
+      const params = req.body.params;
+
+      const entire_menu = await Model.EntireMenu.bulkCreate(params)
+
+      res.status(200).send(entire_menu)
+    } 
   }
 }
 

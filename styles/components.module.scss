@@ -351,6 +351,7 @@
   padding: 0 8px;
   height: 3rem;
   border: 1px solid $gray_4;
+  width: 100%;
 }
 
 .custom_bottom_input {
@@ -359,6 +360,7 @@
   height: 3rem;
   border-bottom: 1px solid $gray_4;
   border-radius: 0;
+  width: 100%;
 }
 
 .regi_button {
@@ -450,4 +452,43 @@
       }
     }
   }
+}
+
+.entire_menu_modal {
+  width: 100%;
+  height: auto;
+  padding: 1rem;
+  .entire_menu_modal_container {
+    width: 100%;
+    height: auto;
+    border: 1px solid #e3e3e3;
+    padding: 1rem;
+
+    .menu_list {
+      width: 100%;
+      height: auto;
+      li {
+        b {
+          display: flex;
+          width: 2rem;
+          height: 3rem;
+          justify-content: center;
+          align-items: center;
+        }
+        display: flex;
+        gap: 12px;
+        &:not(:last-of-type) {
+          margin-bottom: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+.util_box {
+  width: 100%;
+  height: 4rem;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
 }
