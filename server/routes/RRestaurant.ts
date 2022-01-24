@@ -233,7 +233,8 @@ class Restraunt {
             label: x.menu[i].label,
             price: x.menu[i].price,
             category_id: entire_menu_category_arr[idx].id,
-            restaurant_id: restaurant_id
+            restaurant_id: restaurant_id,
+            seq: x.menu[i].seq
           })
         }
       }
@@ -244,17 +245,18 @@ class Restraunt {
           label: x.label,
           price: x.price,
           comment: x.comment,
-          restaurant_id: restaurant_id
+          restaurant_id: restaurant_id,
+          seq: x.seq
         })
       }
 
       const entire_menu = await Model.EntireMenu.bulkCreate(entire_menu_bulk, {
         individualHooks: true,
-        fields: ['label', 'price', 'category_id', 'restaurant_id']
+        fields: ['label', 'price', 'category_id', 'restaurant_id', 'seq']
       });
       const exposure_menu = await Model.ExposureMenu.bulkCreate(exposure_menu_bulk, {
         individualHooks: true,
-        fields: ['label', 'price', 'comment', 'restaurant_id']
+        fields: ['label', 'price', 'comment', 'restaurant_id', 'seq']
       })
 
       const menus: object = {

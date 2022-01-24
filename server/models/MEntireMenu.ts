@@ -6,6 +6,7 @@ interface EntireMenuAttributes {
   id: number;
   label: string;
   price: number;
+  seq: number;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -14,6 +15,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public readonly id!: number;
     public label!: string;
     public price!: number;
+    public seq!: number;
 
     public static associate(models: any) {
       EntireMenu.belongsTo(models.Restaurant, {
@@ -42,6 +44,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.INTEGER,
         allowNull: false
       },
+      seq: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      }
     },
     {
       modelName: 'EntireMenu',

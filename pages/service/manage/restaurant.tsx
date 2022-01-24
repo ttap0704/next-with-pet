@@ -37,7 +37,7 @@ const ManageRestraunt = () => {
     target: "",
     visible: false,
     title: "",
-    category_id: 0
+    category: {id: 0, value: ""}
   })
   const [editModal, setEditModal] = useState({
     title: "",
@@ -430,7 +430,7 @@ const ManageRestraunt = () => {
           setExposureMenuContents({ ...exposureMenuContents, modal_visible: true });
           break;
         case 1:
-          setCategoryModalContents({visible: true, target: 'category', title: "카테고리 추가", category_id: 0})
+          setCategoryModalContents({visible: true, target: 'category', title: "카테고리 추가", category: {id: 0, value: ""}})
           break;
         case 2:
           setRadioModal(target, type);
@@ -698,11 +698,10 @@ const ManageRestraunt = () => {
     });
   }
 
-  function handleRadioModal(val) {
+  function handleRadioModal(val: {id: number, value: string}) {
     const item = contents[radioModalContents.target].table_items.find((data) => {
       return data.checked == true;
     });
-    const value = val;
     setRadioModalContents({
       visible: false,
       title: "",
@@ -710,7 +709,11 @@ const ManageRestraunt = () => {
       target: ""
     });
 
+    console.log(val, radioModalContents.target)
+
     if (radioModalContents.target == 'entire_menu') {
+      const value = val.id;
+
       fetchPatchApi(`/entire_menu/${item.id}`, { target: 'category_id', value }).then((status) => {
         if (status == 200) {
           alert("수정이 완료되었습니다.");
@@ -722,7 +725,7 @@ const ManageRestraunt = () => {
         getTableItems("entire_menu");
       });
     } else {
-      setCategoryModalContents({visible: true, target: 'entire_menu', title: '전체메뉴 추가', category_id: val})
+      setCategoryModalContents({visible: true, target: 'entire_menu', title: '전체메뉴 추가', category: val})
     }
   }
 
@@ -814,11 +817,11 @@ const ManageRestraunt = () => {
 
   async function addCategory (data: {category: string, menu: {label: string, price: string}[]}) {
     let category_id = 0;
-    if (categoryModalContents.category_id != 0) {
+    if (categoryModalContents.target == 'category') {
       const res_category = await fetchPostApi(`/entire_menu_category`, {category: data.category})
       category_id = res_category[0].id
     } else {
-      category_id = categoryModalContents.category_id
+      category_id = categoryModalContents.category.id
     }
     
 
@@ -917,7 +920,7 @@ const ManageRestraunt = () => {
         visible={categoryModalContents.visible}
         target={categoryModalContents.target}
         title={categoryModalContents.title}
-        hideModal={() => setCategoryModalContents({visible: false, target: "", title: "", category_id: 0})}
+        hideModal={() => setCategoryModalContents({visible: false, target: "", title: "", category: {id: 0, value: ""}})}
         onSubmit={(data) => addCategory(data)}
       />
       <ModalContainer backClicked={() => clearExposureMenuContents()} visible={exposureMenuContents.modal_visible}>

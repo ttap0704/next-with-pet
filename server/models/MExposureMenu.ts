@@ -7,6 +7,7 @@ interface ExposureMenuAttributes {
   label: string;
   price: number;
   comment: string;
+  seq: number;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -16,6 +17,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public label!: string;
     public price!: number;
     public comment!: string;
+    public seq!: number;
 
     public static associate(models: any) {
       ExposureMenu.belongsTo(models.Restaurant, {
@@ -50,6 +52,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.STRING(100),
         allowNull: true
       },
+      seq: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      }
     },
     {
       modelName: 'ExposureMenu',

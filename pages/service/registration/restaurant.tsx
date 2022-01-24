@@ -255,14 +255,19 @@ const Service = () => {
       return false;
     }
 
-    let exposure_menu = [];
-    for (let i = 0, leng = exposureMenu.length; i < leng; i++) {
-      exposure_menu.push({
-        comment: exposureMenu[i].comment,
-        label: exposureMenu[i].label,
-        price: exposureMenu[i].price,
-      });
-    }
+    const exposure_menu = exposureMenu.map((menu, idx) => {
+      return {
+        ...menu,
+        seq: idx        
+      }
+    });
+
+    const entire_menu = entireMenu.map((menu, idx) => {
+      return {
+        ...menu,
+        seq: idx
+      }
+    })
 
     const data = {
       label: title,
@@ -273,10 +278,12 @@ const Service = () => {
       sido: address.sido,
       sigungu: address.sigungu,
       zonecode: address.zonecode,
-      entireMenu,
+      entireMenu: entire_menu,
       exposureMenu: exposure_menu,
       introduction: intro,
     };
+
+    console.log(data);
 
     fetchPostApi("/restaurant/add", data).then((res: { restaurant_id: number; exposure_menu: object[] }) => {
       const res_restaraunt_id = res.restaurant_id;

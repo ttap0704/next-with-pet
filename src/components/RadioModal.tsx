@@ -19,7 +19,11 @@ const RadioModal = (props) => {
   function update() {
     const ok = confirm(`${title}을 하시겠습니까?`);
     if (ok) {
-      props.onChange(value);
+      const idx = contents.findIndex(data => {
+        return data.id == Number(value)
+      })
+
+      props.onChange(contents[idx]);
     } else {
       return;
     }
