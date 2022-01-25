@@ -33,8 +33,11 @@ class App {
 
     // Configure Express middleware.
     private middleware(): void {
-        this.express.use(express.urlencoded({ extended: false }));
-        this.express.use(express.json());
+        this.express.use(express.json({limit: '50mb'}));
+        this.express.use(express.urlencoded({
+            limit: '50mb',
+            extended: false
+        }))
         this.express.use(express.static(path.join(__dirname, "../out/")));
         this.express.use(cookieParser(process.env.COOKIE_SECRET));
         this.express.use(session(sessionOption));

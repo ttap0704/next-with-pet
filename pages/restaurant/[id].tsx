@@ -17,7 +17,7 @@ const Detail = () => {
   const [address, setAddress] = useState("");
   const [introduction, setIntroduction] = useState("");
   const [exposureMenu, setExposureMenu] = useState([]);
-  const [entireMenu, setEntireMenu] = useState({});
+  const [entireMenu, setEntireMenu] = useState([]);
   useEffect(() => {
     fetchGetApi(`/restaurant/${id}`).then((data) => {
       setExposureImages([...data.restaurant_images]);
@@ -25,16 +25,7 @@ const Detail = () => {
       setAddress(`${data.sigungu} ${data.bname}`);
       setIntroduction(data.introduction);
       setExposureMenu([...data.exposure_menu]);
-      let entrie_menu = {};
-
-      for (let x of data.entire_menu) {
-        if (!entrie_menu[x.category]) {
-          entrie_menu[x.category] = [];
-        }
-
-        entrie_menu[x.category].push({label: x.label, price: x.price});
-      }
-      setEntireMenu({...entrie_menu});
+      setEntireMenu([...data.entire_menu_category]);
     });
     return () => {};
   }, []);
@@ -121,18 +112,18 @@ const Detail = () => {
             </ul>
             <h3>전체 메뉴</h3>
             <ul className={res_style.rest_menu_wrap}>
-              {Object.keys(entireMenu).map((category, idx) => {
+              {entireMenu.map((category, idx) => {
                 return (
                   <li className={res_style.rest_entire_menu} key={`entire_category_${idx}`}>
                     <div className={res_style.rest_menu_circle}></div>
                     <div className={res_style.res_entire_menu_category} onClick={() => showEntireMenu(idx)}>
-                      {category}
+                      {category.category}
                       <div className={res_style.res_entire_menu_category_icon}>
                         <HiChevronUp style={{transform: "rotate(180deg)"}} id={`entire_menu_category_icon_${idx}`} />
                       </div>
                     </div>
                     <ul id={`entire_menu_list_${idx}`} style={{display: "none"}}>
-                      {entireMenu[category].map((menu, menu_idx) => {
+                      {category.menu.map((menu, menu_idx) => {
                         return (
                           <li className={res_style.rest_entire_menu_detail} key={`entire_menu_${menu_idx}`}>
                             <div className={res_style.rest_menu_circle}></div>

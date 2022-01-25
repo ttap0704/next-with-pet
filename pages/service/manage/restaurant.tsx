@@ -817,25 +817,26 @@ const ManageRestraunt = () => {
 
   async function addCategory (data: {category: string, menu: {label: string, price: string}[]}) {
     let category_id = 0;
+    const target = contents.restaurant.table_items.find(item => {
+      return item.checked == true
+    })
     if (categoryModalContents.target == 'category') {
-      const res_category = await fetchPostApi(`/entire_menu_category`, {category: data.category})
-      category_id = res_category[0].id
+      const res_category = await fetchPostApi(`/restaurant/${target.id}/category`, {category: data.category})
+      category_id = res_category.id
     } else {
       category_id = categoryModalContents.category.id
     }
     
 
     const menu = data.menu;
-    const target = contents.restaurant.table_items.find(item => {
-      return item.checked == true
-    })
     let params = [];
-    for (let x of menu) {
+    for (let i = 0, leng = menu.length; i < leng; i++) {
       params.push({
-        label: x.label,
-        price: x.price,
+        label: menu[i].label,
+        price: menu[i].price,
         restaurant_id: target.id,
-        category_id: category_id
+        category_id: category_id,
+        seq: i
       })
     }
 

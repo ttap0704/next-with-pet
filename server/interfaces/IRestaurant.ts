@@ -14,4 +14,6 @@ export interface RestaurantAttributes {
 export interface Category {
   id: number;
   category: string;
+  seq: number;
+  restaurant_id: number;
 }

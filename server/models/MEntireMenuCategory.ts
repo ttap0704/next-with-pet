@@ -5,6 +5,7 @@ import {
 interface EntireMenuCategoryAttributes {
   id: number;
   category: string;
+  seq: number;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -12,12 +13,16 @@ module.exports = (sequelize: any, DataTypes: any) => {
     implements EntireMenuCategoryAttributes {
     public readonly id!: number;
     public category!: string;
+    public seq!: number;
 
     public static associate(models: any) {
       EntireMenuCategory.hasMany(models.EntireMenu, {
         sourceKey: 'id',
         foreignKey: "category_id",
-        as: "entire_menu_category"
+        as: "menu"
+      });
+      EntireMenuCategory.belongsTo(models.Restaurant, {
+        foreignKey: "restaurant_id",
       });
     };
   }
@@ -34,6 +39,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.STRING(45),
         allowNull: false
       },
+      seq: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      }
     },
     {
       modelName: 'EntireMenuCategory',

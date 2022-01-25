@@ -264,7 +264,13 @@ const Service = () => {
 
     const entire_menu = entireMenu.map((menu, idx) => {
       return {
-        ...menu,
+        category: menu.category,
+        menu: menu.menu.map((menu2, idx2) => {
+          return {
+            ...menu2,
+            seq: idx2
+          }
+        }),
         seq: idx
       }
     })

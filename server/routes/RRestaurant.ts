@@ -29,6 +29,7 @@ class Restraunt {
     this.express.get("", getRestaurant);
     this.express.get("/:id", getRestaurantOne)
     this.express.get("/:id/category", getAdminRestaurantCategory)
+    this.express.post("/:id/category", addCategory)
     this.express.post("/:id/:menu", addMenu)
     this.express.post("/add", createRestaurant)
     this.express.patch("/:id", patchRestaurant);
@@ -51,7 +52,7 @@ class Restraunt {
             }
           ],
           attributes: ['sigungu', 'bname', 'label', 'id'],
-          order: [[{model: Model.Images, as: 'restaurant_images'}, 'seq', 'ASC']],
+          order: [[{ model: Model.Images, as: 'restaurant_images' }, 'seq', 'ASC']],
         });
         res.json(list)
       } else {
@@ -92,7 +93,7 @@ class Restraunt {
               attributes: ['seq', 'id', 'file_name', 'category', 'restaurant_id']
             }
           ],
-          order: [[{model: Model.Images, as: 'restaurant_images'}, 'seq', 'ASC']],
+          order: [[{ model: Model.Images, as: 'restaurant_images' }, 'seq', 'ASC']],
           offset: offset,
           limit: 5,
         });
@@ -119,17 +120,16 @@ class Restraunt {
             order: [[Model.Images, 'seq', 'ASC']]
           },
           {
-            model: Model.EntireMenu,
-            as: 'entire_menu',
+            model: Model.EntireMenuCategory,
+            as: 'entire_menu_category',
             require: true,
-            attributes: ['price', 'label', [
-              Model.sequelize.literal(`(
-                SELECT category
-                FROM entire_menu_category
-                WHERE
-                category_id = entire_menu_category.id
-              )`), 'category'
-            ]]
+            include: [
+              {
+                model: Model.EntireMenu,
+                as: 'menu',
+                require: true,
+              }
+            ],
           },
           {
             model: Model.Images,
@@ -137,7 +137,12 @@ class Restraunt {
             require: true,
           }
         ],
-        order: [[{model: Model.Images, as: 'restaurant_images'}, 'seq', 'ASC']],
+        order: [
+          [{ model: Model.Images, as: 'restaurant_images' }, 'seq', 'ASC'],
+          [{ model: Model.EntireMenuCategory, as: 'entire_menu_category' }, 'seq', 'ASC'],
+          [{ model: Model.EntireMenuCategory, as: 'entire_menu_category' }, { model: Model.EntireMenu, as: 'menu' }, 'seq', 'ASC'],
+          [{ model: Model.ExposureMenu, as: 'exposure_menu' }, 'seq', 'ASC']
+        ],
         where: { id: id },
       })
 
@@ -147,24 +152,36 @@ class Restraunt {
     async function getAdminRestaurantCategory(req: express.Request, res: express.Response, next: express.NextFunction) {
       const id = req.params.id;
 
-      const tempSQL = Model.sequelize.dialect.queryGenerator.selectQuery('entire_menu', {
-        attributes: ['category_id'],
-        where: {
-          restaurant_id: id,
-        }
-      })
-        .slice(0, -1);
-
       const category = await Model.EntireMenuCategory.findAll({
         where: {
-          id: {
-            [Model.Sequelize.Op.in]: Model.sequelize.literal(`(${tempSQL})`)
-          }
-        },
-        group: ['id']
+          restaurant_id: id
+        }
       })
 
       res.status(200).json(category)
+    }
+
+    async function addCategory(req: express.Request, res: express.Response, next: express.NextFunction) {
+      const restaurant_id = req.params.id;
+      const category = req.body.category;
+
+      const tmp_category = await Model.EntireMenuCategory.findAll({
+        where :{
+          restaurant_id,
+        },
+        order: [['seq', 'DESC']],
+        limit: 1
+      })
+
+      const seq = Number(tmp_category[0].dataValues.seq) + 1;
+
+      const res_category = await Model.EntireMenuCategory.create({
+        category,
+        seq,
+        restaurant_id
+      })
+
+      res.status(200).send(res_category);
     }
 
     async function addMenu(req: express.Request, res: express.Response, next: express.NextFunction) {
@@ -207,18 +224,25 @@ class Restraunt {
         fields: ['bname', 'building_name', 'detail_address', 'label', 'sido', 'sigungu', 'zonecode', 'road_address', 'manager', 'introduction']
       });
 
-      let category: { category: string }[] = [];
+      const restaurant_id = restaurant.dataValues.id;
+
+      let category: { category: string, seq: number, restaurant_id: number }[] = [];
       for (let i = 0, leng = data.entireMenu.length; i < leng; i++) {
-        category.push({ category: data.entireMenu[i].category });
+        category.push({
+          category: data.entireMenu[i].category,
+          seq: data.entireMenu[i].seq,
+          restaurant_id: restaurant_id
+        });
       };
 
-      const restaurant_id = restaurant.dataValues.id;
       let entire_menu_category_arr: Category[] = [];
       for (let x of category) {
-        const entire_menu_category = await Model.EntireMenuCategory.findOrCreate({ where: { category: x.category } });
+        const entire_menu_category = await Model.EntireMenuCategory.findOrCreate({ where: { category: x.category, restaurant_id: restaurant_id, seq: x.seq } });
         entire_menu_category_arr.push({
           id: entire_menu_category[0].dataValues.id,
-          category: entire_menu_category[0].dataValues.category
+          category: entire_menu_category[0].dataValues.category,
+          seq: entire_menu_category[0].dataValues.seq,
+          restaurant_id: restaurant_id
         })
       }
 
@@ -232,9 +256,9 @@ class Restraunt {
           entire_menu_bulk.push({
             label: x.menu[i].label,
             price: x.menu[i].price,
+            seq: x.menu[i].seq,
             category_id: entire_menu_category_arr[idx].id,
             restaurant_id: restaurant_id,
-            seq: x.menu[i].seq
           })
         }
       }
@@ -285,7 +309,7 @@ class Restraunt {
       }
     }
 
-    async function deleteRestaurant (req: express.Request, res: express.Response, next: express.NextFunction) {
+    async function deleteRestaurant(req: express.Request, res: express.Response, next: express.NextFunction) {
       const id = req.params.id;
 
       const code1 = await Model.EntireMenu.destroy({
