@@ -65,8 +65,7 @@ class Rooms {
           {
             model: Model.Images,
             as: 'rooms_images',
-            require: true,
-            order: ['seq', 'ASC']
+            require: true
           },
         ],
         attributes: ['id', 'label', 'price', 'standard_num', 'maximum_num', 'amenities', 'additional_info', 'accommodation_id', [
@@ -78,6 +77,7 @@ class Rooms {
           )`), 'accommodation_label'
         ]],
         offset: offset,
+        order: [[{model: Model.Images, as: 'rooms_images'}, 'seq', 'ASC']],
         limit: 5
       });
 

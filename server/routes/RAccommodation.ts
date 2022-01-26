@@ -114,7 +114,12 @@ class Accommodation {
             order: ['seq', 'ASC']
           }
         ],
-        where: { id: id }
+        where: { id: id },
+        order: [
+          [{model: Model.Rooms, as: 'accommodation_rooms'}, 'seq', 'ASC'],
+          [{model: Model.Rooms, as: 'accommodation_rooms'}, {model: Model.Images, as: 'rooms_images'}, 'seq', 'ASC'],
+          [{model: Model.Images, as: 'accommodation_images'}, 'seq', 'ASC']
+        ],
       })
 
 
