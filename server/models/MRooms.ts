@@ -10,6 +10,7 @@ interface RoomsAttributes {
   maximum_num: number;
   amenities: string;
   additional_info: string;
+  seq: number;
 }
 
 module.exports = (sequelize: any, DataTypes: any) => {
@@ -22,6 +23,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public maximum_num!: number;
     public amenities: string;
     public additional_info: string;
+    public seq: number;
 
     public static associate(models: any) {
       Rooms.belongsTo(models.Restaurant, {
@@ -68,6 +70,10 @@ module.exports = (sequelize: any, DataTypes: any) => {
         type: DataTypes.STRING(1000),
         allowNull: true
       },
+      seq: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+      }
     },
     {
       modelName: 'Rooms',

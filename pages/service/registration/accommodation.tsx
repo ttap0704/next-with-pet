@@ -87,6 +87,7 @@ const Service = () => {
         price: roomDetail[i].price,
         amenities: roomDetail[i].other_info.amenities,
         additional_info: roomDetail[i].other_info.additional_info,
+        seq: i
       });
     }
 

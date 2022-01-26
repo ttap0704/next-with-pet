@@ -146,7 +146,7 @@ class Accommodation {
       for (let x of data_rooms) {
         x.accommodation_id = accommodation_id;
       }
-      const rooms = await Model.Rooms.bulkCreate(data_rooms, { fields: ['label', 'maximum_num', 'price', 'standard_num', 'accommodation_id', 'amenities', 'additional_info'] });
+      const rooms = await Model.Rooms.bulkCreate(data_rooms, { fields: ['label', 'maximum_num', 'price', 'standard_num', 'accommodation_id', 'amenities', 'additional_info', 'seq'] });
 
       res.json({ accommodation_id, rooms });
     });
