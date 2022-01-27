@@ -8,5 +8,15 @@ export interface UsersAttributes {
   nickname: string;
   profile_path: string;
   // license_id: number;
-  type: boolean;
+  type: number;
 };
+
+export interface CreateUserAttributes {
+  login_id: string;
+  password: string | null;
+  name: string;
+  phone: string;
+  nickname: string;
+  profile_path: string;
+  type: number;
+}

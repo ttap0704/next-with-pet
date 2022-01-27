@@ -3,7 +3,7 @@ import {
   Model,
 } from 'sequelize';
 const bcrypt = require('bcrypt');
-import {UsersAttributes} from "../interfaces/IUser";
+import { UsersAttributes } from "../interfaces/IUser";
 
 module.exports = (sequelize: any, DataTypes: any) => {
   class Users extends Model<UsersAttributes>
@@ -17,7 +17,7 @@ module.exports = (sequelize: any, DataTypes: any) => {
     public nickname!: string;
     public profile_path!: string;
     // public license_id!: number;
-    public type!: boolean;
+    public type!: number;
 
     public readonly createdAt!: Date;
     public readonly updatedAt!: Date;
@@ -101,9 +101,9 @@ module.exports = (sequelize: any, DataTypes: any) => {
       },
     }
   )
-   Users.prototype.validPassword = async (password, hash) => {
+  Users.prototype.validPassword = async (password, hash) => {
     return await bcrypt.compareSync(password, hash);
-   }
+  }
 
   return Users;
 }
