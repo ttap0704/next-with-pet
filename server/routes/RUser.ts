@@ -1,7 +1,7 @@
 import * as express from "express";
 import { Logger } from "../logger/logger";
 import Model from '../models'
-import { UsersAttributes } from "../interfaces/IUser"
+import { UsersAttributes, resLoginUserAttributes } from "../interfaces/IUser"
 import UserService from "../services/SUser"
 
 class User {
@@ -15,9 +15,12 @@ class User {
     this.express = express();
     this.middleware();
     this.routes();
-    this.logger = new Logger();
     this.data = {};
+    this.logger = new Logger();
     this.UserService = new UserService();
+
+    this.loginUser = this.loginUser.bind(this)
+    this.joinUser = this.joinUser.bind(this)
   }
 
   // Configure Express middleware.
@@ -25,56 +28,29 @@ class User {
   }
 
   private routes(): void {
-    this.express.post("/login", (req: any, res: any, next) => {
-      const login_id: string = req.body.id;
-      const password: string = req.body.password;
-      let message: string = "";
-      let pass: boolean = false;
+    this.express.post("/login", this.loginUser);
+    this.express.post("/join", this.joinUser);
+  }
 
-      if (login_id.length == 0 || password.length == 0) {
-        const data = {
-          message: "아이디, 비밀번호를 모두 입력해주세요.",
-          pass: false,
-        };
-
-        res.json(data);
+  private loginUser = async (req: any, res: any, next: express.NextFunction) => {
+    try {
+      const user: resLoginUserAttributes = await this.UserService.findUser(req.body)
+      if (user.pass == true) {
+        req.session.uid = user.uid;
+        req.session.save();
       }
+      res.json(user);
+    } catch (err) {
+      res.status(500).send();
+      throw new Error(err);
+    }
+  }
 
-      Model.Users.findOne(
-        {
-          where: {
-            login_id: login_id
-          }
-        })
-        .then(async (user: UsersAttributes) => {
-          const validate = await Model.Users.prototype.validPassword(password, user.password)
-
-          if (validate) {
-            message = `${user.nickname}님 환영합니다!`
-            pass = true
-          } else {
-            message = '아이디, 비밀번호를 다시 확인해주세요.'
-          }
-
-          const data = {
-            nickname: user.nickname,
-            login_id: user.login_id,
-            uid: user.id,
-            profile_path: user.profile_path,
-            message,
-            pass
-          }
-
-          req.session.uid = user.id;
-          req.session.save();
-          res.json(data);
-        })
-    })
-
-    this.express.post("/join", async (req: any, res: any, next) => {
+  private joinUser = async (req: any, res: any, next: express.NextFunction) => {
+    try {
+      console.log(this)
       this.logger.info("url:::::::" + req.url);
-      const data = req.body
-      console.log(data);
+      const data = req.body;
       const user = await this.UserService.create({
         login_id: data.id,
         password: data.password,
@@ -86,7 +62,10 @@ class User {
       })
 
       res.json(user);
-    });
+    } catch (err) {
+      res.status(500).send();
+      throw new Error(err);
+    }
   }
 }
 

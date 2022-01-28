@@ -7,11 +7,18 @@ import {
   IMAGES_ID_LIST
 } from "../constant";
 import Model from '../models'
+import { Session } from "inspector";
 
 const path = require('path');
 const fs = require('fs');
 const formidableMiddleware = require("express-formidable");
 
+type CustomRequestType = express.Request & {
+  session: {
+    uid: number
+  };
+  sessionID: string;
+}
 
 class Upload {
 
@@ -35,52 +42,54 @@ class Upload {
   }
 
   private routes(): void {
-    this.express.post("/image/multi", async (req: any, res: any, next) => {
-      this.logger.info("url:::::::" + req.url);
-      const length = req.fields.length;
-      const category:number = Number(req.fields.category);
-      const dir = UPLOAD_PATH[category];
-      const files = req.files;
-      const uid = req.session.uid;
-      let image_bulk: object[] = [];
-      for (let [key, val] of Object.entries(files)) {
-        const file = files[key];
-        const file_name = file.name
-        const target_text = IMAGES_ID_LIST[category]
-        const file_name_split = file_name.split(".")
-        const seq = file_name_split[0].split("_")[file_name_split[0].split("_").length - 2];
-        let target_idx = undefined;
-        if ([RESTAURANT, ACCOMMODATION].includes(category) == true) {
-          target_idx = 0;
-        } else {
-          target_idx = 1;
-        }
-        const target = Number(file_name.split(".")[0].split("_")[target_idx]);
-        const file_path = __dirname + '/../uploads' + dir + file_name;
-        fs.readFile(file.path, (error: any, data: any) => {
-          fs.writeFile(file_path, data, async function (error: any) {
-            if (error) {
-              console.error(error);
-            } else {
-              image_bulk.push({
-                file_name: file_name,
-                category: category,
-                [target_text]: target,
-                seq: seq,
-              })
+    this.express.post("/image/multi", this.uploadImages)
+  }
 
-              if (image_bulk.length == length) {
-                const upload_images = await Model.Images.bulkCreate(image_bulk, {
-                  individualHooks: true,
-                });
-
-                res.json(upload_images)
-              }
-            }
-          })
-        })
+  private uploadImages = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    this.logger.info("url:::::::" + req.url);
+    const length = req.fields.length;
+    const category: number = Number(req.fields.category);
+    const dir = UPLOAD_PATH[category];
+    const files: { [key: string]: File } | any = req.files;
+    const uid = req.session.uid;
+    let image_bulk: object[] = [];
+    for (let [key, val] of Object.entries(files)) {
+      const file: File = files[key];
+      const file_name = file.name
+      const target_text = IMAGES_ID_LIST[category]
+      const file_name_split = file_name.split(".")
+      const seq = file_name_split[0].split("_")[file_name_split[0].split("_").length - 2];
+      let target_idx = undefined;
+      if ([RESTAURANT, ACCOMMODATION].includes(category) == true) {
+        target_idx = 0;
+      } else {
+        target_idx = 1;
       }
-    })
+      const target = Number(file_name.split(".")[0].split("_")[target_idx]);
+      const file_path = __dirname + '/../uploads' + dir + file_name;
+      fs.readFile(file_path, (error: any, data: any) => {
+        fs.writeFile(file_path, data, async function (error: any) {
+          if (error) {
+            console.error(error);
+          } else {
+            image_bulk.push({
+              file_name: file_name,
+              category: category,
+              [target_text]: target,
+              seq: seq,
+            })
+
+            if (image_bulk.length == length) {
+              const upload_images = await Model.Images.bulkCreate(image_bulk, {
+                individualHooks: true,
+              });
+
+              res.json(upload_images)
+            }
+          }
+        })
+      })
+    }
   }
 }
 

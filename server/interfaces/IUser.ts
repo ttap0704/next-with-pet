@@ -20,3 +20,17 @@ export interface CreateUserAttributes {
   profile_path: string;
   type: number;
 }
+
+export interface loginUserAttributes {
+  id: string;
+  password: string | null;
+}
+
+export interface resLoginUserAttributes {
+  nickname?: string;
+  login_id?: string;
+  uid?: number,
+  profile_path?: string;
+  message: string;
+  pass: boolean;
+}
