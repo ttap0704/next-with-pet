@@ -545,7 +545,7 @@ const ManageAccommodation = () => {
       upload_images.append("category", category);
 
       fetchDeleteApi(`/image/${target}/${target_id}`);
-      fetchFileApi("/upload/image/multi", upload_images)
+      fetchFileApi("/upload/image", upload_images)
         .then((res) => console.log(res, "1"))
         .then(() => {
           getTableItems("accommodation");
@@ -677,7 +677,7 @@ const ManageAccommodation = () => {
         upload_images.append("length", files.length.toString());
         upload_images.append("category", category);
 
-        fetchFileApi("/upload/image/multi", upload_images)
+        fetchFileApi("/upload/image", upload_images)
           .then((res) => console.log(res, "1"))
           .then(() => {
             getTableItems("accommodation");

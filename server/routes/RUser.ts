@@ -1,7 +1,7 @@
 import * as express from "express";
 import { Logger } from "../logger/logger";
 import Model from '../models'
-import { UsersAttributes, resLoginUserAttributes } from "../interfaces/IUser"
+import { resLoginUserAttributes } from "../interfaces/IUser"
 import UserService from "../services/SUser"
 
 class User {
@@ -18,9 +18,6 @@ class User {
     this.data = {};
     this.logger = new Logger();
     this.UserService = new UserService();
-
-    this.loginUser = this.loginUser.bind(this)
-    this.joinUser = this.joinUser.bind(this)
   }
 
   // Configure Express middleware.
@@ -32,7 +29,7 @@ class User {
     this.express.post("/join", this.joinUser);
   }
 
-  private loginUser = async (req: any, res: any, next: express.NextFunction) => {
+  private loginUser = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       const user: resLoginUserAttributes = await this.UserService.findUser(req.body)
       if (user.pass == true) {
@@ -46,7 +43,7 @@ class User {
     }
   }
 
-  private joinUser = async (req: any, res: any, next: express.NextFunction) => {
+  private joinUser = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       console.log(this)
       this.logger.info("url:::::::" + req.url);

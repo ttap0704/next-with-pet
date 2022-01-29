@@ -143,8 +143,8 @@ const Service = () => {
       rooms_images.append("length", rooms_images_cnt.toString());
       rooms_images.append("category", "21");
 
-      fetchFileApi("/upload/image/multi", accommodation_images).then((res) => console.log(res, "1"));
-      fetchFileApi("/upload/image/multi", rooms_images).then((res) => console.log(res, "2"));
+      fetchFileApi("/upload/image", accommodation_images).then((res) => console.log(res, "1"));
+      fetchFileApi("/upload/image", rooms_images).then((res) => console.log(res, "2"));
     });
   }
 

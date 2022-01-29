@@ -656,7 +656,7 @@ const ManageRestraunt = () => {
     upload_images.append("category", category);
 
     fetchDeleteApi(`/image/${target}/${target_id}`);
-    fetchFileApi("/upload/image/multi", upload_images)
+    fetchFileApi("/upload/image", upload_images)
       .then((res) => console.log(res, "1"))
       .then(() => {
         getTableItems("restaurant");
@@ -806,7 +806,7 @@ const ManageRestraunt = () => {
       upload_image.append("length", '1');
       upload_image.append("category", "11");
 
-      fetchFileApi("/upload/image/multi", upload_image)
+      fetchFileApi("/upload/image", upload_image)
         .then(() => {
           clearExposureMenuContents()
           getTableItems("restaurant");

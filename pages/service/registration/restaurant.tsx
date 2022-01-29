@@ -325,8 +325,8 @@ const Service = () => {
       exposure_menu_images.append("length", exposureMenu.length.toString());
       exposure_menu_images.append("category", "11");
 
-      fetchFileApi("/upload/image/multi", exposure_images).then((res) => console.log(res, "1"));
-      fetchFileApi("/upload/image/multi", exposure_menu_images).then((res) => console.log(res, "2"));
+      fetchFileApi("/upload/image", exposure_images).then((res) => console.log(res, "1"));
+      fetchFileApi("/upload/image", exposure_menu_images).then((res) => console.log(res, "2"));
     });
 
     console.log(data);
