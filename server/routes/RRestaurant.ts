@@ -4,6 +4,7 @@ import Model from '../models'
 
 import { RESTAURANT } from "../constant";
 import { Category } from "../interfaces/IRestaurant"
+import RestaurantService from "../services/SRestaurant"
 
 class Restraunt {
 
@@ -12,6 +13,7 @@ class Restraunt {
 
   // array to hold users
   public data: object;
+  public RestaurantService: RestaurantService;
 
   constructor() {
     this.express = express();
@@ -19,6 +21,7 @@ class Restraunt {
     this.routes();
     this.data = {};
     this.logger = new Logger();
+    this.RestaurantService = new RestaurantService();
   }
 
   // Configure Express middleware.
@@ -27,13 +30,8 @@ class Restraunt {
 
   private routes(): void {
     this.express.get("", getRestaurant);
-    this.express.get("/:id", getRestaurantOne)
-    this.express.get("/:id/category", getAdminRestaurantCategory)
-    this.express.post("/:id/category", addCategory)
-    this.express.post("/:id/:menu", addMenu)
-    this.express.post("/add", createRestaurant)
-    this.express.patch("/:id", patchRestaurant);
-    this.express.delete("/:id", deleteRestaurant)
+    this.express.get("/:id", this.getRestaurantOne)
+
 
     async function getRestaurant(req: any, res: any, next: any) {
       let uid = undefined
@@ -101,244 +99,23 @@ class Restraunt {
       }
     }
 
-    async function getRestaurantOne(req: express.Request, res: express.Response, next: express.NextFunction) {
-      const id = req.params.id;
-
-      const restaurant = await Model.Restaurant.findOne({
-        include: [
-          {
-            model: Model.ExposureMenu,
-            as: 'exposure_menu',
-            require: true,
-            include: [
-              {
-                model: Model.Images,
-                as: 'exposure_menu_image',
-                require: true,
-              }
-            ],
-            order: [[Model.Images, 'seq', 'ASC']]
-          },
-          {
-            model: Model.EntireMenuCategory,
-            as: 'entire_menu_category',
-            require: true,
-            include: [
-              {
-                model: Model.EntireMenu,
-                as: 'menu',
-                require: true,
-              }
-            ],
-          },
-          {
-            model: Model.Images,
-            as: 'restaurant_images',
-            require: true,
-          }
-        ],
-        order: [
-          [{ model: Model.Images, as: 'restaurant_images' }, 'seq', 'ASC'],
-          [{ model: Model.EntireMenuCategory, as: 'entire_menu_category' }, 'seq', 'ASC'],
-          [{ model: Model.EntireMenuCategory, as: 'entire_menu_category' }, { model: Model.EntireMenu, as: 'menu' }, 'seq', 'ASC'],
-          [{ model: Model.ExposureMenu, as: 'exposure_menu' }, 'seq', 'ASC']
-        ],
-        where: { id: id },
-      })
-
-      res.json(restaurant)
-    }
-
-    async function getAdminRestaurantCategory(req: express.Request, res: express.Response, next: express.NextFunction) {
-      const id = req.params.id;
-
-      const category = await Model.EntireMenuCategory.findAll({
-        where: {
-          restaurant_id: id
-        }
-      })
-
-      res.status(200).json(category)
-    }
-
-    async function addCategory(req: express.Request, res: express.Response, next: express.NextFunction) {
-      const restaurant_id = req.params.id;
-      const category = req.body.category;
-
-      const tmp_category = await Model.EntireMenuCategory.findAll({
-        where :{
-          restaurant_id,
-        },
-        order: [['seq', 'DESC']],
-        limit: 1
-      })
-
-      const seq = Number(tmp_category[0].dataValues.seq) + 1;
-
-      const res_category = await Model.EntireMenuCategory.create({
-        category,
-        seq,
-        restaurant_id
-      })
-
-      res.status(200).send(res_category);
-    }
-
-    async function addMenu(req: express.Request, res: express.Response, next: express.NextFunction) {
-      const id = req.params.id;
-      const menu = req.params.menu;
-
-      if (menu == 'exposure_menu') {
-        const data = {
-          label: req.body.label,
-          price: req.body.price,
-          comment: req.body.comment,
-          restaurant_id: id.toString()
-        }
-
-        console.log(data, 'data')
-
-        const menu = await Model.ExposureMenu.create(data, { fields: ['label', 'price', 'comment', 'restaurant_id', 'id'] });
-
-        res.status(200).send(menu);
-      }
-
-    }
-
-    async function createRestaurant(req: any, res: any, next: any) {
-      // this.logger.info("url:::::::" + req.url);
-      const data = req.body;
-      const manager = req.session.uid;
-      const restaurant = await Model.Restaurant.create({
-        bname: data.bname,
-        building_name: data.building_name,
-        detail_address: data.detail_address,
-        label: data.label,
-        sido: data.sido,
-        sigungu: data.sigungu,
-        zonecode: data.zonecode,
-        road_address: data.road_address,
-        manager: manager,
-        introduction: data.introduction
-      }, {
-        fields: ['bname', 'building_name', 'detail_address', 'label', 'sido', 'sigungu', 'zonecode', 'road_address', 'manager', 'introduction']
-      });
-
-      const restaurant_id = restaurant.dataValues.id;
-
-      let category: { category: string, seq: number, restaurant_id: number }[] = [];
-      for (let i = 0, leng = data.entireMenu.length; i < leng; i++) {
-        category.push({
-          category: data.entireMenu[i].category,
-          seq: data.entireMenu[i].seq,
-          restaurant_id: restaurant_id
-        });
-      };
-
-      let entire_menu_category_arr: Category[] = [];
-      for (let x of category) {
-        const entire_menu_category = await Model.EntireMenuCategory.findOrCreate({ where: { category: x.category, restaurant_id: restaurant_id, seq: x.seq } });
-        entire_menu_category_arr.push({
-          id: entire_menu_category[0].dataValues.id,
-          category: entire_menu_category[0].dataValues.category,
-          seq: entire_menu_category[0].dataValues.seq,
-          restaurant_id: restaurant_id
-        })
-      }
-
-      let entire_menu_bulk = [];
-      for (let x of data.entireMenu) {
-        const idx = entire_menu_category_arr.findIndex((item: Category) => {
-          return item.category == x.category
-        });
-
-        for (let i = 0, leng = x.menu.length; i < leng; i++) {
-          entire_menu_bulk.push({
-            label: x.menu[i].label,
-            price: x.menu[i].price,
-            seq: x.menu[i].seq,
-            category_id: entire_menu_category_arr[idx].id,
-            restaurant_id: restaurant_id,
-          })
-        }
-      }
-
-      let exposure_menu_bulk = [];
-      for (let x of data.exposureMenu) {
-        exposure_menu_bulk.push({
-          label: x.label,
-          price: x.price,
-          comment: x.comment,
-          restaurant_id: restaurant_id,
-          seq: x.seq
-        })
-      }
-
-      const entire_menu = await Model.EntireMenu.bulkCreate(entire_menu_bulk, {
-        individualHooks: true,
-        fields: ['label', 'price', 'category_id', 'restaurant_id', 'seq']
-      });
-      const exposure_menu = await Model.ExposureMenu.bulkCreate(exposure_menu_bulk, {
-        individualHooks: true,
-        fields: ['label', 'price', 'comment', 'restaurant_id', 'seq']
-      })
-
-      const menus: object = {
-        restaurant_id,
-        entire_menu,
-        exposure_menu
-      }
-
-      res.json(menus);
-    }
-
-    async function patchRestaurant(req: express.Request, res: express.Response, next: express.NextFunction) {
-      const id = req.params.id;
-      const target = req.body.target;
-      const value = req.body.value;
-
-      const code = await Model.Restaurant.update({ [target]: value }, {
-        where: {
-          id: id
-        }
-      })
-      if (code >= 0) {
-        res.status(200).send()
-      } else {
-        res.status(500).send()
-      }
-    }
-
-    async function deleteRestaurant(req: express.Request, res: express.Response, next: express.NextFunction) {
-      const id = req.params.id;
-
-      const code1 = await Model.EntireMenu.destroy({
-        where: {
-          accommodation_id: id
-        }
-      })
-
-      const code2 = await Model.ExposureMenu.destroy({
-        where: {
-          accommodation_id: id
-        }
-      })
-
-      const code3 = await Model.Restaurant.destroy({
-        where: {
-          id: id
-        }
-      })
-
-      if (code1 >= 0 && code2 >= 0 && code3 >= 0) {
-        res.status(200).send();
-      } else {
-        res.status(500).send();
-      }
-    }
-
 
   }
+
+  getRestaurantOne = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const id = Number(req.params.id);
+
+      const restaurant = await this.RestaurantService.getRestaurantOne({ restaurant_id: id })
+
+      res.status(200).send(restaurant)
+    } catch (err) {
+      res.status(500).send()
+      throw new Error(err);
+    }
+
+  }
+
 }
 
 export default new Restraunt().express;

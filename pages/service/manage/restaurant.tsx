@@ -244,7 +244,13 @@ const ManageRestraunt = () => {
       });
       page_num = page;
     }
-    fetchGetApi(`/${type}?uid=1&page=${page_num}`).then((res) => {
+    let url = "";
+    if (type == 'restaurant') {
+      url = `/manager/${1}/restaurant?page=${page_num}`;
+    } else {
+      url = `/manager/${1}/restaurant/${type}?page=${page_num}`
+    }
+    fetchGetApi(url).then((res) => {
       count = res.count;
       if (type == "restaurant") {
         for (let x of res.rows) {
@@ -574,7 +580,7 @@ const ManageRestraunt = () => {
       restaurant_id = target.restaurant_id
       title = "카테고리 수정";
     }
-    const category = await fetchGetApi(`/restaurant/${restaurant_id}/category`);
+    const category = await fetchGetApi(`/manager/1/restaurant/${restaurant_id}/category`);
 
     let data = [];
     for (let x of category) {
@@ -664,7 +670,18 @@ const ManageRestraunt = () => {
   }
 
   async function deleteData(type: string, id: number) {
-    const status = await fetchDeleteApi(`/${type}/${id}`);
+    let stauts: any = undefined;
+    if (type == 'restaurant') {
+      stauts = await fetchDeleteApi(`/manager/1/${type}/${id}`);
+    } else {
+      const target = contents[type].table_items.find(item => {
+        return item.cheched == true;
+      })
+
+      const restaurant_id = target.restaurant_id;
+
+      stauts = await fetchDeleteApi(`/manager/1/restaurant/${restaurant_id}/${type}/${id}`);
+    }
 
     return status;
   }
@@ -793,7 +810,7 @@ const ManageRestraunt = () => {
         restaurant_id: target.id
       }
 
-      const menu = await fetchPostApi(`/restaurant/${target.id}/exposure_menu`, param)
+      const menu = await fetchPostApi(`/manager/1/restaurant/${target.id}/exposure_menu`, param)
 
       let upload_image = new FormData();
       const file_name_arr = exposureMenuContents.image.file.name.split(".");

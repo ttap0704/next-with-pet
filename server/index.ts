@@ -11,7 +11,7 @@ import db from "./models"
 
 App.set("port", port);
 const server = http.createServer(App);
-db.sequelize.sync({ force: true })
+db.sequelize.sync({ force: false })
     .then(() => {
         console.log('Success DB Connection')
     })

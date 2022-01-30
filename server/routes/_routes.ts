@@ -9,6 +9,7 @@ import Accommodation from "./RAccommodation";
 import Rooms from "./RRooms";
 import Upload from "./RUpload";
 import Image from "./RImage"
+import Manager from "./RManager"
 
 class Routes {
 
@@ -41,6 +42,7 @@ class Routes {
         this.express.use("/rooms", Rooms);
         this.express.use("/upload", Upload);
         this.express.use("/image", Image)
+        this.express.use("/manager", Manager)
     }
 }
 

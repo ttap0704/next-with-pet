@@ -291,7 +291,7 @@ const Service = () => {
 
     console.log(data);
 
-    fetchPostApi("/restaurant/add", data).then((res: { restaurant_id: number; exposure_menu: object[] }) => {
+    fetchPostApi("/manager/1/restaurant", data).then((res: { restaurant_id: number; exposure_menu: object[] }) => {
       const res_restaraunt_id = res.restaurant_id;
       const res_exposure_menu: any = res.exposure_menu;
 
