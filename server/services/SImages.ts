@@ -8,6 +8,10 @@ class ImagesService {
 
     return images;
   }
+
+  async sendImage () {
+    
+  }
 }
 
 export default ImagesService

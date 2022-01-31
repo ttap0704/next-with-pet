@@ -6,10 +6,8 @@ import {
   UPLOAD_PATH,
   IMAGES_ID_LIST
 } from "../constant";
-const path = require('path');
 const fs = require('fs');
-const formidableMiddleware = require("express-formidable");
-
+const path = require('path')
 
 class UploadService {
   async uploadImages(payload: UploadImagesAttributes) {
@@ -32,9 +30,11 @@ class UploadService {
           target_idx = 1;
         }
         const target = Number(file_name.split(".")[0].split("_")[target_idx]);
-        const file_path = __dirname + '/../uploads' + dir + file_name;
-        fs.readFile(file_path, (error: any, data: any) => {
-          fs.writeFile(file_path, `${data}`, async function (error: any) {
+        const file_path = path.resolve(__dirname + '/../uploads' + dir + file_name);
+
+        fs.readFile(file.path, (error: any, data: any) => {
+          console.log(data)
+          fs.writeFile(file_path, data, async function (error: any) {
             if (error) {
               console.error(error);
             } else {
@@ -47,7 +47,6 @@ class UploadService {
 
               if (image_bulk.length == length) {
                 const upload_images = await Model.Images.bulkCreate(image_bulk, {});
-
                 return upload_images
               }
             }

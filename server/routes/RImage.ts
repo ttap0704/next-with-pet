@@ -1,8 +1,9 @@
 import * as express from "express";
 import { Logger } from "../logger/logger";
 import Model from "../models";
-const fs = require('fs');
+import ImagesService from "../services/SImages"
 
+const fs = require('fs');
 const path = require('path');
 const formidableMiddleware = require("express-formidable");
 
@@ -13,6 +14,7 @@ class Image {
 
   // array to hold users
   public data: [];
+  public ImagesService: ImagesService
 
   constructor() {
     this.express = express();
@@ -20,6 +22,7 @@ class Image {
     this.routes();
     this.data = [];
     this.logger = new Logger();
+    this.ImagesService = new ImagesService();
   }
 
   // Configure Express middleware.
@@ -29,10 +32,7 @@ class Image {
 
 
   private routes(): void {
-    this.express.get('/:dir/:file_name', async (req: any, res: any, next) => {
-      const file_path = __dirname + "/../uploads/" + req.params.dir + "/" + req.params.file_name;
-      res.status(200).sendFile(path.resolve(file_path));
-    })
+    this.express.get('/:dir/:file_name', this.getImage)
 
     this.express.delete('/:type/:id', async (req: express.Request, res: express.Response, next: express.NextFunction) => {
       const type = req.params.type;
@@ -75,6 +75,18 @@ class Image {
         res.status(204).send()
       }
     })
+  }
+
+  getImage = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const file_path = __dirname + "/../uploads/" + req.params.dir + "/" + req.params.file_name;
+      const resolved_path = path.resolve(file_path)
+
+      res.status(200).sendFile(resolved_path)
+    } catch (err) {
+      res.status(500).send()
+      throw new Error(err)
+    }
   }
 }
 

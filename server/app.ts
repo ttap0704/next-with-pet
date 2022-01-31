@@ -16,6 +16,7 @@ const sessionOption = {
   },
 };
 
+
 class App {
   public express: express.Application;
   public logger: Logger;
