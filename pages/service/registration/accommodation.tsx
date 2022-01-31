@@ -104,7 +104,7 @@ const Service = () => {
       rooms,
     };
 
-    fetchPostApi("/accommodation/add", data).then((res) => {
+    fetchPostApi("/manager/1/accommodation", data).then((res) => {
       const res_accommodation_id = res.accommodation_id;
       const res_rooms: any = res.rooms;
 

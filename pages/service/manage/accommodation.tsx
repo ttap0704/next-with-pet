@@ -192,8 +192,14 @@ const ManageAccommodation = () => {
       })
       page_num = page;
     }
-    
-    fetchGetApi(`/${type}?uid=1&page=${page_num}`).then((res) => {
+    let url = "";
+    if (type == 'accommodation') {
+      url = `/manager/1/accommodation?page=${page_num}`
+    } else { 
+      url = `/manager/1/accommodation/${type}?page=${page_num}`
+    }
+
+    fetchGetApi(url).then((res) => {
       setContents((state) => {
         return {
           ...state,
@@ -482,7 +488,16 @@ const ManageAccommodation = () => {
   }
 
   async function deleteData(type: string, id: number) {
-    const status = await fetchDeleteApi(`/${type}/${id}`);
+    let url = "";
+    if (type == 'accommodation') {
+      url = `/accommodation/${id}`
+    } else {
+      const target = contents.rooms.table_items.find(item => {
+        return item.checked == true;
+      })
+      url = `/accommodation/${target.accommodation_id}/rooms/${id}`
+    }
+    const status = await fetchDeleteApi(url);
 
     console.log(status);
   }
@@ -499,7 +514,14 @@ const ManageAccommodation = () => {
       return data.checked == true;
     });
 
-    fetchPatchApi(`/${path}/${item.id}`, {target, value}).then((status) => {
+    let url = "";
+    if (path == 'accommodation') {
+      url = `/manager/1/accommodation/${item.id}`
+    } else {
+      url = `/manager/1/accommodation/${item.accommodation_id}/rooms/${item.id}`
+    }
+
+    fetchPatchApi(url, {target, value}).then((status) => {
       if (status == 200) {
         alert("수정이 완료되었습니다.");
       } else {
@@ -659,7 +681,7 @@ const ManageAccommodation = () => {
       const files = addRoomContents.files;
       console.log(files);
 
-      fetchPostApi("/rooms/add", data).then((res) => {
+      fetchPostApi(`/manager/1/accommodation/${accommodation_id}/rooms`, data).then((res) => {
         const room_id = res.id;
         let upload_images = new FormData();
         for (let i = 0, leng = files.length; i < leng; i++) {

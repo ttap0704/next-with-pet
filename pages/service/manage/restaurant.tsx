@@ -674,8 +674,9 @@ const ManageRestraunt = () => {
     if (type == 'restaurant') {
       stauts = await fetchDeleteApi(`/manager/1/${type}/${id}`);
     } else {
+      console.log(type)
       const target = contents[type].table_items.find(item => {
-        return item.cheched == true;
+        return item.checked == true;
       })
 
       const restaurant_id = target.restaurant_id;

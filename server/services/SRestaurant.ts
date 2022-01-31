@@ -356,7 +356,7 @@ class RestaurantService {
     }
   }
 
-  async eidtManagerRestaurant(payload: { restaurant_id: number, target: string, value: string }) {
+  async editManagerRestaurant(payload: { restaurant_id: number, target: string, value: string }) {
     const restaurant_id = payload.restaurant_id;
     const target = payload.target;
     const value = payload.value;
@@ -374,7 +374,7 @@ class RestaurantService {
     }
   }
 
-  async eidtManagerRestaurantMenu(payload: { restaurant_id: number, target: string, value: string, menu: string, menu_id: number }) {
+  async editManagerRestaurantMenu(payload: { restaurant_id: number, target: string, value: string, menu: string, menu_id: number }) {
     const restaurant_id = payload.restaurant_id;
     const target = payload.target;
     const value = payload.value;

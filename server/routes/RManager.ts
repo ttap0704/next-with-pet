@@ -6,6 +6,7 @@ import { RESTAURANT } from "../constant";
 import { Category } from "../interfaces/IRestaurant"
 
 import RestaurantService from "../services/SRestaurant"
+import AccommodationService from "../services/SAccommodation"
 
 class Manager {
 
@@ -15,6 +16,7 @@ class Manager {
   // array to hold users
   public data: object;
   public RestaurantService: RestaurantService;
+  public AccommodationService: AccommodationService;
 
   constructor() {
     this.express = express();
@@ -23,6 +25,7 @@ class Manager {
     this.data = {};
     this.logger = new Logger();
     this.RestaurantService = new RestaurantService();
+    this.AccommodationService = new AccommodationService();
   }
 
   // Configure Express middleware.
@@ -30,7 +33,17 @@ class Manager {
   }
 
   private routes(): void {
-    // this.express.get("", getRestaurant);
+    // 숙박업소 
+    this.express.post("/:manager/accommodation", this.addManagerAccommodation)
+    this.express.get("/:manager/accommodation", this.getManagerAccommodation)
+    this.express.post("/:manager/accommodation/:id/rooms", this.addManagerAccommodationRooms)
+    this.express.get("/:manager/accommodation/rooms", this.getManagerAccommodationRooms)
+    this.express.patch("/:manager/accommodation/:id", this.patchManagerAccommodation);
+    this.express.delete("/:manager/accommodation/:id", this.deleteManagerAccommodation)
+    this.express.patch("/:manager/accommodation/:id/rooms/:rooms_id", this.patchManagerAccommodationRoom);
+    this.express.delete("/:manager/accommodation/:id/rooms/:rooms_id", this.deleteManagerAccommodationRoom)
+
+    // 음식점
     this.express.post("/:manager/restaurant", this.addManagerRestaurant)
     this.express.get("/:manager/restaurant", this.getManagerRestaurant)
     this.express.get("/:manager/restaurant/:menu", this.getManagerRestaurantMenu)
@@ -43,6 +56,133 @@ class Manager {
     this.express.delete("/:manager/restaurant/:id/:menu/:menu_id", this.deleteManagerRestaurantMenu)
   }
 
+  addManagerAccommodation = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const manager = Number(req.params.manager);
+      const f_res = await this.AccommodationService.addManagerRestaurantList({ manager, data: req.body })
+
+      res.status(200).send(f_res);
+    } catch (err) {
+      res.status(500).send();
+      throw new Error(err);
+    }
+  }
+
+  getManagerAccommodation = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const manager = Number(req.params.manager);
+      const page = Number(req.query.page);
+
+      const list = await this.AccommodationService.getManagerAccommodationList({ manager, page })
+
+      res.status(200).send(list)
+    } catch (err) {
+      res.status(500).send()
+      throw new Error(err);
+    }
+  }
+
+  addManagerAccommodationRooms = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const accommodation_id = Number(req.params.id);
+      const data = req.body;
+      const f_res = await this.AccommodationService.addManagerRestaurantRoomList({ accommodation_id, data })
+
+      res.status(200).send(f_res);
+    } catch (err) {
+      res.status(500).send();
+      throw new Error(err);
+    }
+  }
+
+  getManagerAccommodationRooms = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const manager = Number(req.params.manager);
+      const page = Number(req.query.page);
+
+      const list = await this.AccommodationService.getManagerAccommodationRoomList({ manager, page })
+
+      res.status(200).send(list)
+    } catch (err) {
+      res.status(500).send()
+      throw new Error(err);
+    }
+  }
+
+  patchManagerAccommodation = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const accommodation_id = Number(req.params.id);
+      const target = req.body.target;
+      const value = req.body.value;
+
+      const response = await this.AccommodationService.editManagerAccommodation({ accommodation_id, target, value })
+
+      if (response) {
+        res.status(200).send();
+      } else {
+        res.status(500).send();
+      }
+    } catch (err) {
+      res.status(500).send()
+      throw new Error(err);
+    }
+  }
+
+  deleteManagerAccommodation = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const accommodation_id = Number(req.params.id);
+
+      const response = await this.AccommodationService.deleteManagerAccommodationList({ accommodation_id })
+
+      if (response) {
+        res.status(200).send();
+      } else {
+        res.status(500).send();
+      }
+    } catch (err) {
+      res.status(500).send()
+      throw new Error(err);
+    }
+  }
+
+  patchManagerAccommodationRoom = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const accommodation_id = Number(req.params.id);
+      const rooms_id = Number(req.params.rooms_id)
+      const target = req.body.target;
+      const value = req.body.value;
+
+      const response = await this.AccommodationService.editManagerAccommodationRoom({ accommodation_id, rooms_id, target, value })
+
+      if (response) {
+        res.status(200).send();
+      } else {
+        res.status(500).send();
+      }
+    } catch (err) {
+      res.status(500).send()
+      throw new Error(err);
+    }
+  }
+
+  deleteManagerAccommodationRoom = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const accommodation_id = Number(req.params.id);
+      const rooms_id = Number(req.params.rooms_id);
+
+      const response = await this.AccommodationService.deleteManagerAccommodationRoomList({ accommodation_id, rooms_id })
+
+      if (response) {
+        res.status(200).send();
+      } else {
+        res.status(500).send();
+      }
+    } catch (err) {
+      res.status(500).send()
+      throw new Error(err);
+    }
+  }
+
   addManagerRestaurant = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       const manager = Number(req.params.manager);
@@ -53,7 +193,6 @@ class Manager {
       res.status(500).send();
       throw new Error(err);
     }
-
   }
 
   getManagerRestaurant = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -132,7 +271,7 @@ class Manager {
       const target = req.body.target;
       const value = req.body.value;
 
-      const response = await this.RestaurantService.eidtManagerRestaurant({ restaurant_id, target, value })
+      const response = await this.RestaurantService.editManagerRestaurant({ restaurant_id, target, value })
 
       if (response) {
         res.status(200).send();
@@ -170,7 +309,7 @@ class Manager {
       const target = req.body.target;
       const value = req.body.value;
 
-      const response = await this.RestaurantService.eidtManagerRestaurantMenu({ restaurant_id, target, value, menu, menu_id })
+      const response = await this.RestaurantService.editManagerRestaurantMenu({ restaurant_id, target, value, menu, menu_id })
 
       if (response) {
         res.status(200).send();

@@ -2,7 +2,7 @@ import Model from "../models"
 import { ImagesBulkAttributes } from "../interfaces/IImages"
 
 class ImagesService {
-  async bulkCreate(payload: ImagesBulkAttributes) {
+  async bulkCreate(payload: any) {
     
     const images = await Model.Images.bulkCreate(payload, {});
 
@@ -10,7 +10,7 @@ class ImagesService {
   }
 
   async sendImage () {
-    
+
   }
 }
 
