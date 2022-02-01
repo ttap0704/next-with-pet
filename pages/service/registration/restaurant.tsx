@@ -328,8 +328,6 @@ const Service = () => {
       fetchFileApi("/upload/image", exposure_images).then((res) => console.log(res, "1"));
       fetchFileApi("/upload/image", exposure_menu_images).then((res) => console.log(res, "2"));
     });
-
-    console.log(data);
   }
 
   function showUploadModal() {
