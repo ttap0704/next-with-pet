@@ -50,9 +50,7 @@ class Image {
         for (let i = 0, leng = images.length; i < leng; i++) {
           const path = __dirname + "/../uploads/" + type + "/" + images[i].file_name
           fs.unlink(path, (err: Error) => {
-            console.log(path)
             if (err) {
-              console.log(err)
               res.status(500).send()
               return;
             }

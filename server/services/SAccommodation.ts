@@ -121,7 +121,6 @@ class AccommodationService {
       limit: 5
     });
 
-    console.log({ count: count, rows: list })
     return { count: count, rows: list }
   }
 
@@ -139,11 +138,7 @@ class AccommodationService {
 
     const seq = Number(tmp_category[0].dataValues.seq) + 1;
 
-    console.log(seq);
-
     const rooms = await Model.Rooms.create({ ...data, seq: seq }, { fields: ['label', 'maximum_num', 'price', 'standard_num', 'accommodation_id', 'amenities', 'additional_info', 'seq'] });
-
-    console.log(rooms);
     return rooms;
   }
 
@@ -198,7 +193,6 @@ class AccommodationService {
       limit: 5
     });
 
-    console.log({ count: count, rows: list })
     return { count: count, rows: list }
   }
 

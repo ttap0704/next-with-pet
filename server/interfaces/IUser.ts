@@ -33,4 +33,5 @@ export interface resLoginUserAttributes {
   profile_path?: string;
   message: string;
   pass: boolean;
+  token?: string;
 }

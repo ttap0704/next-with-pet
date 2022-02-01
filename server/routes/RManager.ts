@@ -7,6 +7,7 @@ import { Category } from "../interfaces/IRestaurant"
 
 import RestaurantService from "../services/SRestaurant"
 import AccommodationService from "../services/SAccommodation"
+import JwtService from "../services/SJwt"
 
 class Manager {
 
@@ -17,19 +18,25 @@ class Manager {
   public data: object;
   public RestaurantService: RestaurantService;
   public AccommodationService: AccommodationService;
+  public JwtService: JwtService;
 
   constructor() {
     this.express = express();
+
+    this.RestaurantService = new RestaurantService();
+    this.AccommodationService = new AccommodationService();
+    this.JwtService = new JwtService();
+
     this.middleware();
     this.routes();
     this.data = {};
     this.logger = new Logger();
-    this.RestaurantService = new RestaurantService();
-    this.AccommodationService = new AccommodationService();
+
   }
 
   // Configure Express middleware.
   private middleware(): void {
+    this.express.use(this.JwtService.verifyToken);
   }
 
   private routes(): void {

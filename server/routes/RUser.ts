@@ -3,6 +3,7 @@ import { Logger } from "../logger/logger";
 import Model from '../models'
 import { resLoginUserAttributes } from "../interfaces/IUser"
 import UserService from "../services/SUser"
+import JwtService from "../services/SJwt"
 
 class User {
   public express: express.Application;
@@ -10,6 +11,7 @@ class User {
 
   public data: object;
   public UserService: UserService;
+  public JwtService: JwtService;
 
   constructor() {
     this.express = express();
@@ -18,9 +20,9 @@ class User {
     this.data = {};
     this.logger = new Logger();
     this.UserService = new UserService();
+    this.JwtService = new JwtService();
   }
 
-  // Configure Express middleware.
   private middleware(): void {
   }
 
@@ -31,12 +33,21 @@ class User {
 
   private loginUser = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const user: resLoginUserAttributes = await this.UserService.findUser(req.body)
+      let user: resLoginUserAttributes = await this.UserService.findUser(req.body)
       if (user.pass == true) {
         req.session.uid = user.uid;
         req.session.save();
+
+        const token = await this.JwtService.createToken({ login_id: user.login_id, uid: user.uid })
+        res.cookie('access-token', token, {
+          maxAge: 60 * 60 * 12 * 1000,
+          secure: false,
+          httpOnly: true
+        });
+        
+        user.token = `${token}`;
       }
-      res.json(user);
+      res.status(200).send(user);
     } catch (err) {
       res.status(500).send();
       throw new Error(err);

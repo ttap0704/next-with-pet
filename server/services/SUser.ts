@@ -29,7 +29,7 @@ class UserService {
       })
 
     const validate = await Model.Users.prototype.validPassword(password, user.password)
-    
+
     let message = "";
     let pass = false;
     if (validate) {
