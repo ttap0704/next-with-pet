@@ -19,14 +19,24 @@ class JwtService {
         throw new Error(err);
       }
     })
-    console.log(token, 'create token')
 
     return await token;
   }
 
   public async verifyToken(req: Request, res: Response, next: NextFunction) {
-    console.log(req.cookies['access-token'])
-    next();
+    const access_token = req.cookies['access-token'];
+
+    if (access_token) {
+      const decoded_token = jwt.verify(access_token, process.env.JWT_SECRET);
+      if (decoded_token) {
+        next();
+      } else {
+        res.status(204).send();
+      }
+    } else {
+      res.status(204).send();
+      return false;
+    }
   }
 }
 
