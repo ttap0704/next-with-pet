@@ -1,8 +1,8 @@
 import styles from "../../styles/components.module.scss";
-import React, { useState, useEffect } from "react";
-import { Tooltip, IconButton, Button } from "@mui/material";
-import { HiX, HiOutlinePlusCircle } from "react-icons/hi";
-import { TiDelete } from "react-icons/ti";
+import React, {useState, useEffect} from "react";
+import {Tooltip, IconButton, Button} from "@mui/material";
+import {HiX, HiOutlinePlusCircle} from "react-icons/hi";
+import {TiDelete} from "react-icons/ti";
 
 import ModalContainer from "./ModalContainer";
 import CustomInput from "./CustomInput";
@@ -16,65 +16,72 @@ const CategoryModal = (props) => {
   const [menu, setMenu] = useState([
     {
       label: "",
-      price: ""
-    }
-  ])
+      price: "",
+    },
+  ]);
 
   useEffect(() => {
-  });
-
+    if (!visible) {
+      setCategory("");
+      setMenu([{
+        label: "",
+        price: "",
+      }]);
+    }
+  }, [visible]);
 
   function addEntireMenu() {
     const data = {
       category: category,
-      menu: menu
-    }
+      menu: menu,
+    };
 
-    const ok = confirm('카테고리를 등록하시겠습니까?');
+    const ok = confirm("카테고리를 등록하시겠습니까?");
     if (ok) {
       props.onSubmit(data);
     }
   }
 
   function addMenu() {
-    setMenu(state => {
+    setMenu((state) => {
       return [
         ...state,
         {
           label: "",
-          price: ""
-        }
-      ]
-    })
+          price: "",
+        },
+      ];
+    });
   }
 
   function deleteMenu(idx: number) {
     if (menu.length == 1) return false;
-    setMenu(state => {
-      return state.map((item, index) => {
-        if (idx != index) {
-          return item;
-        };
-      }).filter(item => item != undefined)
-    })
+    setMenu((state) => {
+      return state
+        .map((item, index) => {
+          if (idx != index) {
+            return item;
+          }
+        })
+        .filter((item) => item != undefined);
+    });
   }
 
   function handleInput(e: React.ChangeEvent<HTMLInputElement>, idx: number, type: string) {
-    setMenu(state => {
+    setMenu((state) => {
       return state.map((item, index) => {
         if (idx != index) {
-          return item
+          return item;
         } else {
           return {
             ...menu[idx],
-            [type]: e.target.value
-          }
+            [type]: e.target.value,
+          };
         }
-      })
-    })
+      });
+    });
   }
 
-  
   return (
     <ModalContainer backClicked={() => props.hideModal()} visible={visible}>
       <div
@@ -92,35 +99,29 @@ const CategoryModal = (props) => {
           {title}
           <HiX onClick={() => props.hideModal()} />
         </h2>
-        <div
-          className={styles.entire_menu_modal}
-        >
+        <div className={styles.entire_menu_modal}>
           <div className={styles.entire_menu_modal_container}>
-            {target == 'category' ? (
+            {target == "category" ? (
               <CustomInput
                 placeholder="카테고리를 입력해주세요."
                 value={category}
                 onChange={(e) => setCategory(e.target.value)}
               />
             ) : null}
-            <div style={{ textAlign: 'right', padding: '1rem 0' }}>
-              <Button onClick={() => addMenu()}>
-                메뉴 추가하기
-              </Button>
+            <div style={{textAlign: "right", padding: "1rem 0"}}>
+              <Button onClick={() => addMenu()}>메뉴 추가하기</Button>
             </div>
             <ul className={styles.menu_list}>
               {menu.map((data, index) => {
                 return (
-                  <li key={`menu_list_${index}`} >
-                    <b>
-                      {index + 1}.
-                    </b>
+                  <li key={`menu_list_${index}`}>
+                    <b>{index + 1}.</b>
                     <CustomInput
                       value={data.label}
                       bottom={true}
                       width="60%"
                       placeholder="메뉴를 입력해주세요."
-                      onChange={(e) => handleInput(e, index, 'label')}
+                      onChange={(e) => handleInput(e, index, "label")}
                     />
                     <CustomInput
                       value={data.price}
@@ -128,25 +129,25 @@ const CategoryModal = (props) => {
                       width="40%"
                       placeholder="가격을 입력해주세요."
                       align="right"
-                      onChange={(e) => handleInput(e, index, 'price')}
+                      onChange={(e) => handleInput(e, index, "price")}
                     />
                     <IconButton onClick={() => deleteMenu(index)}>
                       <TiDelete />
                     </IconButton>
                   </li>
-                )
+                );
               })}
             </ul>
           </div>
         </div>
-        <UtilBox style={{paddingRight: '1rem'}}>
-          <button className={styles.regi_button} onClick={() => addEntireMenu()}>등록</button>
+        <UtilBox style={{paddingRight: "1rem"}}>
+          <button className={styles.regi_button} onClick={() => addEntireMenu()}>
+            등록
+          </button>
         </UtilBox>
       </div>
-    </ModalContainer >
+    </ModalContainer>
   );
 };
 
 export default CategoryModal;
-
-
