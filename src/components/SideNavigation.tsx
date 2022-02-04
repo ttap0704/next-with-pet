@@ -72,7 +72,7 @@ const SideNavigation = () => {
       child.style.display = 'block';
     }
   }
-  console.log('test')
+  console.log('testtest')
 
   const menu_item = (item: { label: string, path: string, children?: { label: string, path: string }[] }, idx: number) => {
     return (
