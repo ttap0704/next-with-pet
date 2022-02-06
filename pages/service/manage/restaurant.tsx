@@ -774,7 +774,7 @@ const ManageRestraunt = () => {
     });
   }
 
-  function handleExposureMenuContents(e: React.ChangeEvent<HTMLInputElement>, target) {
+  function handleExposureMenuContents(e: React.ChangeEvent<HTMLInputElement>, target:string) {
     let value = e.target.value;
     if (target == "price") {
       value = value.toLocaleString();
@@ -983,8 +983,7 @@ const ManageRestraunt = () => {
                 value={exposureMenuContents.label}
                 align="right"
               />
-
-              <div style={exposureMenuContents.price.length > 0 ? {paddingRight: "8px"} : null}>
+              <div style={exposureMenuContents.price.length > 0 ? {paddingRight: "8px"} : {}}>
                 <CustomInput
                   type="text"
                   placeholder="메뉴 가격을 입력해주세요."
@@ -1004,9 +1003,9 @@ const ManageRestraunt = () => {
             </div>
           </div>
           <div className={styles.util_box} style={{paddingRight: "48px"}}>
-            <button className={styles.regi_button} onClick={() => addExposureMenu()}>
+            <Button onClick={() => addExposureMenu()} color="orange" variant="contained"> 
               등록
-            </button>
+            </Button>
           </div>
         </div>
       </ModalContainer>

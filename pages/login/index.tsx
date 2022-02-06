@@ -4,6 +4,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {useRouter} from "next/router";
 
 import styles from "../../styles/pages/login.module.scss";
+import {Button} from "@mui/material";
 import {actions, RESET_USER} from "../../reducers/models/user";
 
 import {fetchPostApi} from "../../src/tools/api";
@@ -193,7 +194,7 @@ const Login = () => {
             {contentsText == "login" ? "사업자 회원가입" : "로그인"}하기
           </span>
         </div>
-        <button onClick={(e) => onSubmit(e)}>{button_txt(contentsText)}</button>
+        <Button onClick={(e) => onSubmit(e)} color="orange" variant="contained">{button_txt(contentsText)}</Button>
       </form>
     </>
   );

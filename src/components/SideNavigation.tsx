@@ -1,34 +1,35 @@
 import nav_items from "../tools/nav";
 import styles from "../../styles/components.module.scss";
 import Link from "next/link";
-import { RootState } from "../../reducers";
-import { useSelector } from "react-redux";
-import { HiChevronUp } from "react-icons/hi";
-import { Button } from "@mui/material"
+import {RootState} from "../../reducers";
+import {useSelector} from "react-redux";
+import {HiChevronUp} from "react-icons/hi";
+import {Button} from "@mui/material";
+import React from "react";
 
 const SideNavigation = () => {
   const restaurant_items = [
     {
       label: "매장 관리",
-      path: "/retaurant",
+      path: "/restaurant",
       children: [
         {
           label: "음식점 관리",
-          path: "/info"
+          path: "/info",
         },
         {
           label: "대표메뉴 관리",
-          path: "/exposure_menu"
+          path: "/exposure-menu",
         },
         {
           label: "카테고리 관리",
-          path: "/category"
+          path: "/category",
         },
         {
           label: "전체메뉴 관리",
-          path: "/entire_menu"
+          path: "/entire-menu",
         },
-      ]
+      ],
     },
   ];
 
@@ -39,13 +40,13 @@ const SideNavigation = () => {
       children: [
         {
           label: "숙박업소 관리",
-          path: "/info"
+          path: "/info",
         },
         {
           label: "객실 관리",
-          path: "/rooms"
-        }
-      ]
+          path: "/rooms",
+        },
+      ],
     },
   ];
 
@@ -57,54 +58,52 @@ const SideNavigation = () => {
   ];
 
   const manage_items = () => {
-    return [...restaurant_items, ...accommodation_items, ...info_items]
-  }
+    return [...restaurant_items, ...accommodation_items, ...info_items];
+  };
 
   function openChildren(idx: number) {
     const icon = document.getElementById(`nav_icon_${idx}`);
     const child = document.getElementById(`nav_children_${idx}`);
 
-    if (child.style.display == 'block') {
-      icon.style.transform = 'rotate(180deg)'
-      child.style.display = 'none';
+    if (child.style.display == "block") {
+      icon.style.transform = "rotate(180deg)";
+      child.style.display = "none";
     } else {
-      icon.style.transform = 'rotate(0deg)'
-      child.style.display = 'block';
+      icon.style.transform = "rotate(0deg)";
+      child.style.display = "block";
     }
   }
-  console.log('testtest23')
 
-  const menu_item = (item: { label: string, path: string, children?: { label: string, path: string }[] }, idx: number) => {
+  const menu_item = (item: {label: string; path: string; children?: {label: string; path: string}[]}, idx: number) => {
     return (
-      <li key={`menu_item1_${idx}`} onClick={() => openChildren(idx)} className={styles.nav_parent}>
-        <div className={styles.nav_label_wrap}>
+      <li key={`menu_item1_${idx}`} className={styles.nav_parent}>
+        <div className={styles.nav_label_wrap} onClick={() => openChildren(idx)}>
           <span>{item.label}</span>
           <div className={styles.nav_icon}>
-            <HiChevronUp style={{ transform: "rotate(180deg)" }} id={`nav_icon_${idx}`} />
+            <HiChevronUp style={{transform: "rotate(180deg)"}} id={`nav_icon_${idx}`} />
           </div>
         </div>
-        <ul style={{ display: 'none' }} id={`nav_children_${idx}`}>
-          {item.children ? item.children.map((child, idx2) => {
-            return (
-              <li key={`menu_item2_${idx2}`}>{child.label}</li>
-            )
-          })
+        <ul style={{display: "none"}} id={`nav_children_${idx}`}>
+          {item.children
+            ? item.children.map((child, idx2) => {
+                return (
+                  <li key={`menu_item2_${idx2}`}>
+                    <Link href={`/service/manage${item.path}${child.path}`}>{child.label}</Link>
+                  </li>
+                );
+              })
             : null}
         </ul>
       </li>
-    )
-  }
+    );
+  };
 
   return (
     <div className={styles.side_navigation}>
-      <div className={styles.side_navigation_logo}>
-        logo
-      </div>
+      <div className={styles.side_navigation_logo}>logo</div>
       <ul>
         {manage_items().map((menu1, idx1) => {
-          return (
-            menu_item(menu1, idx1)
-          )
+          return menu_item(menu1, idx1);
         })}
       </ul>
     </div>
