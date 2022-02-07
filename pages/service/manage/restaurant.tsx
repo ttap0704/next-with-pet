@@ -928,7 +928,7 @@ const ManageRestraunt = () => {
         hideModal={() =>
           setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""})
         }
-        onSubmit={(value) => updateValues(value)}
+        onSubmit={(value: string) => updateValues(value)}
       />
       <UploadModal onChange={(files, target) => updateImages(files, target)} />
       <RadioModal
@@ -936,7 +936,7 @@ const ManageRestraunt = () => {
         contents={radioModalContents.contents}
         title={radioModalContents.title}
         hideModal={() => setRadioModalContents({visible: false, title: "", contents: [], target: ""})}
-        onChange={(val) => handleRadioModal(val)}
+        onChange={(val: {id: number, value: string}) => handleRadioModal(val)}
       />
       <CategoryModal
         visible={categoryModalContents.visible}
@@ -979,7 +979,7 @@ const ManageRestraunt = () => {
               <CustomInput
                 type="text"
                 placeholder="메뉴 이름을 입력해주세요."
-                onChange={(e) => handleExposureMenuContents(e, "label")}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleExposureMenuContents(e, "label")}
                 value={exposureMenuContents.label}
                 align="right"
               />
@@ -987,7 +987,7 @@ const ManageRestraunt = () => {
                 <CustomInput
                   type="text"
                   placeholder="메뉴 가격을 입력해주세요."
-                  onChange={(e) => handleExposureMenuContents(e, "price")}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleExposureMenuContents(e, "price")}
                   value={exposureMenuContents.price}
                   align="right"
                 />
@@ -996,7 +996,7 @@ const ManageRestraunt = () => {
               <CustomInput
                 type="text"
                 placeholder="한 줄 설명을 입력해주세요."
-                onChange={(e) => handleExposureMenuContents(e, "comment")}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleExposureMenuContents(e, "comment")}
                 value={exposureMenuContents.comment}
                 align="right"
               />

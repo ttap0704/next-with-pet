@@ -44,7 +44,7 @@ const SideNavigation = () => {
         },
         {
           label: "객실 관리",
-          path: "/rooms",
+          path: "/room",
         },
       ],
     },
