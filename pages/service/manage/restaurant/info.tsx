@@ -200,7 +200,7 @@ const MangeRestaurantInfo = () => {
       stauts = await fetchDeleteApi(`/manager/1/${type}/${id}`);
     } else {
       console.log(type);
-      const target = contents[type].table_items.find((item) => {
+      const target = contents.table_items.find((item) => {
         return item.checked == true;
       });
 
@@ -373,9 +373,6 @@ const MangeRestaurantInfo = () => {
   }
 
   function handleRadioModal(val: {id: number; value: string}) {
-    const item = contents[radioModalContents.target].table_items.find((data) => {
-      return data.checked == true;
-    });
     setRadioModalContents({
       visible: false,
       title: "",

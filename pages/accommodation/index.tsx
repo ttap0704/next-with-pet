@@ -10,24 +10,15 @@ import {useRouter} from "next/router";
 import ImageBox from "../../src/components/ImageBox";
 import LabelBox from "../../src/components/LabelBox";
 
-const Accommodation = () => {
+const Accommodation = ({list}) => {
   const dispatch = useDispatch();
   const {accommodation_list} = useSelector((state: RootState) => state.accommodationReducer);
   const router = useRouter();
 
   useEffect(() => {
-    fetchGetApi("/accommodation").then((res) => {
-      console.log(res);
-      dispatch(actions.pushAccommodationList(res));
-    });
+    dispatch(actions.pushAccommodationList(list));
     return () => {
       dispatch({type: RESET_ACCOMMODATION});
-    };
-  }, []);
-
-  useEffect(() => {
-    return () => {
-      console.log("컴포넌트가 화면에서 사라짐");
     };
   }, []);
 
@@ -61,5 +52,39 @@ const Accommodation = () => {
     </>
   );
 };
+
+// // 빌드될 때 실행
+// export const getStaticPaths = async () => {
+//   // posts를 받기 위해 fetch
+//   // const data = await fetchGetApi(`/accommodation`)
+//   const res = await fetch(`https://localhost:3000/accommodation`)
+//   const data = await res.json();
+//   const paths = data.map((item) => ({
+//     params: { id: item.id },
+//   }))
+
+//   return { paths, fallback: false }
+// }
+
+// // 빌드될 때 실행 
+// export const getStaticProps = async ({ params }) => {
+//   // params는 post `id`를 포함하고 있다
+//   const res = await fetch(`https://localhost:3000/accommodation/${params.id}`)
+//   const list = await res.json()
+
+//   // 해당 페이지에 props로 보냄
+//   console.log(list)
+//   return { props: { list } }
+// }
+
+export async function getStaticProps() {
+  const data = await fetchGetApi(`/accommodation`);
+
+  return {
+    props: {
+      list: data,
+    },
+  };
+}
 
 export default Accommodation;

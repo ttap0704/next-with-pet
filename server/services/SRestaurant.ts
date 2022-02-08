@@ -297,7 +297,14 @@ class RestaurantService {
     const category = await Model.EntireMenuCategory.findAll({
       where: {
         restaurant_id: restaurant_id
-      }
+      },
+      include: [
+        {
+          model: Model.EntireMenu,
+          as: 'menu',
+          require: true,
+        }
+      ],
     })
 
     return category;

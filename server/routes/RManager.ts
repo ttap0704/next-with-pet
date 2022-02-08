@@ -66,7 +66,7 @@ class Manager {
   addManagerAccommodation = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       const manager = Number(req.params.manager);
-      const f_res = await this.AccommodationService.addManagerRestaurantList({ manager, data: req.body })
+      const f_res = await this.AccommodationService.addManagerAccommodationList({ manager, data: req.body })
 
       res.status(200).send(f_res);
     } catch (err) {
@@ -93,7 +93,7 @@ class Manager {
     try {
       const accommodation_id = Number(req.params.id);
       const data = req.body;
-      const f_res = await this.AccommodationService.addManagerRestaurantRoomList({ accommodation_id, data })
+      const f_res = await this.AccommodationService.addManagerAccommodationRoomList({ accommodation_id, data })
 
       res.status(200).send(f_res);
     } catch (err) {

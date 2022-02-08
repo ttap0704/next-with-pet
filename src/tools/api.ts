@@ -1,4 +1,4 @@
-const servername = "/api";
+const servername = "http://localhost:3000/api";
 
 // Fetch POST
 export const fetchPostApi = async function (uri: string, args: object) {

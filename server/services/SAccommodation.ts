@@ -9,18 +9,20 @@ class AccommodationService {
           model: Model.Images,
           as: 'accommodation_images',
           require: true,
-          order: ['seq', 'ASC']
         }
       ],
-      attributes: ['sigungu', 'bname', 'label', 'id']
+      attributes: ['sigungu', 'bname', 'label', 'id'],
+      order: [
+        [{ model: Model.Images, as: 'accommodation_images' }, 'seq', 'ASC']
+      ]
     });
 
     return list;
   }
 
-  public async getAccommodationOne(payload: {accommodation_id: number}) {
+  public async getAccommodationOne(payload: { accommodation_id: number }) {
     const accommodation_id = payload.accommodation_id;
-    
+
     const accommodation = await Model.Accommodation.findOne({
       include: [
         {
@@ -54,7 +56,7 @@ class AccommodationService {
     return accommodation;
   }
 
-  public async addManagerRestaurantList(payload: AddAccommodationAttributes) {
+  public async addManagerAccommodationList(payload: AddAccommodationAttributes) {
     const data = payload.data;
     const manager = payload.manager;
     const accommodation = await Model.Accommodation.create({
@@ -114,17 +116,19 @@ class AccommodationService {
           model: Model.Images,
           as: 'accommodation_images',
           require: true,
-          order: ['seq', 'ASC']
         }
       ],
       offset: offset,
-      limit: 5
+      limit: 5,
+      order: [
+        [{ model: Model.Images, as: 'accommodation_images' }, 'seq', 'ASC']
+      ],
     });
 
     return { count: count, rows: list }
   }
 
-  public async addManagerRestaurantRoomList(payload: AddRoomAttributes) {
+  public async addManagerAccommodationRoomList(payload: AddRoomAttributes) {
     const accommodation_id = payload.accommodation_id
     const data = payload.data;
 
@@ -218,6 +222,8 @@ class AccommodationService {
     const rooms_id = payload.rooms_id;
     const target = payload.target;
     const value = payload.value;
+
+    console.log(rooms_id, target, value, 'editManagerAccommodationRoom')
 
     const code = await Model.Rooms.update({ [target]: value }, {
       where: {
