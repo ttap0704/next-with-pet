@@ -49,9 +49,8 @@ module.exports = (sequelize: any, DataTypes: any) => {
       tableName: 'entire_menu_category',
       sequelize,
       freezeTableName: true,
-      timestamps: false,
-      createdAt: false,
-      updatedAt: false,
+      timestamps: true,
+      paranoid: true
     }
   )
 

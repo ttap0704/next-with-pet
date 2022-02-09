@@ -1,9 +1,5 @@
 import * as express from "express";
 import { Logger } from "../logger/logger";
-import Model from '../models'
-
-import { RESTAURANT } from "../constant";
-import { Category } from "../interfaces/IRestaurant"
 
 import RestaurantService from "../services/SRestaurant"
 import AccommodationService from "../services/SAccommodation"
@@ -56,6 +52,8 @@ class Manager {
     this.express.get("/:manager/restaurant/:menu", this.getManagerRestaurantMenu)
     this.express.get("/:manager/restaurant/:id/category", this.getManagerRestaurantCategory)
     this.express.post("/:manager/restaurant/:id/category", this.addManagerRestaurantCategory)
+    this.express.patch("/:manager/restaurant/:id/category/:category_id", this.patchManagerRestaurantCategory)
+    this.express.delete("/:manager/restaurant/:id/category/:category_id", this.deleteManagerRestaurantCategory)
     this.express.post("/:manager/restaurant/:id/:menu", this.addManagerRestaurantMenu)
     this.express.patch("/:manager/restaurant/:id", this.patchManagerRestaurant);
     this.express.delete("/:manager/restaurant/:id", this.deleteManagerRestaurant)
@@ -257,6 +255,43 @@ class Manager {
       throw new Error(err);
     }
   }
+
+  patchManagerRestaurantCategory = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const category_id = Number(req.params.category_id);
+      const target = req.body.target;
+      const value = req.body.value;
+
+      const response = await this.RestaurantService.editManagerRestaurantCategoryList({ category_id, target, value })
+
+      if (response) {
+        res.status(200).send();
+      } else {
+        res.status(500).send();
+      }
+    } catch (err) {
+      res.status(500).send()
+      throw new Error(err);
+    }
+  }
+
+  deleteManagerRestaurantCategory = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const category_id = Number(req.params.category_id);
+
+      const response = await this.RestaurantService.deleteManagerRestauranCateogrytList({ category_id })
+
+      if (response) {
+        res.status(200).send();
+      } else {
+        res.status(500).send();
+      }
+    } catch (err) {
+      res.status(500).send()
+      throw new Error(err);
+    }
+  }
+
 
   addManagerRestaurantMenu = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {

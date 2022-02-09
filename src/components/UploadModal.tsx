@@ -1,22 +1,27 @@
-import { RootState } from "../../reducers";
 import styles from "../../styles/components.module.scss";
-import { useDispatch, useSelector } from "react-redux";
-import { actions } from "../../reducers/common/upload";
+
+import {RootState} from "../../reducers";
+import {useDispatch, useSelector} from "react-redux";
+import {actions} from "../../reducers/common/upload";
+import React, {useState, useEffect} from "react";
+
+import {readFile} from "../tools/common";
+
+import {TiDelete} from "react-icons/ti";
+import {Tooltip, IconButton} from "@mui/material";
+import {FaInfoCircle} from "react-icons/fa";
+import {HiX} from "react-icons/hi";
+
+import ModalContainer from "./ModalContainer";
 import UploadInput from "./UploadInput";
 import ImageBox from "./ImageBox";
-import React, { useState, useEffect } from "react";
-import { TiDelete } from "react-icons/ti";
-import { Tooltip, IconButton } from "@mui/material";
-import { FaInfoCircle } from "react-icons/fa";
-import { HiX } from "react-icons/hi";
-import ModalContainer from "./ModalContainer";
-import { readFile } from "../tools/common";
+import OrderList from "./OrderList";
 
 const UploadModal = (props) => {
   const dispatch = useDispatch();
   const [files, setFiles] = useState([]);
 
-  const { upload_modal_visible, title, target, target_idx, multiple, upload_files, image_type } = useSelector(
+  const {upload_modal_visible, title, target, target_idx, multiple, upload_files, image_type} = useSelector(
     (state: RootState) => state.uploadReducer
   );
 
@@ -49,7 +54,7 @@ const UploadModal = (props) => {
         if (duplicated_image_idx < 0) {
           setFiles((state) => {
             console.log(files);
-            return [...state, { file: file, imageUrl: new_file_name, number }];
+            return [...state, {file: file, imageUrl: new_file_name, number}];
           });
           number++;
         } else {
@@ -80,16 +85,16 @@ const UploadModal = (props) => {
     let sorted_items = items
       .sort((a, b) => a.number - b.number)
       .map((data, index) => {
-        return { ...data, number: index + 1 };
+        return {...data, number: index + 1};
       });
-    console.log(sorted_items)
+    console.log(sorted_items);
     setFiles([...sorted_items]);
   }
 
   function blurInput(e: React.KeyboardEvent<HTMLInputElement>, idx: number) {
     const code = e.code;
     if (code == "Enter" || code == "NumpadEnter") {
-      const el: HTMLElement = document.getElementById(`image_order_${idx}`);
+      const el: HTMLElement = document.getElementById(`order_${idx}`);
       el.blur();
     }
   }
@@ -135,7 +140,7 @@ const UploadModal = (props) => {
           <Tooltip
             title="리스트 왼쪽 숫자를 변경하여, 이미지 순서를 정해주세요."
             placement="top"
-            style={{ float: "right" }}
+            style={{float: "right"}}
           >
             <IconButton>
               <FaInfoCircle />
@@ -145,24 +150,31 @@ const UploadModal = (props) => {
         {files.length == 0 ? (
           <h3>파일을 업로드 해주세요.</h3>
         ) : (
-          <ul>
-            {files.map((data, idx) => {
-              return (
-                <li key={data.imageUrl} onClick={() => changePreview(data)}>
-                  <input
-                    type="text"
-                    id={`image_order_${idx}`}
-                    value={data.number}
-                    onChange={(e) => changeImageOrder(e, idx)}
-                    onBlur={() => setImageOrder()}
-                    onKeyDown={(e) => blurInput(e, idx)}
-                  />
-                  <span>{data.file.name ? data.file.name : `이미지 ${data.number}번`}</span>
-                  <TiDelete onClick={() => deleteImage(idx)} />
-                </li>
-              );
-            })}
-          </ul>
+          <OrderList
+            data={files}
+            onListClick={(data) => changePreview(data)}
+            onBlur={() => setImageOrder()}
+            changeOrder={(e, idx) => changeImageOrder(e, idx)}
+            onKeyDown={(e, idx) => blurInput(e, idx)}
+          />
+          // <ul>
+          //   {files.map((data, idx) => {
+          //     return (
+          //       <li key={data.imageUrl} onClick={() => changePreview(data)}>
+          //         <input
+          //           type="text"
+          //           id={`image_order_${idx}`}
+          //           value={data.number}
+          //           onChange={(e) => changeImageOrder(e, idx)}
+          //           onBlur={() => setImageOrder()}
+          //           onKeyDown={(e) => blurInput(e, idx)}
+          //         />
+          //         <span>{data.file.name ? data.file.name : `이미지 ${data.number}번`}</span>
+          //         <TiDelete onClick={() => deleteImage(idx)} />
+          //       </li>
+          //     );
+          //   })}
+          // </ul>
         )}
         <div className={styles.util_box}>
           <UploadInput onChange={(e) => onChangeEvent(e)} title={title} multiple={multiple} />

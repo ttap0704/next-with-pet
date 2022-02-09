@@ -251,7 +251,7 @@ class RestaurantService {
         offset: offset,
         limit: 5
       });
-    } else {
+    } else if (menu == 'entire_menu') {
       count = await Model.EntireMenu.count({
         where: {
           restaurant_id: {
@@ -286,6 +286,41 @@ class RestaurantService {
         offset: offset,
         limit: 5
       });
+    } else if (menu == 'category') {
+      count = await Model.EntireMenuCategory.count({
+        where: {
+          restaurant_id: {
+            [Model.Sequelize.Op.in]: Model.sequelize.literal(`(${tempSQL})`)
+          }
+        }
+      })
+
+      const attributes = ['id', 'restaurant_id', 'category', [
+        Model.sequelize.literal(`(
+          SELECT label
+          FROM restaurant
+          WHERE
+          id = EntireMenuCategory.restaurant_id
+        )`), 'restaurant_label'
+      ]]
+
+      list = await Model.EntireMenuCategory.findAll({
+        where: {
+          restaurant_id: {
+            [Model.Sequelize.Op.in]: Model.sequelize.literal(`(${tempSQL})`)
+          }
+        },
+        include: [
+          {
+            model: Model.EntireMenu,
+            as: 'menu',
+            require: true,
+          }
+        ],
+        offset: offset,
+        attributes,
+        limit: 5
+      })
     }
 
     return { count, rows: list };
@@ -331,6 +366,47 @@ class RestaurantService {
     })
 
     return res_category;
+  }
+
+  public async editManagerRestaurantCategoryList(payload: { category_id: number, target: string, value: string }) {
+    const category_id = payload.category_id;
+    const target = payload.target;
+    const value = payload.value;
+
+    const code = await Model.EntireMenuCategory.update({ [target]: value }, {
+      where: {
+        id: category_id
+      }
+    })
+
+    if (code >= 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public async deleteManagerRestauranCateogrytList(payload: { category_id: number }) {
+    const category_id = payload.category_id;
+
+    const code1 = await Model.EntireMenu.destroy({
+      where: {
+        category_id
+      }
+    })
+
+    const code2 = await Model.EntireMenuCategory.destroy({
+      where: {
+        id: category_id
+      }
+    })
+
+
+    if (code1 >= 0 && code2 >= 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   public async addManagerRestaurantMenuList(payload: AddManagerRestaurantMenuListAttributes) {

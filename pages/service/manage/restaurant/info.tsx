@@ -303,7 +303,7 @@ const MangeRestaurantInfo = () => {
   }
 
   function updateImages(files: File[], target: string) {
-    const item = contents[target].table_items.find((data) => {
+    const item = contents.table_items.find((data) => {
       return data.checked == true;
     });
     const target_id = item.id;
