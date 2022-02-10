@@ -1,29 +1,29 @@
-import styles from "../../../../styles/pages/service.module.scss";
-import accom_style from "../../../../styles/pages/accommodation.module.scss";
-import {RootState} from "../../../../reducers";
+import styles from "../../../styles/pages/service.module.scss";
+import accom_style from "../../../styles/pages/accommodation.module.scss";
+import {RootState} from "../../../reducers";
 import {useSelector, useDispatch} from "react-redux";
 import {useRouter} from "next/router";
 import {ReactElement, useEffect, useState} from "react";
-import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi} from "../../../../src/tools/api";
+import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi} from "../../../src/tools/api";
 import {Checkbox, Modal, stepContentClasses, TableCell, TableRow} from "@mui/material";
-import {getDate} from "../../../../src/tools/common";
+import {getDate} from "../../../src/tools/common";
 import {Button} from "@mui/material";
 import {HiX} from "react-icons/hi";
 
-import CustomDropdown from "../../../../src/components/CustomDrodown";
-import CustomTable from "../../../../src/components/CustomTable";
-import EditModal from "../../../../src/components/EditModal";
-import PostCode from "../../../../src/components/PostCode";
-import UploadModal from "../../../../src/components/UploadModal";
-import ModalContainer from "../../../../src/components/ModalContainer";
-import ImageBox from "../../../../src/components/ImageBox";
-import CustomInput from "../../../../src/components/CustomInput";
-import ImageSlider from "../../../../src/components/ImageSlider";
-import UploadButton from "../../../../src/components/UploadButton";
-import InfoModal from "../../../../src/components/InfoModal";
+import CustomDropdown from "../../../src/components/CustomDrodown";
+import CustomTable from "../../../src/components/CustomTable";
+import EditModal from "../../../src/components/EditModal";
+import PostCode from "../../../src/components/PostCode";
+import UploadModal from "../../../src/components/UploadModal";
+import ModalContainer from "../../../src/components/ModalContainer";
+import ImageBox from "../../../src/components/ImageBox";
+import CustomInput from "../../../src/components/CustomInput";
+import ImageSlider from "../../../src/components/ImageSlider";
+import UploadButton from "../../../src/components/UploadButton";
+import InfoModal from "../../../src/components/InfoModal";
 
-import {actions} from "../../../../reducers/common/upload";
-import {toggleButton, readFile, setSlideNumber} from "../../../../src/tools/common";
+import {actions} from "../../../reducers/common/upload";
+import {toggleButton, readFile, setSlideNumber} from "../../../src/tools/common";
 
 const ManageAccommodationRoom = () => {
   const dispatch = useDispatch();

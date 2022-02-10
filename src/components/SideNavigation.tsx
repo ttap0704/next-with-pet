@@ -88,7 +88,7 @@ const SideNavigation = () => {
             ? item.children.map((child, idx2) => {
                 return (
                   <li key={`menu_item2_${idx2}`}>
-                    <Link href={`/service/manage${item.path}${child.path}`}>{child.label}</Link>
+                    <Link href={`/manage${item.path}${child.path}`}>{child.label}</Link>
                   </li>
                 );
               })

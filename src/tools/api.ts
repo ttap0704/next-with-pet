@@ -23,6 +23,7 @@ export const fetchGetApi = async function (uri: string) {
       'Content-Type': 'application/json',
     },
   });
+  console.log(response)
   let responseJson = await response.json();
   return responseJson;
 };

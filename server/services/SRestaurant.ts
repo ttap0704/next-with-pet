@@ -1,5 +1,11 @@
 import Model from "../models"
-import { AddRestaurantAttributes, Category, GetManagerRestaurantListAttributes, AddManagerRestaurantMenuListAttributes } from "../interfaces/IRestaurant"
+import {
+  AddRestaurantAttributes,
+  Category,
+  GetManagerRestaurantListAttributes,
+  AddManagerRestaurantMenuListAttributes,
+  AddManagerRestaurantCategoryMenuListAttributes
+} from "../interfaces/IRestaurant"
 
 
 class RestaurantService {
@@ -403,6 +409,41 @@ class RestaurantService {
 
 
     if (code1 >= 0 && code2 >= 0) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public async addManagerRestaurantCategoryMenuList(payload: AddManagerRestaurantCategoryMenuListAttributes) {
+    const category_id = payload.category_id;
+    const menu = payload.menu;
+
+    const bulk_data = menu.map((item) => {
+      return {
+        label: item.label,
+        price: item.price,
+        seq: item.seq,
+        category_id: item.category_id,
+        restaurant_id: item.restaurant_id
+      }
+    })
+
+    const menus = await Model.EntireMenu.bulkCreate(bulk_data, { fields: ['label', 'price', 'category_id', 'restaurant_id', 'seq'] })
+
+    return menus;
+  }
+
+  public async deleteManagerRestaurantCategoryMenuList(payload: { category_id: number }) {
+    const category_id = payload.category_id;
+
+    const code = await Model.EntireMenu.destroy({
+      where: {
+        category_id
+      }
+    })
+
+    if (code >= 0) {
       return true;
     } else {
       return false;

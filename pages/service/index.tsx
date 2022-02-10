@@ -34,13 +34,13 @@ const Service = () => {
     },
     {
       label: "숙박업소 관리",
-      type: "accommodation",
+      type: "",
       path: "manage",
       icon_path: "",
     },
     {
       label: "식당 관리",
-      type: "restaurant",
+      type: "",
       path: "manage",
       icon_path: "",
     },
@@ -62,8 +62,8 @@ const Service = () => {
                 key={`${data.path}_${data.type}`}
               >
                 <Link
-                  href={`/service/${data.path}/${data.type}`}
-                  as={`/service/${data.path}/${data.type}`}
+                  href={`/${data.path}/${data.type}`}
+                  as={`/${data.path}/${data.type}`}
                 >
                   <a>
                     <span>{data.label}</span>

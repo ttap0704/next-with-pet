@@ -25,11 +25,11 @@ import InfoModal from "../../../src/components/InfoModal";
 import {actions} from "../../../reducers/common/upload";
 import {toggleButton, readFile, setSlideNumber} from "../../../src/tools/common";
 
-const ManageAccommodation = () => {
+const ManageAccommodationInfo = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     getTableItems("accommodation");
-    getTableItems("rooms"); 
+    getTableItems("rooms");
   }, []);
 
   const router = useRouter();
@@ -65,76 +65,39 @@ const ManageAccommodation = () => {
   });
 
   const [contents, setContents] = useState({
-    accommodation: {
-      header: [
-        {
-          label: "",
-          center: true,
-        },
-        {
-          label: "이름",
-          center: false,
-        },
-        {
-          label: "주소",
-          center: false,
-        },
-        {
-          label: "방 개수",
-          center: false,
-        },
-        {
-          label: "소개",
-          center: true,
-        },
-        {
-          label: "등록일",
-          center: false,
-        },
-      ],
-      table_items: [],
-      edit_items: ["객실 추가", "업소명 수정", "주소 수정", "소개 수정", "대표이미지 수정", "업소 삭제"],
-      type: "accommodation",
-      count: 0,
-      title: "숙박업소 관리",
-      button_disabled: true,
-      page: 1,
-    },
-    rooms: {
-      header: [
-        {
-          label: "",
-          center: true,
-        },
-        {
-          label: "숙박 업소명",
-          center: false,
-        },
-        {
-          label: "객실명",
-          center: false,
-        },
-        {
-          label: "기준 인원",
-          center: false,
-        },
-        {
-          label: "최대 인원",
-          center: false,
-        },
-        {
-          label: "추가 정보",
-          center: true,
-        },
-      ],
-      table_items: [],
-      edit_items: ["객실명 수정", "추가 정보 수정", "기준 인원 수정", "최대 인원 수정", "대표이미지 수정", "객실 삭제"],
-      type: "rooms",
-      count: 0,
-      title: "객실 관리",
-      button_disabled: true,
-      page: 1,
-    },
+    header: [
+      {
+        label: "",
+        center: true,
+      },
+      {
+        label: "이름",
+        center: false,
+      },
+      {
+        label: "주소",
+        center: false,
+      },
+      {
+        label: "방 개수",
+        center: false,
+      },
+      {
+        label: "소개",
+        center: true,
+      },
+      {
+        label: "등록일",
+        center: false,
+      },
+    ],
+    table_items: [],
+    edit_items: ["객실 추가", "업소명 수정", "주소 수정", "소개 수정", "대표이미지 수정", "업소 삭제"],
+    type: "accommodation",
+    count: 0,
+    title: "숙박업소 관리",
+    button_disabled: true,
+    page: 1,
   });
 
   function setChecked(idx: number, type: string, event_type: string, e?: React.ChangeEvent<HTMLInputElement>) {
@@ -142,312 +105,172 @@ const ManageAccommodation = () => {
     if (event_type == "change") {
       checked = e.target.checked;
     } else {
-      checked = !contents[type].table_items[idx].checked;
+      checked = !contents.table_items[idx].checked;
     }
 
     setContents((state) => {
       return {
         ...state,
-        [type]: {
-          ...state[type],
-          table_items: [
-            ...state[type].table_items.map((data, index) => {
-              if (checked) {
-                if (index != idx) {
-                  data.checked = false;
-                  return data;
-                } else {
-                  data.checked = true;
-                  return data;
-                }
+        table_items: [
+          ...state.table_items.map((data, index) => {
+            if (checked) {
+              if (index != idx) {
+                data.checked = false;
+                return data;
               } else {
-                if (index == idx) {
-                  data.checked = false;
-                  return data;
-                } else {
-                  return data;
-                }
+                data.checked = true;
+                return data;
               }
-            }),
-          ],
-          button_disabled: !checked,
-        },
+            } else {
+              if (index == idx) {
+                data.checked = false;
+                return data;
+              } else {
+                return data;
+              }
+            }
+          }),
+        ],
+        button_disabled: !checked,
       };
     });
   }
 
   function getTableItems(type: string, page?: number) {
-    let page_num = contents[type].page;
+    let page_num = contents.page;
     let tmp_table_items = [];
 
     if (page) {
-      setContents(state => {
-        return {
-          ...state,
-          [type]: {
-            ...state[type],
-            page: page
-          }
-        }
-      })
-      page_num = page;
-    }
-    let url = "";
-    if (type == 'accommodation') {
-      url = `/manager/1/accommodation?page=${page_num}`
-    } else { 
-      url = `/manager/1/accommodation/${type}?page=${page_num}`
-    }
-
-    fetchGetApi(url).then((res) => {
       setContents((state) => {
         return {
           ...state,
-          [type]: {
-            ...state[type],
-            count: res.count,
-          },
+          page: page,
         };
       });
-      if (type == "accommodation") {
-        for (let x of res.rows) {
-          tmp_table_items.push({
-            id: x.id,
-            bname: x.bname,
-            building_name: x.building_name,
-            detail_address: x.detail_address,
-            introduction: x.introduction,
-            label: x.label,
-            sido: x.sido,
-            sigungu: x.sigungu,
-            zonecode: x.zonecode,
-            rooms_num: x.accommodation_rooms.length,
-            created_at: x.createdAt,
-            images: x.accommodation_images,
-            checked: false,
-          });
-        }
-        setContents((state) => {
-          return {
-            ...state,
-            [type]: {
-              ...state[type],
-              table_items: [...tmp_table_items],
-            },
-          };
-        });
-      } else {
-        for (let x of res.rows) {
-          tmp_table_items.push({
-            id: x.id,
-            maximum_num: x.maximum_num,
-            standard_num: x.standard_num,
-            label: x.label,
-            accommodation_label: x.accommodation_label,
-            accommodation_id: x.accommodation_id,
-            price: x.price,
-            images: x.rooms_images,
-            additional_info: x.additional_info,
-            amenities: x.amenities,
-            checked: false,
-          });
-        }
-        setContents((state) => {
-          return {
-            ...state,
-            [type]: {
-              ...state[type],
-              table_items: [...tmp_table_items],
-            },
-          };
+      page_num = page;
+    }
+    let url = `/manager/1/accommodation?page=${page_num}`;
+
+    fetchGetApi(url).then((res) => {
+      for (let x of res.rows) {
+        tmp_table_items.push({
+          id: x.id,
+          bname: x.bname,
+          building_name: x.building_name,
+          detail_address: x.detail_address,
+          introduction: x.introduction,
+          label: x.label,
+          sido: x.sido,
+          sigungu: x.sigungu,
+          zonecode: x.zonecode,
+          rooms_num: x.accommodation_rooms.length,
+          created_at: x.createdAt,
+          images: x.accommodation_images,
+          checked: false,
         });
       }
+      setContents((state) => {
+        return {
+          ...state,
+          count: res.count,
+          table_items: [...tmp_table_items],
+        };
+      });
     });
   }
 
   function setTableCell(cell: string, idx: number, type: string) {
     let tag: ReactElement | string;
-    if (type == "accommodation") {
-      switch (cell) {
-        case "":
-          tag = (
-            <Checkbox
-              checked={contents.accommodation.table_items[idx].checked}
-              onChange={(e) => setChecked(idx, "accommodation", "change", e)}
-            ></Checkbox>
-          );
-          break;
-        case "이름":
-          tag = contents.accommodation.table_items[idx].label;
-          break;
-        case "주소":
-          tag = `${contents.accommodation.table_items[idx].sido} ${contents.accommodation.table_items[idx].sigungu} ${contents.accommodation.table_items[idx].bname}`;
-          break;
-        case "방 개수":
-          tag = contents.accommodation.table_items[idx].rooms_num;
-          break;
-        case "소개":
-          tag = (
-            <Button
-              onClick={() => {
-                setEditModal({
-                  title: "소개",
-                  visible: true,
-                  value: contents.accommodation.table_items[idx].introduction,
-                  type: "textarea",
-                  read_only: true,
-                  target: "accommodation",
-                  edit_target: "",
-                });
-              }}
-            >
-              확인
-            </Button>
-          );
-          break;
-        case "등록일":
-          tag = getDate(contents.accommodation.table_items[idx].created_at);
-          break;
-      }
-    } else {
-      switch (cell) {
-        case "":
-          tag = (
-            <Checkbox
-              checked={contents.rooms.table_items[idx].checked}
-              onChange={(e) => setChecked(idx, "rooms", "change", e)}
-            ></Checkbox>
-          );
-          break;
-        case "숙박 업소명":
-          tag = contents.rooms.table_items[idx].accommodation_label;
-          break;
-        case "객실명":
-          tag = contents.rooms.table_items[idx].label;
-          break;
-        case "기준 인원":
-          tag = contents.rooms.table_items[idx].standard_num + "명";
-          break;
-        case "최대 인원":
-          tag = contents.rooms.table_items[idx].maximum_num + "명";
-          break;
-        case "추가 정보":
-          const data = {
-            amenities: contents.rooms.table_items[idx].amenities,
-            additional_info: contents.rooms.table_items[idx].additional_info,
-          };
-          tag = <Button onClick={() => showInfoModal("check", data)}>확인</Button>;
-          break;
-      }
+    switch (cell) {
+      case "":
+        tag = (
+          <Checkbox
+            checked={contents.table_items[idx].checked}
+            onChange={(e) => setChecked(idx, "accommodation", "change", e)}
+          ></Checkbox>
+        );
+        break;
+      case "이름":
+        tag = contents.table_items[idx].label;
+        break;
+      case "주소":
+        tag = `${contents.table_items[idx].sido} ${contents.table_items[idx].sigungu} ${contents.table_items[idx].bname}`;
+        break;
+      case "방 개수":
+        tag = contents.table_items[idx].rooms_num;
+        break;
+      case "소개":
+        tag = (
+          <Button
+            onClick={() => {
+              setEditModal({
+                title: "소개",
+                visible: true,
+                value: contents.table_items[idx].introduction,
+                type: "textarea",
+                read_only: true,
+                target: "accommodation",
+                edit_target: "",
+              });
+            }}
+          >
+            확인
+          </Button>
+        );
+        break;
+      case "등록일":
+        tag = getDate(contents.table_items[idx].created_at);
+        break;
     }
 
     return tag;
   }
 
   function handleDropdown(type: string, idx: number) {
-    const target = contents[type].table_items.find((data) => {
+    const target = contents.table_items.find((data) => {
       return data.checked == true;
     });
 
-    if (type == "accommodation") {
-      switch (idx) {
-        case 0:
-          setRoomModalVisible(true);
-          break;
-        case 1:
-          setEditModal({
-            title: "업소명 수정",
-            visible: true,
-            value: target.label,
-            type: "input",
-            read_only: false,
-            target: "accommodation",
-            edit_target: "label",
+    switch (idx) {
+      case 0:
+        setRoomModalVisible(true);
+        break;
+      case 1:
+        setEditModal({
+          title: "업소명 수정",
+          visible: true,
+          value: target.label,
+          type: "input",
+          read_only: false,
+          target: "accommodation",
+          edit_target: "label",
+        });
+        break;
+      case 2:
+        setPostCodeVisible(true);
+        break;
+      case 3:
+        setEditModal({
+          title: "소개 수정",
+          visible: true,
+          value: target.introduction,
+          type: "textarea",
+          read_only: false,
+          target: "accommodation",
+          edit_target: "introduction",
+        });
+        break;
+      case 4:
+        imageToBlob(target, type);
+        break;
+      case 5:
+        const ok = confirm(`${target.label} 업소를 삭제하시겠습니까?`);
+        if (ok) {
+          deleteData("accommodation", target.id).then(() => {
+            getTableItems("accommodation");
           });
-          break;
-        case 2:
-          setPostCodeVisible(true);
-          break;
-        case 3:
-          setEditModal({
-            title: "소개 수정",
-            visible: true,
-            value: target.introduction,
-            type: "textarea",
-            read_only: false,
-            target: "accommodation",
-            edit_target: "introduction",
-          });
-          break;
-        case 4:
-          imageToBlob(target, type);
-          break;
-        case 5:
-          const ok = confirm(`${target.label} 업소를 삭제하시겠습니까?`);
-          if (ok) {
-            deleteData("accommodation", target.id).then(() => {
-              getTableItems("accommodation");
-              getTableItems("rooms");
-            });
-          }
-          break;
-      }
-    } else {
-      switch (idx) {
-        case 0:
-          setEditModal({
-            title: "객실명 수정",
-            visible: true,
-            value: target.label,
-            type: "input",
-            read_only: false,
-            target: "rooms",
-            edit_target: "label",
-          });
-          break;
-        case 1:
-          const data = {
-            amenities: target.amenities,
-            additional_info: target.additional_info,
-          };
-          showInfoModal("edit", data);
-          break;
-        case 2:
-          setEditModal({
-            title: "기준 인원 수정",
-            visible: true,
-            value: target.standard_num,
-            type: "input",
-            read_only: false,
-            target: "rooms",
-            edit_target: "standard_num",
-          });
-          break;
-        case 3:
-          setEditModal({
-            title: "최대 인원 수정",
-            visible: true,
-            value: target.maximum_num,
-            type: "input",
-            read_only: false,
-            target: "rooms",
-            edit_target: "maximum_num",
-          });
-          break;
-        case 4:
-          imageToBlob(target, type);
-          break;
-        case 5:
-          const ok = confirm(`${target.label} 객실을 삭제하시겠습니까?`);
-          if (ok) {
-            console.log(target);
-            deleteData("rooms", target.id).then(() => {
-              getTableItems("accommodation");
-              getTableItems("rooms");
-            });
-          }
-          break;
-      }
+        }
+        break;
     }
   }
 
@@ -488,17 +311,8 @@ const ManageAccommodation = () => {
   }
 
   async function deleteData(type: string, id: number) {
-    let url = "";
-    if (type == 'accommodation') {
-      url = `/accommodation/${id}`
-    } else {
-      const target = contents.rooms.table_items.find(item => {
-        return item.checked == true;
-      })
-      url = `/accommodation/${target.accommodation_id}/rooms/${id}`
-    }
+    let url = `/manager/1/accommodation/${id}`;
     const status = await fetchDeleteApi(url);
-
     console.log(status);
   }
 
@@ -510,16 +324,11 @@ const ManageAccommodation = () => {
     const path = editModal.target;
     const target = editModal.edit_target;
     const value = val;
-    const item = contents[path].table_items.find((data) => {
+    const item = contents.table_items.find((data) => {
       return data.checked == true;
     });
 
-    let url = "";
-    if (path == 'accommodation') {
-      url = `/manager/1/accommodation/${item.id}`
-    } else {
-      url = `/manager/1/accommodation/${item.accommodation_id}/rooms/${item.id}`
-    }
+    let url = `/manager/1/accommodation/${item.id}`;
 
     fetchPatchApi(url, {target, value}).then((status) => {
       if (status == 200) {
@@ -529,13 +338,12 @@ const ManageAccommodation = () => {
       }
       setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""});
       getTableItems("accommodation");
-      getTableItems("rooms");
     });
   }
 
   function updateImages(files: File[], target: string, add_room?: Boolean) {
     if (!roomModalVisible) {
-      const item = contents[target].table_items.find((data) => {
+      const item = contents.table_items.find((data) => {
         return data.checked == true;
       });
       const target_id = item.id;
@@ -667,7 +475,7 @@ const ManageAccommodation = () => {
   }
 
   function addRoom() {
-    const item = contents.accommodation.table_items.find((data) => {
+    const item = contents.table_items.find((data) => {
       return data.checked == true;
     });
     const accommodation_id = item.id;
@@ -711,49 +519,42 @@ const ManageAccommodation = () => {
 
   return (
     <div>
-      {Object.keys(contents).map((key, idx) => {
-        return (
-          <div className={styles.manage_contents} key={`${contents[key].type}_content`}>
-            <div className={styles.manage_title}>
-              <h2>{contents[key].title}</h2>
-              <CustomDropdown
-                items={contents[key].edit_items}
-                buttonDisabled={contents[key].button_disabled}
-                type={key}
-                onClick={(type, idx) => handleDropdown(type, idx)}
-              />
-            </div>
-            <div style={{height: "28rem", width: "100%"}}>
-              <CustomTable
-                header={contents[key].header}
-                footerColspan={6}
-                rowsLength={contents[key].count}
-                changePerPage={(page) => getTableItems(contents[key].type, page)}
-              >
-                {contents[key].table_items.map((data, index) => {
-                  return (
-                    <TableRow
-                      key={`${contents[key].type}_row_${index}`}
-                      onClick={() => setChecked(index, contents[key].type, "click")}
-                    >
-                      {contents[key].header.map((cell, index2) => {
-                        return (
-                          <TableCell
-                            align={cell.center ? "center" : "left"}
-                            key={`${contents[key].type}_cell_${index2}`}
-                          >
-                            {setTableCell(cell.label, index, contents[key].type)}
-                          </TableCell>
-                        );
-                      })}
-                    </TableRow>
-                  );
-                })}
-              </CustomTable>
-            </div>
-          </div>
-        );
-      })}
+      <div className={styles.manage_contents} key={`${contents.type}_content`}>
+        <div className={styles.manage_title}>
+          <h2>{contents.title}</h2>
+          <CustomDropdown
+            items={contents.edit_items}
+            buttonDisabled={contents.button_disabled}
+            type="accommodation"
+            onClick={(type, idx) => handleDropdown(type, idx)}
+          />
+        </div>
+        <div style={{height: "28rem", width: "100%"}}>
+          <CustomTable
+            header={contents.header}
+            footerColspan={6}
+            rowsLength={contents.count}
+            changePerPage={(page) => getTableItems(contents.type, page)}
+          >
+            {contents.table_items.map((data, index) => {
+              return (
+                <TableRow
+                  key={`${contents.type}_row_${index}`}
+                  onClick={() => setChecked(index, contents.type, "click")}
+                >
+                  {contents.header.map((cell, index2) => {
+                    return (
+                      <TableCell align={cell.center ? "center" : "left"} key={`${contents.type}_cell_${index2}`}>
+                        {setTableCell(cell.label, index, contents.type)}
+                      </TableCell>
+                    );
+                  })}
+                </TableRow>
+              );
+            })}
+          </CustomTable>
+        </div>
+      </div>
       <PostCode
         hideModal={() => setPostCodeVisible(false)}
         visible={postCodeVisible}
@@ -869,4 +670,4 @@ const ManageAccommodation = () => {
   );
 };
 
-export default ManageAccommodation;
+export default ManageAccommodationInfo;

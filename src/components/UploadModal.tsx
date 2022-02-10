@@ -156,6 +156,7 @@ const UploadModal = (props) => {
             onBlur={() => setImageOrder()}
             changeOrder={(e, idx) => changeImageOrder(e, idx)}
             onKeyDown={(e, idx) => blurInput(e, idx)}
+            onClickDelete={(idx) => deleteImage(idx)}
           />
           // <ul>
           //   {files.map((data, idx) => {

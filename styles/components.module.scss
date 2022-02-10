@@ -594,3 +594,18 @@
     }
   }
 }
+
+.category_menu_modal {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 60rem;
+  height: auto;
+  background-color: #fff;
+  .category_menu_modal_contents {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}

@@ -1,25 +1,27 @@
 import React, {ReactElement, useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 
-import styles from "../../../../styles/pages/service.module.scss";
+import styles from "../../../styles/pages/service.module.scss";
 
-import CustomDropdown from "../../../../src/components/CustomDrodown";
-import CustomTable from "../../../../src/components/CustomTable";
-import EditModal from "../../../../src/components/EditModal";
-import RadioModal from "../../../../src/components/RadioModal";
+import CustomDropdown from "../../../src/components/CustomDrodown";
+import CustomTable from "../../../src/components/CustomTable";
+import EditModal from "../../../src/components/EditModal";
+import RadioModal from "../../../src/components/RadioModal";
 
-import {fetchGetApi, fetchDeleteApi, fetchPatchApi} from "../../../../src/tools/api";
+import {fetchGetApi, fetchDeleteApi, fetchPatchApi} from "../../../src/tools/api";
 import {Checkbox, TableCell, TableRow} from "@mui/material";
 
-const MangeRestaurantCategory = () => {
+const MangeRestaurantEntrieMenu = () => {
   useEffect(() => {
     getTableItems("entire_menu");
   }, []);
 
-  const [categoryMenuModal, setCategoryMenuModal] = useState({
+  const [radioModalContents, setRadioModalContents] = useState({
     visible: false,
-    data: []
-  })
+    title: "",
+    contents: [],
+    target: "",
+  });
   const [editModal, setEditModal] = useState({
     title: "",
     visible: false,
@@ -44,15 +46,19 @@ const MangeRestaurantCategory = () => {
         center: false,
       },
       {
-        label: "메뉴수",
+        label: "메뉴명",
+        center: false,
+      },
+      {
+        label: "가격",
         center: false,
       },
     ],
     table_items: [],
-    edit_items: ["카테고리명 수정", "메뉴 순서 변경", "카테고리 삭제"],
-    type: "category",
+    edit_items: ["메뉴명 수정", "가격 수정", "카테고리 수정", "메뉴 삭제"],
+    type: "entire_menu",
     count: 0,
-    title: "카테고리 관리",
+    title: "전체메뉴 관리",
     button_disabled: true,
     page: 1,
   });
@@ -107,16 +113,17 @@ const MangeRestaurantCategory = () => {
       });
       page_num = page;
     }
-    let url = `/manager/${1}/restaurant/category?page=${page_num}`;
+    let url = `/manager/${1}/restaurant/entire_menu?page=${page_num}`;
     fetchGetApi(url).then((res) => {
       count = res.count;
       for (let x of res.rows) {
         tmp_table_items.push({
           id: x.id,
+          label: x.label,
           restaurant_label: x.restaurant_label,
           restaurant_id: x.restaurant_id,
           category: x.category,
-          menu: x.menu,
+          price: x.price,
           checked: false,
         });
       }
@@ -139,7 +146,7 @@ const MangeRestaurantCategory = () => {
 
     const restaurant_id = target.restaurant_id;
 
-    stauts = await fetchDeleteApi(`/manager/1/restaurant/${restaurant_id}/category/${id}`);
+    stauts = await fetchDeleteApi(`/manager/1/restaurant/${restaurant_id}/entire_menu/${id}`);
 
     return status;
   }
@@ -161,8 +168,11 @@ const MangeRestaurantCategory = () => {
       case "카테고리":
         tag = contents.table_items[idx].category;
         break;
-      case "메뉴수":
-        tag = contents.table_items[idx].menu.length + "개";
+      case "메뉴명":
+        tag = contents.table_items[idx].label;
+        break;
+      case "가격":
+        tag = Number(contents.table_items[idx].price).toLocaleString() + " 원";
         break;
     }
 
@@ -176,17 +186,63 @@ const MangeRestaurantCategory = () => {
       return data.checked == true;
     });
 
-    fetchPatchApi(`/manager/1/restaurant/${item.restaurant_id}/category/${item.id}`, {target, value}).then((status) => {
+    fetchPatchApi(`/manager/1/restaurant/${item.restaurant_id}/entire_menu/${item.id}`, {target, value}).then(
+      (status) => {
+        if (status == 200) {
+          alert("수정이 완료되었습니다.");
+        } else {
+          alert("수정이 실패되었습니다.");
+        }
+        setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""});
+        getTableItems("restaurant");
+      }
+    );
+  }
+
+  async function setRadioModal(target) {
+    let restaurant_id = target.restaurant_id;
+    let title = "카테고리 수정";
+
+    const category = await fetchGetApi(`/manager/1/restaurant/${restaurant_id}/category`);
+
+    let data = [];
+    for (let x of category) {
+      data.push({id: x.id, value: x.category});
+    }
+
+    setRadioModalContents({
+      visible: true,
+      title: title,
+      contents: [...data],
+      target: "restaurant",
+    });
+  }
+
+  function handleRadioModal(val: {id: number; value: string}) {
+    const item = contents.table_items.find((data) => {
+      return data.checked == true;
+    });
+    setRadioModalContents({
+      visible: false,
+      title: "",
+      contents: [],
+      target: "",
+    });
+
+    const value = val.id;
+
+    fetchPatchApi(`/manager/1/restaurant/${item.restaurant_id}/entire_menu/${item.id}`, {
+      target: "category_id",
+      value,
+    }).then((status) => {
       if (status == 200) {
         alert("수정이 완료되었습니다.");
       } else {
         alert("수정이 실패되었습니다.");
       }
-      setEditModal({title: "", visible: false, value: "", type: "", read_only: false, target: "", edit_target: ""});
-      getTableItems("category");
+      getTableItems("exposure_menu");
     });
   }
-
 
   function handleDropdown(type: string, idx: number) {
     const target = contents.table_items.find((data) => {
@@ -196,31 +252,35 @@ const MangeRestaurantCategory = () => {
     switch (idx) {
       case 0:
         setEditModal({
-          title: "카테고리명 수정",
+          title: "메뉴명 수정",
           visible: true,
-          value: target.category,
+          value: target.label,
           type: "input",
           read_only: false,
-          target: "category",
-          edit_target: "category",
+          target: "entire_menu",
+          edit_target: "label",
         });
         break;
       case 1:
-        setCategoryMenuModal({
+        setEditModal({
+          title: "가격 수정",
           visible: true,
-          data: target.menu.map((item) => {
-            return {
-              ...item,
-              number: Number(item.seq) + 1
-            }
-          })
-        })
+          value: target.price,
+          type: "input",
+          read_only: false,
+          target: "entire_menu",
+          edit_target: "price",
+        });
         break;
       case 2:
-        const ok = confirm(`${target.category} 카테고리를 삭제하시겠습니까?`);
+        setRadioModal(target);
+        break;
+      case 3:
+        const ok = confirm(`${target.label} 메뉴를 삭제하시겠습니까?`);
         if (ok) {
-          deleteData("category", target.id).then(() => {
-            getTableItems("category");
+          deleteData("entire_menu", target.id).then(() => {
+            getTableItems("restaurant");
+            getTableItems("entire_menu");
           });
         }
         break;
@@ -276,7 +336,14 @@ const MangeRestaurantCategory = () => {
         }
         onSubmit={(value) => updateValues(value)}
       />
+      <RadioModal
+        visible={radioModalContents.visible}
+        contents={radioModalContents.contents}
+        title={radioModalContents.title}
+        hideModal={() => setRadioModalContents({visible: false, title: "", contents: [], target: ""})}
+        onChange={(val) => handleRadioModal(val)}
+      />
     </div>
   );
 };
-export default MangeRestaurantCategory;
+export default MangeRestaurantEntrieMenu;

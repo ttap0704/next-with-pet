@@ -54,6 +54,8 @@ class Manager {
     this.express.post("/:manager/restaurant/:id/category", this.addManagerRestaurantCategory)
     this.express.patch("/:manager/restaurant/:id/category/:category_id", this.patchManagerRestaurantCategory)
     this.express.delete("/:manager/restaurant/:id/category/:category_id", this.deleteManagerRestaurantCategory)
+    this.express.post("/:manager/restaurant/:id/category/:category_id/menu", this.addManagerRestaurantCategoryMenu)
+    this.express.delete("/:manager/restaurant/:id/category/:category_id/menu", this.deleteManagerRestaurantCategoryMenu)
     this.express.post("/:manager/restaurant/:id/:menu", this.addManagerRestaurantMenu)
     this.express.patch("/:manager/restaurant/:id", this.patchManagerRestaurant);
     this.express.delete("/:manager/restaurant/:id", this.deleteManagerRestaurant)
@@ -235,7 +237,7 @@ class Manager {
 
       const list = await this.RestaurantService.getManagerRestaurantCategoryList({ restaurant_id })
 
-      res.status(200).send(list)
+      res.status(200).json(list)
     } catch (err) {
       res.status(500).send()
       throw new Error(err);
@@ -291,6 +293,38 @@ class Manager {
       throw new Error(err);
     }
   }
+
+  addManagerRestaurantCategoryMenu = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const category_id = Number(req.params.category_id);
+      const menu = req.body.menu;
+
+      const res_menu = await this.RestaurantService.addManagerRestaurantCategoryMenuList({ category_id, menu });
+
+      res.status(200).send(res_menu);
+    } catch (err) {
+      res.status(500).send()
+      throw new Error(err);
+    }
+  }
+
+  deleteManagerRestaurantCategoryMenu = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const category_id = Number(req.params.category_id);
+
+      const response = await this.RestaurantService.deleteManagerRestaurantCategoryMenuList({ category_id })
+
+      if (response) {
+        res.status(200).send();
+      } else {
+        res.status(500).send();
+      }
+    } catch (err) {
+      res.status(500).send()
+      throw new Error(err);
+    }
+  }
+
 
 
   addManagerRestaurantMenu = async (req: express.Request, res: express.Response, next: express.NextFunction) => {

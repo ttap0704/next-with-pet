@@ -1,14 +1,14 @@
 import React, {ReactElement, useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
 
-import styles from "../../../../styles/pages/service.module.scss";
+import styles from "../../../styles/pages/service.module.scss";
 
-import CustomDropdown from "../../../../src/components/CustomDrodown";
-import CustomTable from "../../../../src/components/CustomTable";
-import EditModal from "../../../../src/components/EditModal";
-import UploadModal from "../../../../src/components/UploadModal";
+import CustomDropdown from "../../../src/components/CustomDrodown";
+import CustomTable from "../../../src/components/CustomTable";
+import EditModal from "../../../src/components/EditModal";
+import UploadModal from "../../../src/components/UploadModal";
 
-import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi} from "../../../../src/tools/api";
+import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi} from "../../../src/tools/api";
 import {Checkbox, TableCell, TableRow} from "@mui/material";
 import {Button} from "@mui/material";
 

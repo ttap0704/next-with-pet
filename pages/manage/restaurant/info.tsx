@@ -1,29 +1,29 @@
 import React, {ReactElement, useEffect, useState} from "react";
 import {useSelector, useDispatch} from "react-redux";
 
-import styles from "../../../../styles/pages/service.module.scss";
-import res_style from "../../../../styles/pages/restaurant.module.scss";
+import styles from "../../../styles/pages/service.module.scss";
+import res_style from "../../../styles/pages/restaurant.module.scss";
 
-import CustomDropdown from "../../../../src/components/CustomDrodown";
-import CustomTable from "../../../../src/components/CustomTable";
-import EditModal from "../../../../src/components/EditModal";
-import PostCode from "../../../../src/components/PostCode";
-import UploadModal from "../../../../src/components/UploadModal";
-import ModalContainer from "../../../../src/components/ModalContainer";
-import CustomInput from "../../../../src/components/CustomInput";
-import RadioModal from "../../../../src/components/RadioModal";
-import CategoryModal from "../../../../src/components/CategoryModal";
+import CustomDropdown from "../../../src/components/CustomDrodown";
+import CustomTable from "../../../src/components/CustomTable";
+import EditModal from "../../../src/components/EditModal";
+import PostCode from "../../../src/components/PostCode";
+import UploadModal from "../../../src/components/UploadModal";
+import ModalContainer from "../../../src/components/ModalContainer";
+import CustomInput from "../../../src/components/CustomInput";
+import RadioModal from "../../../src/components/RadioModal";
+import CategoryModal from "../../../src/components/CategoryModal";
 
-import {RootState} from "../../../../reducers";
+import {RootState} from "../../../reducers";
 import {useRouter} from "next/router";
-import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi} from "../../../../src/tools/api";
+import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchFileApi, fetchPostApi} from "../../../src/tools/api";
 import {Checkbox, TableCell, TableRow} from "@mui/material";
-import {getDate} from "../../../../src/tools/common";
+import {getDate} from "../../../src/tools/common";
 import {Button} from "@mui/material";
 import {HiX} from "react-icons/hi";
 
-import {actions} from "../../../../reducers/common/upload";
-import {readFile} from "../../../../src/tools/common";
+import {actions} from "../../../reducers/common/upload";
+import {readFile} from "../../../src/tools/common";
 
 const MangeRestaurantInfo = () => {
   const dispatch = useDispatch();

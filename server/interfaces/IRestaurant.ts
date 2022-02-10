@@ -62,3 +62,14 @@ export interface AddManagerRestaurantMenuListAttributes {
     comment?: string;
   }
 }
+
+export interface AddManagerRestaurantCategoryMenuListAttributes {
+  category_id: number;
+  menu: {
+    category_id: number;
+    seq: number;
+    label: string;
+    price: number;
+    restaurant_id: number;
+  }[];
+}
