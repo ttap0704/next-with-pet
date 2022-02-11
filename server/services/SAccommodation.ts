@@ -184,7 +184,7 @@ class AccommodationService {
           require: true
         },
       ],
-      attributes: ['id', 'label', 'price', 'standard_num', 'maximum_num', 'amenities', 'additional_info', 'accommodation_id', [
+      attributes: ['id', 'seq', 'label', 'price', 'standard_num', 'maximum_num', 'amenities', 'additional_info', 'accommodation_id', [
         Model.sequelize.literal(`(
             SELECT label
             FROM accommodation
@@ -193,7 +193,10 @@ class AccommodationService {
           )`), 'accommodation_label'
       ]],
       offset: offset,
-      order: [[{ model: Model.Images, as: 'rooms_images' }, 'seq', 'ASC']],
+      order: [
+        ['seq', 'ASC'],
+        [{ model: Model.Images, as: 'rooms_images' }, 'seq', 'ASC']
+      ],
       limit: 5
     });
 
@@ -274,6 +277,23 @@ class AccommodationService {
     } else {
       return false;
     }
+  }
+
+  async editManagerAccommodationRoomListOrder(payload: { id: number, seq: number }[]) {
+    const data = payload;
+
+    let f_res = [];
+    for (const x of data) {
+      const res = await Model.Rooms.update({ seq: x.seq }, { where: { id: x.id } })
+
+      if (res) {
+        f_res.push(res)
+      } else {
+        return false;
+      }
+    }
+
+    return f_res;
   }
 }
 

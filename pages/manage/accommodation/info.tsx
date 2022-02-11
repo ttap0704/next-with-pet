@@ -21,6 +21,7 @@ import CustomInput from "../../../src/components/CustomInput";
 import ImageSlider from "../../../src/components/ImageSlider";
 import UploadButton from "../../../src/components/UploadButton";
 import InfoModal from "../../../src/components/InfoModal";
+import EditOrderModal from "../../../src/components/EditOrderModal";
 
 import {actions} from "../../../reducers/common/upload";
 import {toggleButton, readFile, setSlideNumber} from "../../../src/tools/common";
@@ -29,11 +30,15 @@ const ManageAccommodationInfo = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     getTableItems("accommodation");
-    getTableItems("rooms");
   }, []);
 
   const router = useRouter();
   const {uid} = useSelector((state: RootState) => state.userReducer);
+  const [editOrderModal, setEditOrderModal] = useState({
+    visible: false,
+    data: [],
+    type: "",
+  });
   const [editModal, setEditModal] = useState({
     title: "",
     visible: false,
@@ -92,7 +97,15 @@ const ManageAccommodationInfo = () => {
       },
     ],
     table_items: [],
-    edit_items: ["객실 추가", "업소명 수정", "주소 수정", "소개 수정", "대표이미지 수정", "업소 삭제"],
+    edit_items: [
+      "객실 추가",
+      "업소명 수정",
+      "주소 수정",
+      "소개 수정",
+      "대표이미지 수정",
+      "객실 순서 변경",
+      "업소 삭제",
+    ],
     type: "accommodation",
     count: 0,
     title: "숙박업소 관리",
@@ -163,6 +176,7 @@ const ManageAccommodationInfo = () => {
           sido: x.sido,
           sigungu: x.sigungu,
           zonecode: x.zonecode,
+          rooms: x.accommodation_rooms,
           rooms_num: x.accommodation_rooms.length,
           created_at: x.createdAt,
           images: x.accommodation_images,
@@ -264,6 +278,19 @@ const ManageAccommodationInfo = () => {
         imageToBlob(target, type);
         break;
       case 5:
+        console.log(target);
+        setEditOrderModal({
+          visible: true,
+          data: target.rooms.map((item) => {
+            return {
+              ...item,
+              number: Number(item.seq) + 1,
+            };
+          }),
+          type: "rooms",
+        });
+        break;
+      case 6:
         const ok = confirm(`${target.label} 업소를 삭제하시겠습니까?`);
         if (ok) {
           deleteData("accommodation", target.id).then(() => {
@@ -379,7 +406,6 @@ const ManageAccommodationInfo = () => {
         .then((res) => console.log(res, "1"))
         .then(() => {
           getTableItems("accommodation");
-          getTableItems("rooms");
         });
     } else {
       setAddRoomImages(files, target);
@@ -511,9 +537,37 @@ const ManageAccommodationInfo = () => {
           .then((res) => console.log(res, "1"))
           .then(() => {
             getTableItems("accommodation");
-            getTableItems("rooms");
           });
       });
+    }
+  }
+
+  async function setRoomsOrder(data) {
+    const ok = confirm("객실 순서를 변경하시겠습니까?");
+    if (ok) {
+      const target = contents.table_items.find((data) => {
+        return data.checked == true;
+      });
+
+      const req_data = data.map((item, idx) => {
+        return {
+          id: item.id,
+          seq: item.seq,
+        };
+      });
+
+      const body = data.map((item) => {
+        return {
+          id: item.id,
+          seq: item.number - 1,
+        };
+      });
+
+      console.log(body);
+
+      const response = await fetchPostApi(`/manager/1/accommodation/${target.id}/rooms/order`, {data: body});
+
+      console.log(response);
     }
   }
 
@@ -578,6 +632,13 @@ const ManageAccommodationInfo = () => {
         hideModal={() => setInfoModalVisible(false)}
         onRegistered={(info) => setAdditionalInfo(info)}
         type={infoModalType}
+      />
+      <EditOrderModal
+        visible={editOrderModal.visible}
+        data={editOrderModal.data}
+        type={editOrderModal.type}
+        onSubmit={(data) => setRoomsOrder(data)}
+        hideModal={() => setEditOrderModal({visible: false, data: [], type: ""})}
       />
       <ModalContainer backClicked={() => setRoomModalVisible(false)} visible={roomModalVisible}>
         <div

@@ -7,7 +7,7 @@ import styles from "../../styles/pages/login.module.scss";
 import {Button} from "@mui/material";
 import {actions, RESET_USER} from "../../reducers/models/user";
 
-import {fetchPostApi} from "../../src/tools/api";
+import {fetchPostApi, fecthCheckBusiness} from "../../src/tools/api";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -22,6 +22,16 @@ const Login = () => {
   let [contentsText, setContentsText] = useState("login");
   let [loginContents, setLoginContents] = useState({id: "", password: ""});
   let [joinContents, setJoinContents] = useState({id: "", password: "", nickname: ""});
+  let [certificationContents, setCertificationContents] = useState({
+    b_no: "",
+    start_dt: "",
+    p_nm: "",
+    p_nm2: "",
+    b_nm: "",
+    corp_no: "",
+    b_sector: "",
+    b_type: "",
+  });
 
   const contents = (type: string) => {
     const login_contents = [
@@ -65,41 +75,54 @@ const Login = () => {
       },
     ];
 
+    // b_no: "0000000000";
+    // start_dt: "20000101";
+    // p_nm: "홍길동";
+    // p_nm2: "홍길동";
+    // b_nm: "(주)테스트";
+    // corp_no: "0000000000000";
+    // b_sector: "";
+    // b_type: "";
     const cetification_contents = [
       {
         label: "사업자등록번호 *",
         placeholder: "아이디를 입력해주세요.",
-        target: "password",
+        target: "b_no",
       },
       {
         label: "개업일자 *",
         placeholder: "닉네임을 입력해주세요.",
-        target: "password",
+        target: "start_dt",
       },
       {
         label: "대표자성명 *",
         placeholder: "비밀번호를 입력해주세요.",
-        target: "password",
+        target: "p_nm",
       },
       {
         label: "대표자성명2",
         placeholder: "닉네임을 입력해주세요.",
-        target: "password",
+        target: "p_nm2",
+      },
+      {
+        label: "상호",
+        placeholder: "닉네임을 입력해주세요.",
+        target: "b_nm",
       },
       {
         label: "법인등록번호",
         placeholder: "닉네임을 입력해주세요.",
-        target: "password",
+        target: "corp_no",
       },
       {
-        label: "주업태 *",
+        label: "주업태",
         placeholder: "닉네임을 입력해주세요.",
-        target: "password",
+        target: "b_sector",
       },
       {
-        label: "주종목 *",
+        label: "주종목",
         placeholder: "닉네임을 입력해주세요.",
-        target: "password",
+        target: "b_type",
       },
     ];
 
@@ -149,17 +172,23 @@ const Login = () => {
 
     if (contentsText == "login") item = loginContents;
     else if (contentsText == "join") item = joinContents;
+    else if (contentsText == "certification") item = certificationContents;
 
     item[target] = e.target.value;
 
     if (contentsText == "login") setLoginContents({...item});
     else if (contentsText == "join") setJoinContents({...item});
+    else if (contentsText == "certification") setCertificationContents({...item});
   }
 
-  function onSubmit(e) {
+  async function onSubmit(e) {
     e.preventDefault();
     if (contentsText == "certification") {
-      setContentsText("join");
+      console.log(certificationContents);
+
+      const res = await fecthCheckBusiness(certificationContents)
+      console.log(res)
+      // setContentsText("join");
     } else if (contentsText == "join") {
       fetchPostApi("/user/join", joinContents).then((res) => {
         console.log(res);
@@ -194,7 +223,9 @@ const Login = () => {
             {contentsText == "login" ? "사업자 회원가입" : "로그인"}하기
           </span>
         </div>
-        <Button onClick={(e) => onSubmit(e)} color="orange" variant="contained">{button_txt(contentsText)}</Button>
+        <Button onClick={(e) => onSubmit(e)} color="orange" variant="contained">
+          {button_txt(contentsText)}
+        </Button>
       </form>
     </>
   );

@@ -1,5 +1,6 @@
 import React, {ReactElement, useEffect, useState} from "react";
 import {useDispatch} from "react-redux";
+import {GetServerSideProps} from "next";
 
 import styles from "../../../styles/pages/service.module.scss";
 
@@ -13,10 +14,8 @@ import {fetchGetApi, fetchDeleteApi, fetchPatchApi, fetchPostApi} from "../../..
 import {Checkbox, TableCell, TableRow} from "@mui/material";
 
 const MangeRestaurantCategory = ({data}) => {
-
   useEffect(() => {
-    console.log(data)
-    getTableItems("entire_menu");
+    getTableItems("entire_menu", 1, data);
   }, []);
 
   const [editOrderModal, setEditOrderModal] = useState({
@@ -97,10 +96,11 @@ const MangeRestaurantCategory = ({data}) => {
     });
   }
 
-  function getTableItems(type: string, page?: number) {
+  async function getTableItems(type: string, page?: number, data?: {count: number; rows: any[]}) {
     let page_num = contents.page;
     let tmp_table_items = [];
     let count = 0;
+    console.log(data);
 
     if (page) {
       setContents((state) => {
@@ -111,27 +111,29 @@ const MangeRestaurantCategory = ({data}) => {
       });
       page_num = page;
     }
-    let url = `/manager/${1}/restaurant/category?page=${page_num}`;
-    fetchGetApi(url).then((res) => {
-      count = res.count;
-      for (let x of res.rows) {
-        tmp_table_items.push({
-          id: x.id,
-          restaurant_label: x.restaurant_label,
-          restaurant_id: x.restaurant_id,
-          category: x.category,
-          menu: x.menu,
-          checked: false,
-        });
-      }
-      setContents((state) => {
-        return {
-          ...state,
-          table_items: [...tmp_table_items],
-          count: count,
-          button_disabled: true,
-        };
+    if (!data) {
+      let url = `/manager/${1}/restaurant/category?page=${page_num}`;
+      data = await fetchGetApi(url);
+    }
+
+    count = data.count;
+    for (let x of data.rows) {
+      tmp_table_items.push({
+        id: x.id,
+        restaurant_label: x.restaurant_label,
+        restaurant_id: x.restaurant_id,
+        category: x.category,
+        menu: x.menu,
+        checked: false,
       });
+    }
+    setContents((state) => {
+      return {
+        ...state,
+        table_items: [...tmp_table_items],
+        count: count,
+        button_disabled: true,
+      };
     });
   }
 
@@ -316,12 +318,17 @@ const MangeRestaurantCategory = ({data}) => {
   );
 };
 
-export async function getServerSideProps() {
-  const res = await fetchGetApi(`/manager/${1}/restaurant/category?page=1`);
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const {req} = ctx;
+  const {cookies} = req;
 
-  console.log(res, 'serversideporps')
+  const res = await fetchGetApi(`/manager/${1}/restaurant/category?page=1`, cookies["access-token"]);
 
-  return {props: {data: res}};
-}
+  return {
+    props: {
+      data: res,
+    },
+  };
+};
 
 export default MangeRestaurantCategory;

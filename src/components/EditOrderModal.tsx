@@ -12,8 +12,14 @@ import OrderList from "./OrderList";
 const CategoryMenuModal = (props) => {
   const visible = props.visible;
   const type = props.type;
-  const target = type == "category" ? "메뉴" : "카테고리";
-
+  let target = "";
+  if (type == "category") {
+    target = "메뉴";
+  } else if (type == "rooms") {
+    target = "객실";
+  } else {
+    target = "카테고리";
+  }
 
   const [data, setData] = useState([]);
 
